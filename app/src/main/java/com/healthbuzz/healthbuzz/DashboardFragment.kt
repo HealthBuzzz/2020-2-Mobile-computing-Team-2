@@ -8,10 +8,10 @@ import androidx.fragment.app.Fragment
 
 /**
  * A fragment representing a single Item detail screen.
- * This fragment is contained in a [ItemDetailActivity]
+ * This fragment is contained in a [MainActivity]
  * on handsets.
  */
-class ItemDetailFragment : Fragment() {
+class DashboardFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -20,7 +20,7 @@ class ItemDetailFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val rootView = inflater.inflate(R.layout.item_detail, container, false)
+        val rootView = inflater.inflate(R.layout.fragment_dashboard, container, false)
         return rootView
     }
 }

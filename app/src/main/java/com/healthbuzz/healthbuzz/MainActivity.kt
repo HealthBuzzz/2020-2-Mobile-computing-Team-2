@@ -6,11 +6,11 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 
-class ItemDetailActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_item_detail)
+        setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.detail_toolbar))
 
         findViewById<FloatingActionButton>(R.id.fab).setOnClickListener { view ->
@@ -33,7 +33,7 @@ class ItemDetailActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
-            val fragment = ItemDetailFragment()
+            val fragment = DashboardFragment()
             supportFragmentManager.beginTransaction()
                 .add(R.id.item_detail_container, fragment)
                 .commit()
