@@ -33,9 +33,14 @@ class MainActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
-            val fragment = DashboardFragment()
+            val dashboardFragment = DashboardFragment()
             supportFragmentManager.beginTransaction()
-                .add(R.id.item_detail_container, fragment)
+                .add(R.id.item_detail_container, dashboardFragment)
+                .commit()
+
+            val welcomeFragment = WelcomeFragment()
+            supportFragmentManager.beginTransaction()
+                .add(R.id.welcome_container, welcomeFragment)
                 .commit()
         }
     }

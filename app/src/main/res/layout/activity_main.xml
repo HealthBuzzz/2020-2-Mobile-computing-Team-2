@@ -23,6 +23,12 @@
             app:contentScrim="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:toolbarId="@+id/toolbar">
+            <LinearLayout
+                android:orientation="vertical"
+                android:id="@+id/welcome_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"/>
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/detail_toolbar"
