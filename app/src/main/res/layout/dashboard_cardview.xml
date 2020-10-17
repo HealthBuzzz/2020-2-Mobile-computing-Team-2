@@ -37,14 +37,21 @@
             app:layout_constraintStart_toStartOf="parent"
             tools:src="@tools:sample/avatars" />
 
-        <ProgressBar
+        <com.akexorcist.roundcornerprogressbar.IconRoundCornerProgressBar
+            android:layout_height="30dp"
+            app:rcBackgroundColor="#0A000000"
+            app:rcBackgroundPadding="2dp"
+            app:rcMax="100"
+            app:rcProgress="80"
+            app:rcProgressColor="#EF5350"
+            app:rcRadius="10dp"
+            app:rcSecondaryProgress="90"
+            app:rcSecondaryProgressColor="#40EF5350"
             android:id="@+id/pbCardProgress"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toEndOf="@id/ivCardImage"
+            android:layout_width="0dp"
             app:layout_constraintEnd_toStartOf="@id/swCardEnable"
-            app:layout_constraintTop_toBottomOf="@id/tvCardTitle"/>
+            app:layout_constraintStart_toEndOf="@id/ivCardImage"
+            app:layout_constraintTop_toBottomOf="@id/tvCardTitle" />
 
         <TextView
             android:id="@+id/tvCardContent"
