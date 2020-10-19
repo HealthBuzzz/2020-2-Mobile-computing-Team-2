@@ -45,6 +45,8 @@ class MainActivity : AppCompatActivity() {
                 .add(R.id.welcome_container, welcomeFragment)
                 .commit()
         }
+
+        startSensorService(this)
     }
 
     override fun onOptionsItemSelected(item: MenuItem) =

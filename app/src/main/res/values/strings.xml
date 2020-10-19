@@ -4,4 +4,5 @@
     <string name="dashboard_stretching_title_default"> You shoud stretch!!!</string>
     <string name="dashboard_water_title_default"> You shoud drink water!!!</string>
     <string name="dashboard_minutes_left"> %d minutes left</string>
+    <string name="ticker_text">HealthBuzz is guarding your health :)</string>
 </resources>
