@@ -12,7 +12,7 @@ public class SensorThread {
 
             try {
                 Thread.sleep(10000);
-                Log.d(TAG, "I am working");
+                Log.e(TAG, "I am working");
             } catch (InterruptedException e) {
                 e.printStackTrace();
                 break;
