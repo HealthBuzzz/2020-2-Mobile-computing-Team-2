@@ -2,9 +2,10 @@ package com.healthbuzz.healthbuzz;
 
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.annotation.Nullable;
 import android.os.Handler;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 public class WelcomeActivity extends AppCompatActivity {
     int SPLASH_TIME = 3000; //This is 3 seconds
@@ -16,9 +17,10 @@ public class WelcomeActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                startActivity(new Intent(WelcomeActivity.this,MainActivity.class));
+                startActivity(new Intent(WelcomeActivity.this, MainActivity.class));
+                finish();
             }
-        },SPLASH_TIME);
+        }, SPLASH_TIME);
 
 
     }
