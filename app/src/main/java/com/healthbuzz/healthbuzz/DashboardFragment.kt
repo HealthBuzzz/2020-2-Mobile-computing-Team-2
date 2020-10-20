@@ -32,15 +32,16 @@ class DashboardFragment : Fragment() {
                 .setImageDrawable(stretchingDrawable)
             cardview_layout_water.findViewById<ImageView>(R.id.ivCardImage)
                 .setImageDrawable(waterDrawable)
-            cardview_layout_stretching.findViewById<TextView>(R.id.tvCardTitle).setText(R.string.dashboard_stretching_title_default)
-            cardview_layout_water.findViewById<TextView>(R.id.tvCardTitle).setText(R.string.dashboard_water_title_default)
+            cardview_layout_stretching.findViewById<TextView>(R.id.tvCardTitle)
+                .setText(R.string.dashboard_stretching_title_default)
+            cardview_layout_water.findViewById<TextView>(R.id.tvCardTitle)
+                .setText(R.string.dashboard_water_title_default)
             cardview_layout_stretching.findViewById<TextView>(R.id.tvCardContent).text =
                 getString(R.string.dashboard_minutes_left, 10)
             cardview_layout_water.findViewById<TextView>(R.id.tvCardContent).text =
                 getString(R.string.dashboard_minutes_left, 10)
 
         }
-
 
         return rootView
     }
