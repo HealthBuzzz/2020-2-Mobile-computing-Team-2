@@ -4,4 +4,7 @@
     <string name="dashboard_stretching_title_default"> You shoud stretch!!!</string>
     <string name="dashboard_water_title_default"> You shoud drink water!!!</string>
     <string name="dashboard_minutes_left"> %d minutes left</string>
+    <string name="menu_item1">Settings</string>
+    <string name="menu_item2">Debug</string>
+    <string name="menu_item3">Help</string>
 </resources>
