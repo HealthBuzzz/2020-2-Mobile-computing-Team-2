@@ -1,5 +1,6 @@
 package com.healthbuzz.healthbuzz;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -46,14 +47,18 @@ public class WelcomeFragment extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_welcome, container, false);
     }
+
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.settings_menu, menu);
         return;
     }
+
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.settings:
-                Toast.makeText(getActivity(), "Go to Settings page", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(requireActivity(), SettingsActivity.class);
+                startActivity(intent);
+//                Toast.makeText(getActivity(), "Go to Settings page", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.debug:
                 Toast.makeText(getActivity(), "Go to Debug page", Toast.LENGTH_SHORT).show();
