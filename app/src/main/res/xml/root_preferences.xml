@@ -1,0 +1,55 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="General">
+
+        <SwitchPreferenceCompat
+            app:key="n_bother"
+            app:title="Don't bother" />
+
+        <ListPreference
+            app:defaultValue="Buzz"
+            app:entries="@array/sound_entries"
+            app:entryValues="@array/sound_values"
+            app:key="sound"
+            app:title="Sound setting"
+            app:useSimpleSummaryProvider="true" />
+
+        <CheckBoxPreference
+            app:key="smartwatch"
+            app:title="Smartwatch"
+            app:useSimpleSummaryProvider="true" />
+
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Stretch setting">
+
+        <SwitchPreferenceCompat
+            app:key="sync"
+            app:title="activate" />
+
+        <SwitchPreferenceCompat
+            app:dependency="sync"
+            app:key="time_interval"
+            app:summaryOff="a"
+            app:summaryOn="b"
+            app:title="time interval" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Water drinking">
+
+        <SwitchPreferenceCompat
+            app:key="sync2"
+            app:title="activate" />
+
+        <SwitchPreferenceCompat
+            app:dependency="sync2"
+            app:key="time_interval2"
+            app:summaryOff="a"
+            app:summaryOn="b"
+            app:title="time interval" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
