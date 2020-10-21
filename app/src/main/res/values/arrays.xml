@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- sound Preference -->
+    <string-array name="sound_entries">
+        <item>No sound</item>
+        <item>Buzz</item>
+        <item>Sound</item>
+    </string-array>
+
+    <string-array name="sound_values">
+        <item>No sound</item>
+        <item>Buzz</item>
+        <item>Sound</item>
+    </string-array>
+</resources>
