@@ -7,6 +7,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -122,7 +123,7 @@ public class DataGettingActivity extends AppCompatActivity implements SensorEven
         try {
             writer = new CSVWriter(new FileWriter(root));
         } catch (Exception e) {
-            System.err.println("ERROR in making CSVWriter");
+            Log.e(TAG, "ERROR in making CSVWriter", e);
         }
 
         // Label {0: ondeskAcc, 1: standingAcc, 2: walkingAcc,
@@ -147,7 +148,7 @@ public class DataGettingActivity extends AppCompatActivity implements SensorEven
         try {
             writer.close();
         } catch (Exception e) {
-            System.err.println("ERROR in closing CSVWriter");
+            Log.e(TAG, "ERROR in closing CSVWriter", e);
         }
     }
 
