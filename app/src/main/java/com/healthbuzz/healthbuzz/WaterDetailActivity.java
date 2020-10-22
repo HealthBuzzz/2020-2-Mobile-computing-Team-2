@@ -34,7 +34,7 @@ class drinkMonth {
     drinkMonth(int year, int month, int[] day, int[] quantity) {
         this.year = year;
         this.month = month;
-        this.dayQuantityPairs = new LinkedList<Pair<Integer, Integer>>();
+        this.dayQuantityPairs = new LinkedList<>();
         assert (day.length == quantity.length);
         for (int i = 0; i < day.length; i++) {
             dayQuantityPairs.add(new Pair(day[i], quantity[i]));
@@ -128,9 +128,9 @@ public class WaterDetailActivity extends AppCompatActivity {
         List<Entry> entries = new ArrayList<>();
 
         drinkMonth target = null;
-        for (int i = 0; i < drinkMonths.length; i++) {
-            if (drinkMonths[i].year == showYear && drinkMonths[i].month == showMonth) {
-                target = drinkMonths[i];
+        for (com.healthbuzz.healthbuzz.drinkMonth drinkMonth : drinkMonths) {
+            if (drinkMonth.year == showYear && drinkMonth.month == showMonth) {
+                target = drinkMonth;
             }
         }
         if (target != null) {

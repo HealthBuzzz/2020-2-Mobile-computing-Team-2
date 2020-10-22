@@ -34,7 +34,7 @@ class stretchingMonth {
     stretchingMonth(int year, int month, int[] day, int[] quantity) {
         this.year = year;
         this.month = month;
-        this.dayQuantityPairs = new LinkedList<Pair<Integer, Integer>>();
+        this.dayQuantityPairs = new LinkedList<>();
         assert (day.length == quantity.length);
         for (int i = 0; i < day.length; i++) {
             dayQuantityPairs.add(new Pair(day[i], quantity[i]));
@@ -124,9 +124,9 @@ public class StretchingDetailActivity extends AppCompatActivity {
         List<Entry> entries = new ArrayList<>();
 
         stretchingMonth target = null;
-        for (int i = 0; i < stretchingMonths.length; i++) {
-            if (stretchingMonths[i].year == showYear && stretchingMonths[i].month == showMonth) {
-                target = stretchingMonths[i];
+        for (com.healthbuzz.healthbuzz.stretchingMonth stretchingMonth : stretchingMonths) {
+            if (stretchingMonth.year == showYear && stretchingMonth.month == showMonth) {
+                target = stretchingMonth;
             }
         }
         if (target != null) {

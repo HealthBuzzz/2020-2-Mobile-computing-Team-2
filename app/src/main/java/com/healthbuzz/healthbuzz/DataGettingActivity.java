@@ -67,9 +67,9 @@ public class DataGettingActivity extends AppCompatActivity implements SensorEven
 
         labelList = new ArrayList<>(Arrays.asList(ondesk, standing, walking));
 
-        ondeskSegment = new LinkedList<SensorData>();
-        standingSegment = new LinkedList<SensorData>();
-        walkingSegment = new LinkedList<SensorData>();
+        ondeskSegment = new LinkedList<>();
+        standingSegment = new LinkedList<>();
+        walkingSegment = new LinkedList<>();
 
         sm = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         accelerometer = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -130,7 +130,7 @@ public class DataGettingActivity extends AppCompatActivity implements SensorEven
 
         LinkedList<LinkedList<SensorData>> segments
                 = new LinkedList<>(Arrays.asList(ondeskSegment, standingSegment, walkingSegment));
-        LinkedList<String[]> data = new LinkedList<String[]>();
+        LinkedList<String[]> data = new LinkedList<>();
 
         for (int i = 0; i < segments.size(); i++) {
             LinkedList<SensorData> targetSegment = segments.get(i);
