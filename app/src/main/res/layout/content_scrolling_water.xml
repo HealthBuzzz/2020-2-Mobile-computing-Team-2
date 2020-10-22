@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="right"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    app:layout_constraintEnd_toStartOf="parent"
+    tools:context=".WaterDetailActivity"
+    tools:showIn="@layout/activity_water_detail">
+
+    <LinearLayout
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/text1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:gravity="center"
+            android:padding="10dp"
+            android:shadowColor="#000"
+            android:shadowRadius="1.0"
+            android:text="Today"
+            android:textAllCaps="false"
+            android:textSize="20sp"
+            android:textStyle="normal"
+            android:typeface="monospace" />
+
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/piechart"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:layout_margin="@dimen/text_margin"
+            android:layout_weight="1" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textHistory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:gravity="center"
+                android:padding="10dp"
+                android:shadowColor="#000"
+                android:shadowRadius="1.0"
+                android:text="History"
+                android:textAllCaps="false"
+                android:textSize="20sp"
+                android:textStyle="normal"
+                android:typeface="monospace" />
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:text="TextView" />
+
+            <ImageButton
+                android:id="@+id/imageButton2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|right"
+                android:layout_weight="0.1"
+                android:onClick="onBeforeClicked"
+                android:src="@android:drawable/ic_media_previous" />
+
+            <ImageButton
+                android:id="@+id/imageButton3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|right"
+                android:layout_weight="0.1"
+                android:onClick="onAfterClicked"
+                android:src="@android:drawable/ic_media_next" />
+
+        </LinearLayout>
+
+        <com.github.mikephil.charting.charts.LineChart xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/chart"
+            android:layout_width="400dp"
+            android:layout_height="300dp"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:layout_margin="@dimen/text_margin"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
+
+</androidx.core.widget.NestedScrollView>
