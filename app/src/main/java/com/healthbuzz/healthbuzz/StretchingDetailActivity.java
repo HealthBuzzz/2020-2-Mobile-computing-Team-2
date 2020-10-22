@@ -4,51 +4,39 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
-
-import com.github.mikephil.charting.animation.Easing;
-import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.Description;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.data.PieData;
-import com.github.mikephil.charting.data.PieDataSet;
-import com.github.mikephil.charting.data.PieEntry;
-import com.google.android.material.appbar.CollapsingToolbarLayout;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import android.service.controls.templates.ToggleRangeTemplate;
-import android.view.View;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.ToggleButton;
-
-import org.w3c.dom.Text;
+import com.github.mikephil.charting.animation.Easing;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
-class stretchingMonth{
+class stretchingMonth {
     // quantity unit is number
     public final int year, month;
     public LinkedList<Pair<Integer, Integer>> dayQuantityPairs;
 
-    stretchingMonth(int year, int month, int[] day, int[] quantity){
+    stretchingMonth(int year, int month, int[] day, int[] quantity) {
         this.year = year;
         this.month = month;
         this.dayQuantityPairs = new LinkedList<Pair<Integer, Integer>>();
-        assert(day.length == quantity.length);
-        for (int i=0; i<day.length; i++) {
+        assert (day.length == quantity.length);
+        for (int i = 0; i < day.length; i++) {
             dayQuantityPairs.add(new Pair(day[i], quantity[i]));
         }
     }
@@ -77,12 +65,12 @@ public class StretchingDetailActivity extends AppCompatActivity {
         toolBarLayout.setTitle(getTitle());
 
         // This is mock data
-        int[] dayArr1 = new int[] {1,2,3,4};
-        int[] dayArr2 = new int[] {1,2,3,4,5};
-        int[] quantityArr1 = new int[] {100,200,300,100};
-        int[] quantityArr2 = new int[] {300,200,300,100,400};
-        stretchingMonths = new stretchingMonth[] {new stretchingMonth(2020,10, dayArr1, quantityArr1),
-                new stretchingMonth(2020,9, dayArr2, quantityArr2)};
+        int[] dayArr1 = new int[]{1, 2, 3, 4};
+        int[] dayArr2 = new int[]{1, 2, 3, 4, 5};
+        int[] quantityArr1 = new int[]{100, 200, 300, 100};
+        int[] quantityArr2 = new int[]{300, 200, 300, 100, 400};
+        stretchingMonths = new stretchingMonth[]{new stretchingMonth(2020, 10, dayArr1, quantityArr1),
+                new stretchingMonth(2020, 9, dayArr2, quantityArr2)};
 
         // Get current year&month for initial showing
         Calendar cal = Calendar.getInstance();
@@ -91,11 +79,11 @@ public class StretchingDetailActivity extends AppCompatActivity {
 
         // ProgressBar configure
         progressBar = findViewById(R.id.progressBar);
-        progressBar.setProgress(Math.round((float)todayStretching / dayNeedStretching * 100), true);
+        progressBar.setProgress(Math.round((float) todayStretching / dayNeedStretching * 100), true);
 
         // textProgress configure
         TextView textProgress = findViewById(R.id.textProgress);
-        textProgress.setText("  " + todayStretching +"/" + dayNeedStretching);
+        textProgress.setText("  " + todayStretching + "/" + dayNeedStretching);
 
         // textBuzz configure, this must be called every minute ?through service?
         buzzTextUpdate();
@@ -103,7 +91,7 @@ public class StretchingDetailActivity extends AppCompatActivity {
         textBuzz.setTypeface(null, Typeface.BOLD);
 
         ////// LINE CHART BELOW
-        lineChart = (LineChart)findViewById(R.id.chart);
+        lineChart = (LineChart) findViewById(R.id.chart);
         XAxis xAxis = lineChart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setTextColor(Color.BLACK);
@@ -125,22 +113,24 @@ public class StretchingDetailActivity extends AppCompatActivity {
         lineChart.invalidate();
         historyTextUpdate();
     }
+
     // textBuzz configure, this must be updated every minute ?through service?
     public void buzzTextUpdate() {
         TextView textBuzz = findViewById(R.id.textBuzz);
         textBuzz.setText("BUZZ " + minutesToBUZZ + " minutes left!");
     }
+
     private void lineChartDataUpdate() {
         List<Entry> entries = new ArrayList<>();
 
         stretchingMonth target = null;
-        for (int i=0; i<stretchingMonths.length; i++) {
-            if(stretchingMonths[i].year == showYear && stretchingMonths[i].month == showMonth) {
+        for (int i = 0; i < stretchingMonths.length; i++) {
+            if (stretchingMonths[i].year == showYear && stretchingMonths[i].month == showMonth) {
                 target = stretchingMonths[i];
             }
         }
         if (target != null) {
-            for (int i=0; i<target.dayQuantityPairs.size(); i++) {
+            for (int i = 0; i < target.dayQuantityPairs.size(); i++) {
                 entries.add(new Entry(target.dayQuantityPairs.get(i).x,
                         target.dayQuantityPairs.get(i).y));
             }
@@ -163,10 +153,12 @@ public class StretchingDetailActivity extends AppCompatActivity {
         LineData lineData = new LineData(lineDataSet);
         lineChart.setData(lineData);
     }
+
     private void historyTextUpdate() {
-        TextView hisoryText = (TextView)findViewById(R.id.textHistory);
-        hisoryText.setText("History in " + showYear + "." + (showMonth<10 ? "0" : "")+ showMonth);
+        TextView hisoryText = (TextView) findViewById(R.id.textHistory);
+        hisoryText.setText("History in " + showYear + "." + (showMonth < 10 ? "0" : "") + showMonth);
     }
+
     public void onBeforeClicked(View v) {
         if (showMonth == 1) {
             showYear -= 1;
@@ -178,6 +170,7 @@ public class StretchingDetailActivity extends AppCompatActivity {
         historyTextUpdate();
         lineChart.invalidate();
     }
+
     public void onAfterClicked(View v) {
         if (showMonth == 12) {
             showYear += 1;

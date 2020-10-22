@@ -23,18 +23,20 @@
             app:contentScrim="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:toolbarId="@+id/toolbar">
+
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/detail_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" >
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
                 <LinearLayout
                     android:orientation="vertical"
                     android:id="@+id/welcome_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"/>
+                    android:layout_gravity="bottom" />
             </androidx.appcompat.widget.Toolbar>
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>

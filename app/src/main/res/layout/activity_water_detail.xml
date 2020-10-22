@@ -33,8 +33,7 @@
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <include
-        layout="@layout/content_scrolling_water"/>
+    <include layout="@layout/content_scrolling_water" />
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -129,7 +129,7 @@ public class DataGettingActivity extends AppCompatActivity implements SensorEven
         //      3: ondeskGyro, 4: standingGyro, 5: walkingGyro}
 
         LinkedList<LinkedList<SensorData>> segments
-                = new LinkedList<LinkedList<SensorData>>(Arrays.asList(ondeskSegment, standingSegment, walkingSegment));
+                = new LinkedList<>(Arrays.asList(ondeskSegment, standingSegment, walkingSegment));
         LinkedList<String[]> data = new LinkedList<String[]>();
 
         for (int i = 0; i < segments.size(); i++) {
