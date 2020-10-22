@@ -40,6 +40,8 @@
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".SettingsActivity" />
+        <activity android:name=".StretchingDetailActivity"/>
+        <activity android:name=".WaterDetailActivity"/>
     </application>
 
 </manifest>
