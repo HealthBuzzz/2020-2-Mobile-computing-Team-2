@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -54,15 +53,14 @@ public class StretchingDetailActivity extends AppCompatActivity {
     stretchingMonth[] stretchingMonths;
     int minutesToBUZZ = 10;
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stretching_detail);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
-        CollapsingToolbarLayout toolBarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
-        toolBarLayout.setTitle(getTitle());
+//        CollapsingToolbarLayout toolBarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
+//        toolBarLayout.setTitle(getTitle());
 
         // This is mock data
         int[] dayArr1 = new int[]{1, 2, 3, 4};
@@ -79,7 +77,12 @@ public class StretchingDetailActivity extends AppCompatActivity {
 
         // ProgressBar configure
         progressBar = findViewById(R.id.progressBar);
-        progressBar.setProgress(Math.round((float) todayStretching / dayNeedStretching * 100), true);
+        final int progressValue = Math.round((float) todayStretching / dayNeedStretching * 100);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            progressBar.setProgress(progressValue, true);
+        } else {
+            progressBar.setProgress(progressValue);
+        }
 
         // textProgress configure
         TextView textProgress = findViewById(R.id.textProgress);
