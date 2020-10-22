@@ -10,4 +10,11 @@
     <string name="ticker_text">HealthBuzz is guarding your health :)</string>
     <string name="title_activity_water_detail">Water Detail</string>
     <string name="title_activity_stretching_detail">Stretching Detail</string>
+
+    <string name="ondesk">ondesk</string>
+    <string name="standing">standing</string>
+    <string name="walking">walking</string>
+    <string name="reset">reset</string>
+    <string name="stop_collecting">stop collecting</string>
+    <string name="save">save</string>
 </resources>

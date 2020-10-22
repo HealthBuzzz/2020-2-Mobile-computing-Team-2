@@ -38,9 +38,15 @@ dependencies {
     implementation 'com.akexorcist:round-corner-progress-bar:2.1.1'
     implementation 'androidx.preference:preference-ktx:1.1.1'
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+    implementation group: 'com.opencsv', name: 'opencsv', version: '4.4'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
-
+}
+configurations {
+    all {
+        exclude module: 'httpclient'
+        exclude module: 'commons-logging'
+    }
 }
