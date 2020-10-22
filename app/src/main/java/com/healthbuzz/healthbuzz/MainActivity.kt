@@ -1,12 +1,44 @@
 package com.healthbuzz.healthbuzz
 
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Environment
+import android.provider.Settings
 import android.view.MenuItem
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                // Permission is granted. Continue the action or workflow in your
+                // app.
+
+                startSensorService(this)
+            } else {
+                Toast.makeText(
+                    this,
+                    "This app requires permission to work properly.",
+                    Toast.LENGTH_LONG
+                ).show()
+                finish()
+                // Explain to the user that the feature is unavailable because the
+                // features requires a permission that the user has denied. At the
+                // same time, respect the user's decision. Don't link to system
+                // settings in an effort to convince the user to change their
+                // decision.
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -14,11 +46,6 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(findViewById(R.id.detail_toolbar))
 
 //        findViewById<FloatingActionButton>(R.id.fab) is not needed thanks to kotlin synthetic android extension
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own detail action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
-        }
-
 
         // Show the Up button in the action bar.
 //        supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -46,7 +73,35 @@ class MainActivity : AppCompatActivity() {
                 .commit()
         }
 
-        startSensorService(this)
+        val isExternalStorageManager =
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+                Environment.isExternalStorageManager()
+            } else {
+                true
+            }
+
+        val hasPermission = ContextCompat.checkSelfPermission(
+            applicationContext,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED
+
+        if (!hasPermission) {
+            // You can directly ask for the permission.
+            // The registered ActivityResultCallback gets the result of this request.
+            requestPermissionLauncher.launch(
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            )
+        } else {
+            if (!isExternalStorageManager) {
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+                    startActivity(Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION))
+                }
+            }
+        }
+
+        if (hasPermission && isExternalStorageManager)
+            startSensorService(this)
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem) =

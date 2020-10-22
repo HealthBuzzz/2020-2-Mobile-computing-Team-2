@@ -1,21 +1,17 @@
 package com.healthbuzz.healthbuzz;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import com.opencsv.CSVWriter;
 
@@ -34,7 +30,8 @@ class Motions {
 class SensorData {
     public float[] data = new float[3];
     public SensorType sensorType;
-    SensorData(float x, float y, float z,  SensorType sensorType) {
+
+    SensorData(float x, float y, float z, SensorType sensorType) {
         data[0] = x;
         data[1] = y;
         data[2] = z;
@@ -71,33 +68,14 @@ public class DataGettingActivity extends AppCompatActivity implements SensorEven
 
         labelList = new ArrayList<>(Arrays.asList(ondesk, standing, walking));
 
-        ondeskSegment = new LinkedList<SensorData>();
-        standingSegment = new LinkedList<SensorData>();
-        walkingSegment = new LinkedList<SensorData>();
+        ondeskSegment = new LinkedList<>();
+        standingSegment = new LinkedList<>();
+        walkingSegment = new LinkedList<>();
 
-        sm = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
+        sm = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         accelerometer = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         gyroscope = sm.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-
-        String[] t = new String[1];
-        t[0] = Manifest.permission.WRITE_EXTERNAL_STORAGE;
-        ActivityCompat.requestPermissions(this, t, 1);
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
-        { // 권한이 거절된 상태
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE))
-            {
-                Intent intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
-            } else {
-                Intent intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
-                // 2. 사용자가 승인 거절과 동시에 다시 표시하지 않기 옵션을 선택한 경우 // 3. 혹은 아직 승인요청을 한적이 없는 경우
-            }
-        } else { // 4. 권한이 승인된 상태
-        }
-
     }
-
 
 
     @Override
@@ -145,17 +123,17 @@ public class DataGettingActivity extends AppCompatActivity implements SensorEven
         try {
             writer = new CSVWriter(new FileWriter(root));
         } catch (Exception e) {
-            System.err.println("ERROR in making CSVWriter");
+            Log.e(TAG, "ERROR in making CSVWriter", e);
         }
 
         // Label {0: ondeskAcc, 1: standingAcc, 2: walkingAcc,
         //      3: ondeskGyro, 4: standingGyro, 5: walkingGyro}
 
         LinkedList<LinkedList<SensorData>> segments
-                = new LinkedList<LinkedList<SensorData>>(Arrays.asList(ondeskSegment, standingSegment, walkingSegment));
-        LinkedList<String[]> data = new LinkedList<String[]>();
+                = new LinkedList<>(Arrays.asList(ondeskSegment, standingSegment, walkingSegment));
+        LinkedList<String[]> data = new LinkedList<>();
 
-        for (int i=0; i<segments.size(); i++) {
+        for (int i = 0; i < segments.size(); i++) {
             LinkedList<SensorData> targetSegment = segments.get(i);
             for (int j = 0; j < targetSegment.size(); j++) {
                 data.add(new String[]{"" + targetSegment.get(j).data[0],
@@ -169,8 +147,8 @@ public class DataGettingActivity extends AppCompatActivity implements SensorEven
 
         try {
             writer.close();
-        } catch (Exception e){
-            System.err.println("ERROR in closing CSVWriter");
+        } catch (Exception e) {
+            Log.e(TAG, "ERROR in closing CSVWriter", e);
         }
     }
 
@@ -204,5 +182,6 @@ public class DataGettingActivity extends AppCompatActivity implements SensorEven
     }
 
     @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {}
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+    }
 }

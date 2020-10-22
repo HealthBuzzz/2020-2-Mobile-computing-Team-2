@@ -12,6 +12,8 @@ import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link WelcomeFragment#newInstance} factory method to
@@ -48,27 +50,26 @@ public class WelcomeFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_welcome, container, false);
     }
 
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NotNull Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.settings_menu, menu);
-        return;
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.settings:
-                Intent intent = new Intent(requireActivity(), SettingsActivity.class);
-                startActivity(intent);
+        int itemId = item.getItemId();
+        if (itemId == R.id.settings) {
+            Intent intent = new Intent(requireActivity(), SettingsActivity.class);
+            startActivity(intent);
 //                Toast.makeText(getActivity(), "Go to Settings page", Toast.LENGTH_SHORT).show();
-                return true;
-            case R.id.debug:
-                Toast.makeText(getActivity(), "Go to Debug page", Toast.LENGTH_SHORT).show();
-                return true;
-            case R.id.help:
-                Toast.makeText(getActivity(), "Go to help page", Toast.LENGTH_SHORT).show();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+            return true;
+        } else if (itemId == R.id.debug) {
+//            Toast.makeText(getActivity(), "Go to Debug page", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(requireActivity(), DataGettingActivity.class));
+            return true;
+        } else if (itemId == R.id.help) {
+            Toast.makeText(getActivity(), "Go to help page", Toast.LENGTH_SHORT).show();
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
 }
