@@ -2,6 +2,8 @@ package com.healthbuzz.healthbuzz;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -13,6 +15,7 @@ import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.opencsv.CSVWriter;
 
@@ -79,7 +82,23 @@ public class DataGettingActivity extends AppCompatActivity implements SensorEven
         String[] t = new String[1];
         t[0] = Manifest.permission.WRITE_EXTERNAL_STORAGE;
         ActivityCompat.requestPermissions(this, t, 1);
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+        { // 권한이 거절된 상태
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE))
+            {
+                Intent intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
+            } else {
+                Intent intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
+                // 2. 사용자가 승인 거절과 동시에 다시 표시하지 않기 옵션을 선택한 경우 // 3. 혹은 아직 승인요청을 한적이 없는 경우
+            }
+        } else { // 4. 권한이 승인된 상태
+        }
+
     }
+
+
 
     @Override
     public void onSensorChanged(SensorEvent event) {
