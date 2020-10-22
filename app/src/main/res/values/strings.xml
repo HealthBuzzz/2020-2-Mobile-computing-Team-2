@@ -8,5 +8,6 @@
     <string name="menu_item2">Debug</string>
     <string name="menu_item3">Help</string>
     <string name="ticker_text">HealthBuzz is guarding your health :)</string>
-
+    <string name="title_activity_water_detail">Water Detail</string>
+    <string name="title_activity_stretching_detail">Stretching Detail</string>
 </resources>
