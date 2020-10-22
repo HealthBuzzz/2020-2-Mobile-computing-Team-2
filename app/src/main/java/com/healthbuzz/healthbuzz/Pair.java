@@ -1,4 +1,4 @@
-package com.healthbuzz.healthbuzz
+package com.healthbuzz.healthbuzz;
 
 // This is class for water drink records
 class Pair<X,Y> {

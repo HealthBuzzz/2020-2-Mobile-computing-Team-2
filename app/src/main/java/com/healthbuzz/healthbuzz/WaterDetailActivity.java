@@ -1,4 +1,4 @@
-package com.healthbuzz.healthbuzz
+package com.healthbuzz.healthbuzz;
 
 import android.graphics.Color;
 import android.os.Bundle;
