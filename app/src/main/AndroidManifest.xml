@@ -43,6 +43,7 @@
         <activity android:name=".SettingsActivity" />
         <activity android:name=".StretchingDetailActivity"/>
         <activity android:name=".WaterDetailActivity"/>
+        <activity android:name=".DataGettingActivity"/>
     </application>
 
 </manifest>

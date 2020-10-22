@@ -62,6 +62,7 @@ public class WelcomeFragment extends Fragment {
                 return true;
             case R.id.debug:
                 Toast.makeText(getActivity(), "Go to Debug page", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(requireActivity(), DataGettingActivity.class));
                 return true;
             case R.id.help:
                 Toast.makeText(getActivity(), "Go to help page", Toast.LENGTH_SHORT).show();
