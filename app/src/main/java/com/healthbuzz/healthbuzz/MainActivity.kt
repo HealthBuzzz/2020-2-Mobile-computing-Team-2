@@ -46,11 +46,6 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(findViewById(R.id.detail_toolbar))
 
 //        findViewById<FloatingActionButton>(R.id.fab) is not needed thanks to kotlin synthetic android extension
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own detail action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
-        }
-
 
         // Show the Up button in the action bar.
 //        supportActionBar?.setDisplayHomeAsUpEnabled(true)
