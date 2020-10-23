@@ -10,6 +10,7 @@ import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -124,6 +125,8 @@ public class DataGettingActivity extends AppCompatActivity implements SensorEven
             writer = new CSVWriter(new FileWriter(root));
         } catch (Exception e) {
             Log.e(TAG, "ERROR in making CSVWriter", e);
+            Toast.makeText(this, "Failed to save file", Toast.LENGTH_SHORT).show();
+            return;
         }
 
         // Label {0: ondeskAcc, 1: standingAcc, 2: walkingAcc,
@@ -147,6 +150,7 @@ public class DataGettingActivity extends AppCompatActivity implements SensorEven
 
         try {
             writer.close();
+            Toast.makeText(this, "Successfully saved to file", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             Log.e(TAG, "ERROR in closing CSVWriter", e);
         }
