@@ -18,9 +18,12 @@ import com.opencsv.CSVWriter;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.LinkedList;
+import java.util.Locale;
 
 class Motions {
     public static final int ONDESK = 0;
@@ -119,7 +122,9 @@ public class DataGettingActivity extends AppCompatActivity implements SensorEven
     }
 
     public void onSaveClick(View view) {
-        File root = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/SensorData.csv");
+        String filename = new SimpleDateFormat("'SensorData'yyyyMMddHHmm'.csv'", Locale.KOREA).format(new Date());
+
+        File root = new File(Environment.getExternalStorageDirectory(), filename);
         CSVWriter writer = null;
         try {
             writer = new CSVWriter(new FileWriter(root));
@@ -150,7 +155,7 @@ public class DataGettingActivity extends AppCompatActivity implements SensorEven
 
         try {
             writer.close();
-            Toast.makeText(this, "Successfully saved to file", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Successfully saved to file:" + root.getAbsolutePath(), Toast.LENGTH_LONG).show();
         } catch (Exception e) {
             Log.e(TAG, "ERROR in closing CSVWriter", e);
         }
