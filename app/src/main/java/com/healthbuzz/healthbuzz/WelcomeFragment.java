@@ -66,7 +66,8 @@ public class WelcomeFragment extends Fragment {
             startActivity(new Intent(requireActivity(), DataGettingActivity.class));
             return true;
         } else if (itemId == R.id.help) {
-            Toast.makeText(getActivity(), "Go to help page", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getActivity(), "Go to help page", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(requireActivity(), model_inference.class));
             return true;
         }
         return super.onOptionsItemSelected(item);

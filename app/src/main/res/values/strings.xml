@@ -17,4 +17,8 @@
     <string name="reset">reset</string>
     <string name="stop_collecting">stop collecting</string>
     <string name="save">save</string>
+
+    <string name="processing">Processing</string>
+    <string name="not_inferencing">Not inferencing</string>
+    <string name="inference_failed">Inference failed</string>
 </resources>
