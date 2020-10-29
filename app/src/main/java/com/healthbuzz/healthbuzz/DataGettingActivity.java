@@ -10,6 +10,7 @@ import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -17,9 +18,12 @@ import com.opencsv.CSVWriter;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.LinkedList;
+import java.util.Locale;
 
 class Motions {
     public static final int ONDESK = 0;
@@ -118,12 +122,16 @@ public class DataGettingActivity extends AppCompatActivity implements SensorEven
     }
 
     public void onSaveClick(View view) {
-        File root = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/SensorData.csv");
+        String filename = new SimpleDateFormat("'SensorData'yyyyMMddHHmm'.csv'", Locale.KOREA).format(new Date());
+
+        File root = new File(Environment.getExternalStorageDirectory(), filename);
         CSVWriter writer = null;
         try {
             writer = new CSVWriter(new FileWriter(root));
         } catch (Exception e) {
             Log.e(TAG, "ERROR in making CSVWriter", e);
+            Toast.makeText(this, "Failed to save file", Toast.LENGTH_SHORT).show();
+            return;
         }
 
         // Label {0: ondeskAcc, 1: standingAcc, 2: walkingAcc,
@@ -147,6 +155,7 @@ public class DataGettingActivity extends AppCompatActivity implements SensorEven
 
         try {
             writer.close();
+            Toast.makeText(this, "Successfully saved to file:" + root.getAbsolutePath(), Toast.LENGTH_LONG).show();
         } catch (Exception e) {
             Log.e(TAG, "ERROR in closing CSVWriter", e);
         }
