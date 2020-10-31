@@ -217,10 +217,11 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
 
                     val left_minutes = Integer.parseInt(time_interval_stretch) - time_diff / 60
 
-                    SingleObject.getInstance().stretching_time_left.value = left_minutes
+//                    SingleObject.getInstance().stretching_time_left.value = left_minutes
+                    RealtimeModel.stretching_time_left.value = left_minutes
 
                     if (0 > left_minutes) {
-//                        TODO("Show notificatio    n channel")
+//                        TODO("Show notification channel")
                         if (!isNotifying) {
                             notiBuilder.setContentText("You need to move $time_diff")
                             notiManager.notify(1, notiBuilder.build())
