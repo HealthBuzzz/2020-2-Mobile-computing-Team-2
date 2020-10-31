@@ -6,7 +6,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.LineChart;
@@ -19,19 +18,18 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.google.android.material.appbar.CollapsingToolbarLayout;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
-class drinkMonth {
+class DrinkMonth {
     // quantity unit is mililiter
     public final int year, month;
     public LinkedList<Pair<Integer, Integer>> dayQuantityPairs;
 
-    drinkMonth(int year, int month, int[] day, int[] quantity) {
+    DrinkMonth(int year, int month, int[] day, int[] quantity) {
         this.year = year;
         this.month = month;
         this.dayQuantityPairs = new LinkedList<>();
@@ -51,7 +49,7 @@ public class WaterDetailActivity extends AppCompatActivity {
     // This is from file or backend
     int todayDrink = 1100;
     int dayNeedDrink = 2000;
-    drinkMonth[] drinkMonths;
+    DrinkMonth[] drinkMonths;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,8 +65,8 @@ public class WaterDetailActivity extends AppCompatActivity {
         int[] dayArr2 = new int[]{1, 2, 3, 4, 5};
         int[] quantityArr1 = new int[]{100, 200, 300, 100};
         int[] quantityArr2 = new int[]{300, 200, 300, 100, 400};
-        drinkMonths = new drinkMonth[]{new drinkMonth(2020, 10, dayArr1, quantityArr1),
-                new drinkMonth(2020, 9, dayArr2, quantityArr2)};
+        drinkMonths = new DrinkMonth[]{new DrinkMonth(2020, 10, dayArr1, quantityArr1),
+                new DrinkMonth(2020, 9, dayArr2, quantityArr2)};
 
         // Get current year&month for initial showing
         Calendar cal = Calendar.getInstance();
@@ -127,8 +125,8 @@ public class WaterDetailActivity extends AppCompatActivity {
     private void lineChartDataUpdate() {
         List<Entry> entries = new ArrayList<>();
 
-        drinkMonth target = null;
-        for (com.healthbuzz.healthbuzz.drinkMonth drinkMonth : drinkMonths) {
+        DrinkMonth target = null;
+        for (DrinkMonth drinkMonth : drinkMonths) {
             if (drinkMonth.year == showYear && drinkMonth.month == showMonth) {
                 target = drinkMonth;
             }
