@@ -40,7 +40,7 @@ class LongWrapper implements Subject {
     }
 
     public long getValue() {
-        return this.value;
+        return value;
     }
 }
 public class SingleObject {
