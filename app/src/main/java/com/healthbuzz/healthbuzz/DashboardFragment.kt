@@ -62,12 +62,12 @@ class DashboardFragment : Fragment() {
         RealtimeModel.stretching_time_left.observe(viewLifecycleOwner) { value ->
             Log.e(TAG, "update value ${value}")
             rootView.cardview_layout_stretching.findViewById<TextView>(R.id.tvCardContent).text =
-                getString(R.string.dashboard_minutes_left, value)
+                getString(R.string.dashboard_minutes_left, value?.toInt() ?: 9999)
         }
         RealtimeModel.water_time_left.observe(viewLifecycleOwner) { value ->
             Log.e(TAG, "update value2 ${value}")
             rootView.cardview_layout_water.findViewById<TextView>(R.id.tvCardContent).text =
-                getString(R.string.dashboard_minutes_left, value)
+                getString(R.string.dashboard_minutes_left, value?.toInt() ?: 9999)
         }
 
 
