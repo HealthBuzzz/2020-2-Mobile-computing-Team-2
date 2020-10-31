@@ -8,7 +8,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
@@ -67,7 +66,7 @@ public class WelcomeFragment extends Fragment {
             return true;
         } else if (itemId == R.id.help) {
 //            Toast.makeText(getActivity(), "Go to help page", Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(requireActivity(), model_inference.class));
+            startActivity(new Intent(requireActivity(), InferenceActivity.class));
             return true;
         }
         return super.onOptionsItemSelected(item);

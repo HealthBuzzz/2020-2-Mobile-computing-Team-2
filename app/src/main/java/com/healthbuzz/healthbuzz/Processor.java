@@ -45,9 +45,9 @@ class Processor {
     }
 
     Instances extractFeaturesAndAddLabels(Instances data, int label) {
-        Instances meanFeatures = new Instances("mean", getAttributes(new String[]{"mean x", "mean y", "mean z"}), model_inference.initialInstancesSize);
-        Instances varFeatures = new Instances("var", getAttributes(new String[]{"var x", "var y", "var z"}), model_inference.initialInstancesSize);
-        Instances labels = new Instances("label", new ArrayList<Attribute>(Collections.singletonList(model_inference.labelAttr)), model_inference.initialInstancesSize);
+        Instances meanFeatures = new Instances("mean", getAttributes(new String[]{"mean x", "mean y", "mean z"}), InferenceActivity.initialInstancesSize);
+        Instances varFeatures = new Instances("var", getAttributes(new String[]{"var x", "var y", "var z"}), InferenceActivity.initialInstancesSize);
+        Instances labels = new Instances("label", new ArrayList<Attribute>(Collections.singletonList(InferenceActivity.labelAttr)), InferenceActivity.initialInstancesSize);
         for (int head = 0; head + this.windowSize <= data.size(); head += this.strideSize) {
             Instances window = new Instances(data, head, this.windowSize);
             meanFeatures.add(mean(window));
@@ -59,7 +59,7 @@ class Processor {
         }
         Instances featureData = Instances.mergeInstances(meanFeatures, varFeatures);
         featureData = Instances.mergeInstances(featureData, labels);
-        featureData.setClass(model_inference.labelAttr);
+        featureData.setClass(InferenceActivity.labelAttr);
         return featureData;
     }
 }
