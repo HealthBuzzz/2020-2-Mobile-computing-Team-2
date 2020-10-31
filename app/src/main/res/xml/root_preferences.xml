@@ -18,8 +18,6 @@
             app:key="smartwatch"
             app:title="Smartwatch"
             app:useSimpleSummaryProvider="true" />
-
-
     </PreferenceCategory>
 
     <PreferenceCategory app:title="Stretch setting">
@@ -28,12 +26,11 @@
             app:key="sync"
             app:title="activate" />
 
-        <SwitchPreferenceCompat
+        <EditTextPreference
             app:dependency="sync"
-            app:key="time_interval"
-            app:summaryOff="a"
-            app:summaryOn="b"
-            app:title="time interval" />
+            app:key="time_interval_stretch"
+            app:title="time interval"
+            />
 
     </PreferenceCategory>
 
@@ -43,12 +40,11 @@
             app:key="sync2"
             app:title="activate" />
 
-        <SwitchPreferenceCompat
+        <EditTextPreference
             app:dependency="sync2"
-            app:key="time_interval2"
-            app:summaryOff="a"
-            app:summaryOn="b"
-            app:title="time interval" />
+            app:key="time_interval_water"
+            app:title="time interval"
+            />
 
     </PreferenceCategory>
 
