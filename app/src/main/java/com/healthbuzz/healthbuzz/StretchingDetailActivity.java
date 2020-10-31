@@ -13,11 +13,14 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 
 import java.util.ArrayList;
@@ -47,8 +50,11 @@ public class StretchingDetailActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private int showYear, showMonth;
 
+    private Object SingleObject;
     // This is from file or backend
     int todayStretching = 3;
+    int progressValue = 0;
+
     int dayNeedStretching = 5;
     stretchingMonth[] stretchingMonths;
     int minutesToBUZZ = 10;
@@ -77,7 +83,7 @@ public class StretchingDetailActivity extends AppCompatActivity {
 
         // ProgressBar configure
         progressBar = findViewById(R.id.progressBar);
-        final int progressValue = Math.round((float) todayStretching / dayNeedStretching * 100);
+        progressValue = Math.round((float) todayStretching / dayNeedStretching * 100);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             progressBar.setProgress(progressValue, true);
         } else {
@@ -86,10 +92,30 @@ public class StretchingDetailActivity extends AppCompatActivity {
 
         // textProgress configure
         TextView textProgress = findViewById(R.id.textProgress);
-        textProgress.setText("  " + todayStretching + "/" + dayNeedStretching);
+        textProgress.setText("  " + com.healthbuzz.healthbuzz.SingleObject.getInstance().stretching_count.getValue() + "/" + dayNeedStretching);
+
+        com.healthbuzz.healthbuzz.SingleObject.getInstance().stretching_count.registerObserver(new Observer() {
+            @Override
+            public void update(long value) {
+                textProgress.setText("  " + value + "/" + dayNeedStretching);
+                progressValue = Math.round((float) value/ dayNeedStretching * 100);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    progressBar.setProgress(progressValue, true);
+                } else {
+                    progressBar.setProgress(progressValue);
+                }
+            }
+        });
 
         // textBuzz configure, this must be called every minute ?through service?
         buzzTextUpdate();
+        com.healthbuzz.healthbuzz.SingleObject.getInstance().stretching_time_left.registerObserver(new Observer() {
+            @Override
+            public void update(long value) {
+                TextView textBuzz = findViewById(R.id.textBuzz);
+                textBuzz.setText("BUZZ " + value + " minutes left!");
+            }
+        });
         TextView textBuzz = findViewById(R.id.textBuzz);
         textBuzz.setTypeface(null, Typeface.BOLD);
 
@@ -106,7 +132,6 @@ public class StretchingDetailActivity extends AppCompatActivity {
         yRAxis.setDrawLabels(false);
         yRAxis.setDrawAxisLine(false);
         yRAxis.setDrawGridLines(false);
-
         lineChart.getDescription().setEnabled(false);
         lineChart.getLegend().setEnabled(false);
         lineChart.setDoubleTapToZoomEnabled(false);
