@@ -145,7 +145,7 @@ class SensorService : Service(), SensorEventListener {
             for (i in event.values.indices) {
                 sample.setValue(i, event.values[i].toDouble())
             }
-            handleInference(sample)
+            //handleInference(sample)
         }
     }
 
