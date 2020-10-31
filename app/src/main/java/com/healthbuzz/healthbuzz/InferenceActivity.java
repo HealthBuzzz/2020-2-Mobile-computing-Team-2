@@ -1,7 +1,5 @@
 package com.healthbuzz.healthbuzz;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.hardware.Sensor;
@@ -14,6 +12,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -55,8 +55,7 @@ public class InferenceActivity extends AppCompatActivity implements SensorEventL
 
     private boolean isInference = false;
 
-    private Classifier asset_classifier=null;
-
+    private Classifier asset_classifier = null;
 
 
     @Override
@@ -67,7 +66,7 @@ public class InferenceActivity extends AppCompatActivity implements SensorEventL
         inferenceButton = findViewById(R.id.inference);
         inferenceResultView = findViewById(R.id.result);
 
-        sm = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
+        sm = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         accelerometer = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         gyroscope = sm.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
 
@@ -90,8 +89,7 @@ public class InferenceActivity extends AppCompatActivity implements SensorEventL
             if (isInference) {
                 handleInference(sample);
             }
-        }
-        else if (event.sensor == gyroscope) {
+        } else if (event.sensor == gyroscope) {
             Instance sample = new DenseInstance(attributes.size());
             for (int i = 0; i < event.values.length; i++) {
                 sample.setValue(i, event.values[i]);
@@ -102,22 +100,20 @@ public class InferenceActivity extends AppCompatActivity implements SensorEventL
         }
     }
 
-    private void loadModel(String model_name){
+    private void loadModel(String model_name) {
         Log.d("load_asset_model", "loading the model from asset folder");
         AssetManager assetManager = getAssets();
-        try{
+        try {
             asset_classifier = (Classifier) weka.core.SerializationHelper.read(assetManager.open(model_name));
-        }
-        catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         Toast.makeText(this, "Model loaded", Toast.LENGTH_SHORT).show();
     }
 
-    public void onLoadmodelClick(View view){
+    public void onLoadmodelClick(View view) {
         loadModel("rf.model");
     }
 
@@ -127,44 +123,35 @@ public class InferenceActivity extends AppCompatActivity implements SensorEventL
             Instances features = processor.extractFeaturesAndAddLabels(inferenceSegment, -1);
             inferenceSegment.clear();
             Instance feature = features.get(0);
-            if(asset_classifier==null)
-            {
+            if (asset_classifier == null) {
                 loadModel("rf.model");
             }
             try {
 
                 //int prediction = (int)classifier.classifyInstance(feature);
-                int prediction = (int)asset_classifier.classifyInstance(feature);
+                int prediction = (int) asset_classifier.classifyInstance(feature);
                 //inferenceResultView.setText(labelList.get(prediction));
 
-                Log.d("stop_count",String.valueOf(stop_count));
-                Log.d("prediction",String.valueOf(prediction));
+                Log.d("stop_count", String.valueOf(stop_count));
+                Log.d("prediction", String.valueOf(prediction));
 
-                if(prediction == 0)
-                {
-                    stop_count+=1;
-                    not_stop_count=0;
-                    if(stop_count>50)
-                    {
+                if (prediction == 0) {
+                    stop_count += 1;
+                    not_stop_count = 0;
+                    if (stop_count > 50) {
                         inferenceResultView.setText("you need to move");
-                    }
-                    else
-                    {
+                    } else {
                         inferenceResultView.setText(labelList.get(prediction));
                     }
-                }
-                else
-                {
-                    not_stop_count+=1;
+                } else {
+                    not_stop_count += 1;
 
-                    if(not_stop_count>=5)
-                    {
-                        stop_count=0;
+                    if (not_stop_count >= 5) {
+                        stop_count = 0;
                     }
                     inferenceResultView.setText(labelList.get(prediction));
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 Log.d(TAG, e.toString());
                 inferenceResultView.setText(getString(R.string.inference_failed));
                 Toast.makeText(getApplicationContext(), "Inference failed!", Toast.LENGTH_SHORT).show();
@@ -176,8 +163,7 @@ public class InferenceActivity extends AppCompatActivity implements SensorEventL
         if (asset_classifier == null) {
             Toast.makeText(getApplicationContext(), "Model need to be Trained!", Toast.LENGTH_SHORT).show();
             loadModel("rf.model");
-        }
-        else {
+        } else {
             isInference = !isInference;
             onStopClick(view);
             inferenceSegment.clear();
@@ -198,6 +184,7 @@ public class InferenceActivity extends AppCompatActivity implements SensorEventL
     }
 
     @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {}
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+    }
 
 }
