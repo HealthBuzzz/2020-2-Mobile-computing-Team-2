@@ -172,6 +172,7 @@ class SensorService : Service(), SensorEventListener {
                     not_stop_count = 0
                     if (stop_count > 50) {
 //                        TODO("Show notification channel")
+                        // https://developer.android.com/training/notify-user/build-notification
                         Log.d(TAG, "You need to move $stop_count")
                         // inferenceResultView.setText("you need to move")
                     } else {
