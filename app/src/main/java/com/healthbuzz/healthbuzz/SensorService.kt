@@ -211,8 +211,10 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
                     //bad practice which always read the value
                     val prefs: SharedPreferences =
                         PreferenceManager.getDefaultSharedPreferences(this)
-                    val time_interval_stretch: String =
-                        prefs.getString("time_interval_stretch", "20")!!
+                    var time_interval_stretch: String =
+                        prefs.getString("time_interval_stretch", "20") ?: "20"
+                    if (time_interval_stretch.isEmpty())
+                        time_interval_stretch = "20"
                     Log.d("time_interval_stretch", time_interval_stretch.toString())
 
                     val left_minutes = Integer.parseInt(time_interval_stretch) - time_diff / 60
