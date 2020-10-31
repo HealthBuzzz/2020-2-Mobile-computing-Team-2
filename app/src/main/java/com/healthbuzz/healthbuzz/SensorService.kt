@@ -8,6 +8,7 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import android.speech.tts.TextToSpeech
@@ -23,6 +24,9 @@ import java.util.*
 
 class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListener {
     private var ttsInit: Boolean = false
+
+    private val binder = SensorBinder()
+
     private val samplingRate = SensorManager.SENSOR_DELAY_GAME
 
     private val sitting: String = "sitting"
@@ -70,9 +74,17 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
         private const val ONGOING_NOTIFICATION_ID = 1
     }
 
-    override fun onBind(intent: Intent): IBinder? {
-//        TODO("Return the communication channel to the service.")
-        return null
+    /**
+     * Class used for the client Binder.  Because we know this service always
+     * runs in the same process as its clients, we don't need to deal with IPC.
+     */
+    inner class SensorBinder : Binder() {
+        // Return this instance of LocalService so clients can call public methods
+        fun getService(): SensorService = this@SensorService
+    }
+
+    override fun onBind(intent: Intent): IBinder {
+        return binder
     }
 
     // https://stackoverflow.com/a/47533338/8614565

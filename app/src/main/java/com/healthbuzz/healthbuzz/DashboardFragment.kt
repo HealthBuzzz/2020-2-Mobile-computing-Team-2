@@ -1,7 +1,10 @@
 package com.healthbuzz.healthbuzz
 
+import android.content.ComponentName
 import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.IBinder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,9 +21,36 @@ import kotlinx.android.synthetic.main.fragment_dashboard.view.*
  * on handsets.
  */
 class DashboardFragment : Fragment() {
+//    private lateinit var mService: SensorService
+//    private var mBound: Boolean = false
+
+    /** Defines callbacks for service binding, passed to bindService()  */
+    private val connection = object : ServiceConnection {
+
+        override fun onServiceConnected(className: ComponentName, service: IBinder) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+//            val binder = service as SensorService.SensorBinder
+//            mService = binder.getService()
+//            mBound = true
+        }
+
+        override fun onServiceDisconnected(arg0: ComponentName) {
+//            mBound = false
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+//        Intent(context, SensorService::class.java).also { intent ->
+//            context?.bindService(intent, connection, Context.BIND_AUTO_CREATE)
+//        }
     }
+
+//    override fun onStop() {
+//        super.onStop()
+//        context?.unbindService(connection)
+//        mBound = false
+//    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,6 +59,21 @@ class DashboardFragment : Fragment() {
         val rootView = inflater.inflate(R.layout.fragment_dashboard, container, false)
         val stretchingDrawable = ResourcesCompat.getDrawable(resources, R.drawable.stretching, null)
         val waterDrawable = ResourcesCompat.getDrawable(resources, R.drawable.drink_water, null)
+
+        SingleObject.getInstance().stretching_time_left.registerObserver { value ->
+            rootView.cardview_layout_stretching.findViewById<TextView>(R.id.tvCardContent).text =
+                getString(R.string.dashboard_minutes_left, value)
+        }
+
+        SingleObject.getInstance().water_time_left.registerObserver { value ->
+            rootView.cardview_layout_water.findViewById<TextView>(R.id.tvCardContent).text =
+                getString(R.string.dashboard_minutes_left, value)
+        }
+
+        SingleObject.getInstance().stretching_count.registerObserver { value ->
+            rootView.cardview_layout_stretching.findViewById<Prog>()
+        }
+
         with(rootView) {
             cardview_layout_stretching.findViewById<ImageView>(R.id.ivCardImage)
                 .setImageDrawable(stretchingDrawable)
@@ -39,9 +84,15 @@ class DashboardFragment : Fragment() {
             cardview_layout_water.findViewById<TextView>(R.id.tvCardTitle)
                 .setText(R.string.dashboard_water_title_default)
             cardview_layout_stretching.findViewById<TextView>(R.id.tvCardContent).text =
-                getString(R.string.dashboard_minutes_left, 10)
+                getString(
+                    R.string.dashboard_minutes_left,
+                    SingleObject.getInstance().stretching_time_left.getValue()
+                )
             cardview_layout_water.findViewById<TextView>(R.id.tvCardContent).text =
-                getString(R.string.dashboard_minutes_left, 10)
+                getString(
+                    R.string.dashboard_minutes_left,
+                    SingleObject.getInstance().water_time_left.getValue()
+                )
 
             cardview_layout_stretching.findViewById<ConstraintLayout>(R.id.cardview_root)
                 .setOnClickListener {
@@ -51,7 +102,6 @@ class DashboardFragment : Fragment() {
                 .setOnClickListener {
                     startActivity(Intent(context, WaterDetailActivity::class.java))
                 }
-
         }
 
         return rootView
