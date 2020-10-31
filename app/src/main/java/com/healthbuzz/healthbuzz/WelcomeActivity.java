@@ -18,7 +18,5 @@ public class WelcomeActivity extends AppCompatActivity {
             startActivity(new Intent(WelcomeActivity.this, MainActivity.class));
             finish();
         }, SPLASH_TIME);
-
-
     }
 }
