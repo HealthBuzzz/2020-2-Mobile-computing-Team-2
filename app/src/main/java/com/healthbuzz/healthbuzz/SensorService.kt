@@ -3,6 +3,7 @@ package com.healthbuzz.healthbuzz
 import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.hardware.Sensor
 import android.hardware.SensorEvent
@@ -16,6 +17,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.content.getSystemService
+import androidx.preference.PreferenceManager
 import weka.classifiers.Classifier
 import weka.core.*
 import java.io.IOException
@@ -43,6 +45,7 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
     private val processor = Processor(windowSize, strideSize)
     private var stop_count = 0
     private var not_stop_count = 0
+    private var last_time_move = System.currentTimeMillis()
 
     private val xAttr = Attribute("x")
     private val yAttr = Attribute("y")
@@ -137,6 +140,7 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
 
         sensorManager.registerListener(this, accelerometer, samplingRate)
         sensorManager.registerListener(this, gyroscope, samplingRate)
+        last_time_move = System.currentTimeMillis()
         return START_STICKY
     }
 
@@ -197,15 +201,25 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
                 if (prediction == 0) {
                     stop_count += 1
                     not_stop_count = 0
-                    if (stop_count > 50) {
+                    val current_time = System.currentTimeMillis()
+                    val time_diff = (current_time - last_time_move) / 1000
+                    Log.d("time_diff", time_diff.toString())
+
+                    //bad practice which always read the value
+                    val prefs: SharedPreferences =
+                        PreferenceManager.getDefaultSharedPreferences(this)
+                    val time_interval_stretch: String = prefs.getString("time_interval_stretch", "10")!!
+                    Log.d("time_interval_stretch", time_interval_stretch.toString())
+
+                    if (time_diff > 60*Integer.parseInt(time_interval_stretch)) {
 //                        TODO("Show notification channel")
-                        notiBuilder.setContentText("You need to move $stop_count")
+                        notiBuilder.setContentText("You need to move $time_diff")
                         notiManager.notify(1, notiBuilder.build())
                         if (ttsInit) {
 
                         }
                         // https://developer.android.com/training/notify-user/build-notification
-                        Log.d(TAG, "You need to move $stop_count")
+                        Log.d(TAG, "You need to move $time_diff")
                         // inferenceResultView.setText("you need to move")
                     } else {
                         Log.d(TAG, "val:${labelList[prediction]}")
@@ -215,8 +229,9 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
                     }
                 } else {
                     not_stop_count += 1
-                    if (not_stop_count >= 5) {
+                    if (not_stop_count >= 3) {
                         stop_count = 0
+                        last_time_move = System.currentTimeMillis()
                     }
                     notiBuilder.setContentText("You need to move ${labelList[prediction]}")
                     notiManager.notify(1, notiBuilder.build())
