@@ -25,9 +25,9 @@ import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
 
-public class model_inference extends AppCompatActivity implements SensorEventListener {
+public class InferenceActivity extends AppCompatActivity implements SensorEventListener {
 
-    private static final String TAG = model_inference.class.getSimpleName();
+    private static final String TAG = InferenceActivity.class.getSimpleName();
     private Button loadButton;
     private Button inferenceButton;
     private TextView inferenceResultView;
