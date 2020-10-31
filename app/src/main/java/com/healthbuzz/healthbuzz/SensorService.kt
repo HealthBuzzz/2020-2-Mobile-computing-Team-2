@@ -13,6 +13,7 @@ import android.os.IBinder
 import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.core.content.getSystemService
 import weka.classifiers.Classifier
 import weka.core.*
 import java.io.IOException
@@ -55,6 +56,10 @@ class SensorService : Service(), SensorEventListener {
 
     private lateinit var assetClassifier: Classifier
 
+    private lateinit var notiBuilder: Notification.Builder
+
+    private lateinit var notiManager: NotificationManager
+
     companion object {
         private const val ONGOING_NOTIFICATION_ID = 1
     }
@@ -66,6 +71,7 @@ class SensorService : Service(), SensorEventListener {
 
     // https://stackoverflow.com/a/47533338/8614565
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        notiManager = getSystemService()!!
         val pendingIntent: PendingIntent =
             Intent(this, MainActivity::class.java).let { notificationIntent ->
                 PendingIntent.getActivity(this, 0, notificationIntent, 0)
@@ -83,15 +89,16 @@ class SensorService : Service(), SensorEventListener {
 
         val notification: Notification =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                Notification.Builder(this, channelId)
+                notiBuilder = Notification.Builder(this, channelId)
                     .setContentTitle(getText(R.string.app_name))
                     .setContentText(getText(R.string.ticker_text))
                     .setSmallIcon(R.drawable.ic_launcher_foreground)
                     .setContentIntent(pendingIntent)
                     .setTicker(getText(R.string.ticker_text))
-                    .build()
+                notiBuilder.build()
             } else {
-                Notification()
+                notiBuilder = Notification.Builder(this)
+                notiBuilder.build()
             }
 
         // Notification ID cannot be 0.
@@ -172,11 +179,15 @@ class SensorService : Service(), SensorEventListener {
                     not_stop_count = 0
                     if (stop_count > 50) {
 //                        TODO("Show notification channel")
+                        notiBuilder.setContentText("You need to move $stop_count")
+                        notiManager.notify(1, notiBuilder.build())
                         // https://developer.android.com/training/notify-user/build-notification
                         Log.d(TAG, "You need to move $stop_count")
                         // inferenceResultView.setText("you need to move")
                     } else {
                         Log.d(TAG, "val:${labelList[prediction]}")
+                        notiBuilder.setContentText("You need to move ${labelList[prediction]}")
+                        notiManager.notify(1, notiBuilder.build())
 //                        inferenceResultView.setText(labelList[prediction])
                     }
                 } else {
@@ -184,6 +195,9 @@ class SensorService : Service(), SensorEventListener {
                     if (not_stop_count >= 5) {
                         stop_count = 0
                     }
+                    notiBuilder.setContentText("You need to move ${labelList[prediction]}")
+                    notiManager.notify(1, notiBuilder.build())
+
                     Log.d(TAG, "val:${labelList[prediction]}")
 //                    inferenceResultView.setText(labelList[prediction])
                 }
