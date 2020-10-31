@@ -53,13 +53,10 @@ class SensorService : Service(), SensorEventListener {
     val initialInstancesSize = 2000
     private val inferenceSegment = Instances("inference", attributes, initialInstancesSize)
 
-    private val isInference = false
-
     private lateinit var assetClassifier: Classifier
 
     companion object {
         private const val ONGOING_NOTIFICATION_ID = 1
-        private const val CHANNEL_DEFAULT_IMPORTANCE = "healthbuzz.channel"
     }
 
     override fun onBind(intent: Intent): IBinder? {
@@ -109,6 +106,7 @@ class SensorService : Service(), SensorEventListener {
         gyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
 
         loadModel("rf.model")
+        Log.d(TAG, "Load model finished")
 
         sensorManager.registerListener(this, accelerometer, samplingRate)
         sensorManager.registerListener(this, gyroscope, samplingRate)
@@ -117,7 +115,9 @@ class SensorService : Service(), SensorEventListener {
 
     override fun onDestroy() {
         super.onDestroy()
-        thread?.interrupt()
+//        thread?.interrupt()
+        sensorManager.unregisterListener(this, accelerometer)
+        sensorManager.unregisterListener(this, gyroscope)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -139,22 +139,18 @@ class SensorService : Service(), SensorEventListener {
             for (i in event.values.indices) {
                 sample.setValue(i, event.values[i].toDouble())
             }
-            if (isInference) {
-                handleInference(sample)
-            }
+            handleInference(sample)
         } else if (event?.sensor == gyroscope) {
             val sample: Instance = DenseInstance(attributes.size)
             for (i in event.values.indices) {
                 sample.setValue(i, event.values[i].toDouble())
             }
-            if (isInference) {
-                handleInference(sample)
-            }
+            handleInference(sample)
         }
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-        TODO("Not yet implemented")
+//        TODO("Not yet implemented")
     }
 
     private fun handleInference(sample: Instance) {
@@ -175,8 +171,11 @@ class SensorService : Service(), SensorEventListener {
                     stop_count += 1
                     not_stop_count = 0
                     if (stop_count > 50) {
+//                        TODO("Show notification channel")
+                        Log.d(TAG, "You need to move $stop_count")
                         // inferenceResultView.setText("you need to move")
                     } else {
+                        Log.d(TAG, "val:${labelList[prediction]}")
 //                        inferenceResultView.setText(labelList[prediction])
                     }
                 } else {
@@ -184,6 +183,7 @@ class SensorService : Service(), SensorEventListener {
                     if (not_stop_count >= 5) {
                         stop_count = 0
                     }
+                    Log.d(TAG, "val:${labelList[prediction]}")
 //                    inferenceResultView.setText(labelList[prediction])
                 }
             } catch (e: Exception) {
