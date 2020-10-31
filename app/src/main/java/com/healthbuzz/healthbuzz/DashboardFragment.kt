@@ -96,12 +96,12 @@ class DashboardFragment : Fragment() {
             cardview_layout_stretching.findViewById<TextView>(R.id.tvCardContent).text =
                 getString(
                     R.string.dashboard_minutes_left,
-                    RealtimeModel.stretching_time_left.value
+                    RealtimeModel.stretching_time_left.value?.toInt() ?: 9999
                 )
             cardview_layout_water.findViewById<TextView>(R.id.tvCardContent).text =
                 getString(
                     R.string.dashboard_minutes_left,
-                    RealtimeModel.water_time_left.value
+                    RealtimeModel.water_time_left.value?.toInt() ?: 9999
                 )
 
             cardview_layout_stretching.findViewById<ConstraintLayout>(R.id.cardview_root)
