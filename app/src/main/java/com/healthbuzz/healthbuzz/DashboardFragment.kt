@@ -60,14 +60,16 @@ class DashboardFragment : Fragment() {
         val waterDrawable = ResourcesCompat.getDrawable(resources, R.drawable.drink_water, null)
 
         RealtimeModel.stretching_time_left.observe(viewLifecycleOwner) { value ->
-            Log.e(TAG, "update value ${value}")
+            val intValue = value?.toInt() ?: 9999
+            Log.e(TAG, "update value $value")
             rootView.cardview_layout_stretching.findViewById<TextView>(R.id.tvCardContent).text =
-                getString(R.string.dashboard_minutes_left, value?.toInt() ?: 9999)
+                getString(R.string.dashboard_minutes_left, intValue)
         }
         RealtimeModel.water_time_left.observe(viewLifecycleOwner) { value ->
-            Log.e(TAG, "update value2 ${value}")
+            val intValue = value?.toInt() ?: 9999
+            Log.e(TAG, "update value2 $value")
             rootView.cardview_layout_water.findViewById<TextView>(R.id.tvCardContent).text =
-                getString(R.string.dashboard_minutes_left, value?.toInt() ?: 9999)
+                getString(R.string.dashboard_minutes_left, intValue)
         }
 
 
@@ -94,15 +96,21 @@ class DashboardFragment : Fragment() {
             cardview_layout_water.findViewById<TextView>(R.id.tvCardTitle)
                 .setText(R.string.dashboard_water_title_default)
             cardview_layout_stretching.findViewById<TextView>(R.id.tvCardContent).text =
-                getString(
-                    R.string.dashboard_minutes_left,
-                    RealtimeModel.stretching_time_left.value?.toInt() ?: 9999
-                )
+                (RealtimeModel.stretching_time_left.value?.toInt() ?: 9999).let {
+                    val intVal = it
+                    getString(
+                        R.string.dashboard_minutes_left,
+                        intVal
+                    )
+                }
             cardview_layout_water.findViewById<TextView>(R.id.tvCardContent).text =
-                getString(
-                    R.string.dashboard_minutes_left,
-                    RealtimeModel.water_time_left.value?.toInt() ?: 9999
-                )
+                (RealtimeModel.water_time_left.value?.toInt() ?: 9999).let {
+                    val intVal = it
+                    getString(
+                        R.string.dashboard_minutes_left,
+                        intVal
+                    )
+                }
 
             cardview_layout_stretching.findViewById<ConstraintLayout>(R.id.cardview_root)
                 .setOnClickListener {
