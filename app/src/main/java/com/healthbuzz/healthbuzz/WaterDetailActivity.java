@@ -47,8 +47,8 @@ public class WaterDetailActivity extends AppCompatActivity {
     private int showYear, showMonth;
 
     // This is from file or backend
-    int todayDrink = 1100;
-    int dayNeedDrink = 2000;
+    long todayDrink = 1100;
+    long dayNeedDrink = 2000;
     DrinkMonth[] drinkMonths;
 
     @Override
@@ -78,7 +78,8 @@ public class WaterDetailActivity extends AppCompatActivity {
         ArrayList<PieEntry> pieEntries = new ArrayList();
 
         pieEntries.add(new PieEntry(todayDrink, ""));
-        int marginToday = dayNeedDrink - todayDrink;
+        todayDrink = SingleObject.getInstance().water_count.getValue();
+        long marginToday = dayNeedDrink - todayDrink;
         if (marginToday < 0) {
             marginToday = 0;
         }
@@ -95,6 +96,33 @@ public class WaterDetailActivity extends AppCompatActivity {
         pieChart.setCenterTextSize(15f);
         pieChart.animate();
         pieChart.invalidate();
+
+        SingleObject.getInstance().water_count.registerObserver(new Observer() {
+            @Override
+            public void update(long todayDrink) {
+                ArrayList<PieEntry> pieEntries = new ArrayList();
+
+                pieEntries.add(new PieEntry(todayDrink, ""));
+                long marginToday = dayNeedDrink - todayDrink;
+                if (marginToday < 0) {
+                    marginToday = 0;
+                }
+                pieEntries.add(new PieEntry(marginToday, ""));
+                PieDataSet pieDataSet = new PieDataSet(pieEntries, "");
+                pieDataSet.setColors(colorArray);
+
+                PieData pieData = new PieData(pieDataSet);
+                pieData.setValueTextSize(15f); // <- here
+                pieChart.setData(pieData);
+                pieChart.getDescription().setEnabled(false);
+                pieChart.getLegend().setEnabled(false);
+                pieChart.setCenterText("You drinked\n" + Math.round((float) todayDrink / dayNeedDrink * 100) + "%");
+                pieChart.setCenterTextSize(15f);
+                pieChart.animate();
+                pieChart.invalidate();
+
+            }
+        });
 
         ////// LINE CHART BELOW
         lineChart = (LineChart) findViewById(R.id.chart);

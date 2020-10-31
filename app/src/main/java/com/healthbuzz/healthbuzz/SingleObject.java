@@ -38,6 +38,10 @@ class LongWrapper implements Subject {
         this.value = value;
         measurementsChanged();  // 변경이 발생할 때, 알림을 돌리는 방법 선택
     }
+
+    public long getValue() {
+        return this.value;
+    }
 }
 public class SingleObject {
 
