@@ -38,7 +38,12 @@ class LongWrapper implements Subject {
         this.value = value;
         measurementsChanged();  // 변경이 발생할 때, 알림을 돌리는 방법 선택
     }
+
+    public long getValue() {
+        return value;
+    }
 }
+
 public class SingleObject {
 
     //create an object of SingleObject
@@ -48,14 +53,15 @@ public class SingleObject {
 
     //make the constructor private so that this class cannot be
     //instantiated
-    private SingleObject(){}
+    private SingleObject() {
+    }
 
     //Get the only object available
-    public static SingleObject getInstance(){
+    public static SingleObject getInstance() {
         return instance;
     }
 
-    public void showMessage(){
+    public void showMessage() {
         System.out.println("Hello World!");
     }
 }

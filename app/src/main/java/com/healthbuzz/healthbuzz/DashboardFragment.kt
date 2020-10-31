@@ -70,9 +70,6 @@ class DashboardFragment : Fragment() {
                 getString(R.string.dashboard_minutes_left, value)
         }
 
-        SingleObject.getInstance().stretching_count.registerObserver { value ->
-            rootView.cardview_layout_stretching.findViewById<Prog>()
-        }
 
         with(rootView) {
             cardview_layout_stretching.findViewById<ImageView>(R.id.ivCardImage)
@@ -86,12 +83,12 @@ class DashboardFragment : Fragment() {
             cardview_layout_stretching.findViewById<TextView>(R.id.tvCardContent).text =
                 getString(
                     R.string.dashboard_minutes_left,
-                    SingleObject.getInstance().stretching_time_left.getValue()
+                    SingleObject.getInstance().stretching_time_left.value
                 )
             cardview_layout_water.findViewById<TextView>(R.id.tvCardContent).text =
                 getString(
                     R.string.dashboard_minutes_left,
-                    SingleObject.getInstance().water_time_left.getValue()
+                    SingleObject.getInstance().water_time_left.value
                 )
 
             cardview_layout_stretching.findViewById<ConstraintLayout>(R.id.cardview_root)
