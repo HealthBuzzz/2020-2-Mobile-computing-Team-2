@@ -1,8 +1,11 @@
 package com.healthbuzz.healthbuzz;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 
 class LongWrapper implements Subject {
+    private final String TAG = "LongWrapper";
     private ArrayList<Observer> observers;
     private long value;
 
@@ -34,7 +37,8 @@ class LongWrapper implements Subject {
         notifyObservers();
     }
 
-    public void setMeasurements(long value) {
+    public void setValue(long value) {
+        Log.e(TAG, "Value  " + value);
         this.value = value;
         measurementsChanged();  // 변경이 발생할 때, 알림을 돌리는 방법 선택
     }
@@ -49,7 +53,10 @@ public class SingleObject {
     //create an object of SingleObject
     private static SingleObject instance = new SingleObject();
 
-    public LongWrapper stretching_count, water_count, stretching_time_left, water_time_left;
+    public LongWrapper stretching_count = new LongWrapper();
+    public LongWrapper water_count = new LongWrapper();
+    public LongWrapper stretching_time_left = new LongWrapper();
+    public LongWrapper water_time_left = new LongWrapper();
 
     //make the constructor private so that this class cannot be
     //instantiated

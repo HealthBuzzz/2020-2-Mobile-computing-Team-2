@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -61,11 +62,13 @@ class DashboardFragment : Fragment() {
         val waterDrawable = ResourcesCompat.getDrawable(resources, R.drawable.drink_water, null)
 
         SingleObject.getInstance().stretching_time_left.registerObserver { value ->
+            Log.e(TAG, "update value ${value}")
             rootView.cardview_layout_stretching.findViewById<TextView>(R.id.tvCardContent).text =
                 getString(R.string.dashboard_minutes_left, value)
         }
 
         SingleObject.getInstance().water_time_left.registerObserver { value ->
+            Log.e(TAG, "update value2 ${value}")
             rootView.cardview_layout_water.findViewById<TextView>(R.id.tvCardContent).text =
                 getString(R.string.dashboard_minutes_left, value)
         }

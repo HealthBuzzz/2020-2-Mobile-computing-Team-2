@@ -72,6 +72,8 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
 
     private lateinit var myTTS: TextToSpeech
 
+    private var isNotifying = false
+
 
     companion object {
         private const val ONGOING_NOTIFICATION_ID = 1
@@ -203,25 +205,35 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
                     not_stop_count = 0
                     val current_time = System.currentTimeMillis()
                     val time_diff = (current_time - last_time_move) / 1000
+
                     Log.d("time_diff", time_diff.toString())
 
                     //bad practice which always read the value
                     val prefs: SharedPreferences =
                         PreferenceManager.getDefaultSharedPreferences(this)
-                    val time_interval_stretch: String = prefs.getString("time_interval_stretch", "10")!!
+                    val time_interval_stretch: String =
+                        prefs.getString("time_interval_stretch", "20")!!
                     Log.d("time_interval_stretch", time_interval_stretch.toString())
 
-                    if (time_diff > 60*Integer.parseInt(time_interval_stretch)) {
-//                        TODO("Show notification channel")
-                        notiBuilder.setContentText("You need to move $time_diff")
-                        notiManager.notify(1, notiBuilder.build())
-                        if (ttsInit) {
+                    val left_minutes = Integer.parseInt(time_interval_stretch) - time_diff / 60
 
+                    SingleObject.getInstance().stretching_time_left.value = left_minutes
+
+                    if (0 > left_minutes) {
+//                        TODO("Show notificatio    n channel")
+                        if (!isNotifying) {
+                            notiBuilder.setContentText("You need to move $time_diff")
+                            notiManager.notify(1, notiBuilder.build())
+                            if (ttsInit) {
+
+                            }
+                            isNotifying = true
                         }
                         // https://developer.android.com/training/notify-user/build-notification
                         Log.d(TAG, "You need to move $time_diff")
                         // inferenceResultView.setText("you need to move")
                     } else {
+                        isNotifying = false
                         Log.d(TAG, "val:${labelList[prediction]}")
                         notiBuilder.setContentText("You need to move ${labelList[prediction]}")
                         notiManager.notify(1, notiBuilder.build())
@@ -240,7 +252,7 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
 //                    inferenceResultView.setText(labelList[prediction])
                 }
             } catch (e: Exception) {
-                Log.d(TAG, e.toString())
+                Log.d(TAG, e.toString(), e)
                 Toast.makeText(applicationContext, "Inference failed!", Toast.LENGTH_SHORT).show()
             }
         }
