@@ -10,6 +10,7 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Build
 import android.os.IBinder
+import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -19,7 +20,9 @@ import weka.core.*
 import java.io.IOException
 import java.util.*
 
-class SensorService : Service(), SensorEventListener {
+
+class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListener {
+    private var ttsInit: Boolean = false
     private val samplingRate = SensorManager.SENSOR_DELAY_GAME
 
     private val sitting: String = "sitting"
@@ -60,6 +63,9 @@ class SensorService : Service(), SensorEventListener {
 
     private lateinit var notiManager: NotificationManager
 
+    private lateinit var myTTS: TextToSpeech
+
+
     companion object {
         private const val ONGOING_NOTIFICATION_ID = 1
     }
@@ -71,6 +77,8 @@ class SensorService : Service(), SensorEventListener {
 
     // https://stackoverflow.com/a/47533338/8614565
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        myTTS = TextToSpeech(this, this)
+
         notiManager = getSystemService()!!
         val pendingIntent: PendingIntent =
             Intent(this, MainActivity::class.java).let { notificationIntent ->
@@ -181,6 +189,9 @@ class SensorService : Service(), SensorEventListener {
 //                        TODO("Show notification channel")
                         notiBuilder.setContentText("You need to move $stop_count")
                         notiManager.notify(1, notiBuilder.build())
+                        if (ttsInit) {
+
+                        }
                         // https://developer.android.com/training/notify-user/build-notification
                         Log.d(TAG, "You need to move $stop_count")
                         // inferenceResultView.setText("you need to move")
@@ -219,6 +230,10 @@ class SensorService : Service(), SensorEventListener {
             Log.e(TAG, "Failed to load ", e)
         }
         Toast.makeText(this, "Model loaded", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onInit(status: Int) {
+        ttsInit = true
     }
 
 }
