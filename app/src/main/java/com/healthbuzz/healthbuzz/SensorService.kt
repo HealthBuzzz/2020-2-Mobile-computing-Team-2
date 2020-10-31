@@ -200,9 +200,9 @@ class SensorService : Service(), SensorEventListener {
         try {
             assetClassifier = SerializationHelper.read(assetManager.open(model_name)) as Classifier
         } catch (e: IOException) {
-            e.printStackTrace()
-        } catch (e: java.lang.Exception) {
-            e.printStackTrace()
+            Log.e(TAG, "Failed to load", e)
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to load ", e)
         }
         Toast.makeText(this, "Model loaded", Toast.LENGTH_SHORT).show()
     }

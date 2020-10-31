@@ -31,7 +31,7 @@ public class InferenceActivity extends AppCompatActivity implements SensorEventL
     private Button loadButton;
     private Button inferenceButton;
     private TextView inferenceResultView;
-    private static String sitting, walking, running;
+    private static final String sitting = "sitting", walking = "walking", running = "running";
 
     private Sensor accelerometer;
     private Sensor gyroscope;
@@ -48,10 +48,11 @@ public class InferenceActivity extends AppCompatActivity implements SensorEventL
     private final Attribute yAttr = new Attribute("y");
     private final Attribute zAttr = new Attribute("z");
     private final ArrayList<Attribute> attributes = new ArrayList<>(Arrays.asList(xAttr, yAttr, zAttr));
-    private static ArrayList<String> labelList;
-    public static Attribute labelAttr;
+    private static final ArrayList<String> labelList = new ArrayList<>(Arrays.asList(sitting, walking, running));
+    public static Attribute labelAttr = new Attribute("label", labelList);
+
     public static final int initialInstancesSize = 2000;
-    private Instances inferenceSegment = new Instances("inference", attributes, initialInstancesSize);
+    private final Instances inferenceSegment = new Instances("inference", attributes, initialInstancesSize);
 
     private boolean isInference = false;
 
@@ -69,14 +70,6 @@ public class InferenceActivity extends AppCompatActivity implements SensorEventL
         sm = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         accelerometer = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         gyroscope = sm.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-
-        sitting = "sitting";
-        walking = "walking";
-        running = "running";
-
-        labelList = new ArrayList<>(Arrays.asList(sitting, walking, running));
-        labelAttr = new Attribute("label", labelList);
-
     }
 
     @Override
