@@ -67,8 +67,4 @@ public class SingleObject {
     public static SingleObject getInstance() {
         return instance;
     }
-
-    public void showMessage() {
-        System.out.println("Hello World!");
-    }
 }

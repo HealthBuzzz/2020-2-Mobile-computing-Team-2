@@ -16,15 +16,13 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.fragment_dashboard.view.*
 
+
 /**
  * A fragment representing a single Item detail screen.
  * This fragment is contained in a [MainActivity]
  * on handsets.
  */
 class DashboardFragment : Fragment() {
-//    private lateinit var mService: SensorService
-//    private var mBound: Boolean = false
-
     /** Defines callbacks for service binding, passed to bindService()  */
     private val connection = object : ServiceConnection {
 
@@ -61,17 +59,31 @@ class DashboardFragment : Fragment() {
         val stretchingDrawable = ResourcesCompat.getDrawable(resources, R.drawable.stretching, null)
         val waterDrawable = ResourcesCompat.getDrawable(resources, R.drawable.drink_water, null)
 
-        SingleObject.getInstance().stretching_time_left.registerObserver { value ->
-            Log.e(TAG, "update value ${value}")
+        RealtimeModel.stretching_time_left.observe(viewLifecycleOwner) { value ->
+            val intValue = value?.toInt() ?: 9999
+            Log.e(TAG, "update value $value")
             rootView.cardview_layout_stretching.findViewById<TextView>(R.id.tvCardContent).text =
-                getString(R.string.dashboard_minutes_left, value)
+                getString(R.string.dashboard_minutes_left, intValue)
+        }
+        RealtimeModel.water_time_left.observe(viewLifecycleOwner) { value ->
+            val intValue = value?.toInt() ?: 9999
+            Log.e(TAG, "update value2 $value")
+            rootView.cardview_layout_water.findViewById<TextView>(R.id.tvCardContent).text =
+                getString(R.string.dashboard_minutes_left, intValue)
         }
 
-        SingleObject.getInstance().water_time_left.registerObserver { value ->
-            Log.e(TAG, "update value2 ${value}")
-            rootView.cardview_layout_water.findViewById<TextView>(R.id.tvCardContent).text =
-                getString(R.string.dashboard_minutes_left, value)
-        }
+
+//        SingleObject.getInstance().stretching_time_left.registerObserver { value ->
+//            Log.e(TAG, "update value ${value}")
+//            rootView.cardview_layout_stretching.findViewById<TextView>(R.id.tvCardContent).text =
+//                getString(R.string.dashboard_minutes_left, value)
+//        }
+//
+//        SingleObject.getInstance().water_time_left.registerObserver { value ->
+//            Log.e(TAG, "update value2 ${value}")
+//            rootView.cardview_layout_water.findViewById<TextView>(R.id.tvCardContent).text =
+//                getString(R.string.dashboard_minutes_left, value)
+//        }
 
 
         with(rootView) {
@@ -84,15 +96,21 @@ class DashboardFragment : Fragment() {
             cardview_layout_water.findViewById<TextView>(R.id.tvCardTitle)
                 .setText(R.string.dashboard_water_title_default)
             cardview_layout_stretching.findViewById<TextView>(R.id.tvCardContent).text =
-                getString(
-                    R.string.dashboard_minutes_left,
-                    SingleObject.getInstance().stretching_time_left.value
-                )
+                (RealtimeModel.stretching_time_left.value?.toInt() ?: 9999).let {
+                    val intVal = it
+                    getString(
+                        R.string.dashboard_minutes_left,
+                        intVal
+                    )
+                }
             cardview_layout_water.findViewById<TextView>(R.id.tvCardContent).text =
-                getString(
-                    R.string.dashboard_minutes_left,
-                    SingleObject.getInstance().water_time_left.value
-                )
+                (RealtimeModel.water_time_left.value?.toInt() ?: 9999).let {
+                    val intVal = it
+                    getString(
+                        R.string.dashboard_minutes_left,
+                        intVal
+                    )
+                }
 
             cardview_layout_stretching.findViewById<ConstraintLayout>(R.id.cardview_root)
                 .setOnClickListener {
