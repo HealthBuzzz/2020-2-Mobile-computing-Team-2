@@ -15,12 +15,12 @@ import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.LimitLine;
-
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.ValueFormatter;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -42,6 +42,7 @@ class stretchingMonth {
         }
     }
 }
+
 class YAxisValueFormatterForStretch extends ValueFormatter {
 
     @Override
@@ -49,6 +50,7 @@ class YAxisValueFormatterForStretch extends ValueFormatter {
         return value + "회";
     }
 }
+
 public class StretchingDetailActivity extends AppCompatActivity {
 
     private LineChart lineChart;
