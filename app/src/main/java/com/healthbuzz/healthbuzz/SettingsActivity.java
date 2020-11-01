@@ -60,6 +60,8 @@ public class SettingsActivity extends AppCompatActivity {
             if (preference instanceof EditTextPreference) {
                 preference.setSummary(stringValue);
                 ((EditTextPreference) preference).setText(stringValue);
+                if (stringValue == "")
+                    stringValue = "20";
                 int intValue = Integer.parseInt(stringValue);
                 String key = preference.getKey();
                 switch (key) {
