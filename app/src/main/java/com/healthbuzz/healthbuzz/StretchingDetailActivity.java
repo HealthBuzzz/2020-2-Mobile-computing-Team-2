@@ -9,21 +9,18 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.LimitLine;
+
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
-import com.github.mikephil.charting.formatter.ValueFormatter;
-import com.google.android.material.appbar.CollapsingToolbarLayout;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -113,20 +110,31 @@ public class StretchingDetailActivity extends AppCompatActivity {
                 } else {
                     progressBar.setProgress(progressValue);
                 }
+*/
+        textProgress.setText("  " + RealtimeModel.INSTANCE.getStretching_count().getValue() + "/" + dayNeedStretching);
+
+        RealtimeModel.INSTANCE.getStretching_count().observe(this, aLong -> {
+            textProgress.setText("  " + aLong + "/" + dayNeedStretching);
+            progressValue = Math.round((float) aLong / dayNeedStretching * 100);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                progressBar.setProgress(progressValue, true);
+            } else {
+                progressBar.setProgress(progressValue);
+
             }
         });
-*/
+
         // textBuzz configure, this must be called every minute ?through service?
         buzzTextUpdate();
-        /*
-        com.healthbuzz.healthbuzz.SingleObject.getInstance().stretching_time_left.registerObserver(new Observer() {
+
+        RealtimeModel.INSTANCE.getStretching_time_left().observe(this, new androidx.lifecycle.Observer<Long>() {
+
             @Override
-            public void update(long value) {
+            public void onChanged(Long aLong) {
                 TextView textBuzz = findViewById(R.id.textBuzz);
-                textBuzz.setText("BUZZ " + value + " minutes left!");
+                textBuzz.setText("BUZZ " + aLong + " minutes left!");
             }
         });
-        */
 
         TextView textBuzz = findViewById(R.id.textBuzz);
         textBuzz.setTypeface(null, Typeface.BOLD);

@@ -92,6 +92,7 @@ public class WaterDetailActivity extends AppCompatActivity {
         pieEntries.add(new PieEntry(todayDrink, ""));
         //todayDrink = SingleObject.getInstance().water_count.getValue();
 
+        todayDrink = RealtimeModel.INSTANCE.getWater_count().getValue();
         long marginToday = dayNeedDrink - todayDrink;
         if (marginToday < 0) {
             marginToday = 0;
@@ -134,7 +135,28 @@ public class WaterDetailActivity extends AppCompatActivity {
                 pieChart.animate();
                 pieChart.invalidate();
 
+        RealtimeModel.INSTANCE.getWater_count().observe(this, todayDrink -> {
+            ArrayList<PieEntry> pieEntries1 = new ArrayList();
+            
+            pieEntries1.add(new PieEntry(todayDrink, ""));
+            long marginToday1 = dayNeedDrink - todayDrink;
+            if (marginToday1 < 0) {
+                marginToday1 = 0;
             }
+            pieEntries1.add(new PieEntry(marginToday1, ""));
+            PieDataSet pieDataSet1 = new PieDataSet(pieEntries1, "");
+            pieDataSet1.setColors(colorArray);
+
+            PieData pieData1 = new PieData(pieDataSet1);
+            pieData1.setValueTextSize(15f); // <- here
+            pieChart.setData(pieData1);
+            pieChart.getDescription().setEnabled(false);
+            pieChart.getLegend().setEnabled(false);
+            pieChart.setCenterText("You drinked\n" + Math.round((float) todayDrink / dayNeedDrink * 100) + "%");
+            pieChart.setCenterTextSize(15f);
+            pieChart.animate();
+            pieChart.invalidate();
+
         });
 */
         ////// LINE CHART BELOW

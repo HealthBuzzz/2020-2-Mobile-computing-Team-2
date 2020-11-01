@@ -10,8 +10,8 @@ import weka.core.Instances;
 
 class Processor {
     private final static String TAG = Processor.class.getSimpleName();
-    private int windowSize;
-    private int strideSize;
+    private final int windowSize;
+    private final int strideSize;
 
     Processor(int windowSize, int strideSize) {
         this.windowSize = windowSize;
