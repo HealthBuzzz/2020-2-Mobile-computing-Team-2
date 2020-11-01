@@ -138,7 +138,7 @@ public class StretchingDetailActivity extends AppCompatActivity {
             @Override
             public void onChanged(Long aLong) {
                 TextView textBuzz = findViewById(R.id.textBuzz);
-                if(aLong >=0)
+                if (aLong >= 0)
                     textBuzz.setText("BUZZ " + aLong + " minutes left!");
                 else
                     textBuzz.setText("You need to stretch now");

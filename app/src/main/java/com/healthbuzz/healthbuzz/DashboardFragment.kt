@@ -12,10 +12,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.widget.SwitchCompat
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
+import kotlinx.android.synthetic.main.fragment_dashboard.*
 import kotlinx.android.synthetic.main.fragment_dashboard.view.*
 
 
@@ -143,8 +145,46 @@ class DashboardFragment : Fragment() {
                 .setOnClickListener {
                     startActivity(Intent(context, WaterDetailActivity::class.java))
                 }
+
+            cardview_layout_stretching.findViewById<SwitchCompat>(R.id.swCardEnable)
+                .apply {
+                    isChecked = prefs.getBoolean("sync", true)
+                }
+                .setOnCheckedChangeListener { buttonView, checked ->
+                    disableEnableControls(checked, cardview_layout_stretching as ViewGroup)
+                    buttonView.isEnabled = true
+                    val editor = prefs.edit()
+                    editor.putBoolean("sync", checked)
+                    editor.apply()
+                }
+            cardview_layout_water.findViewById<SwitchCompat>(R.id.swCardEnable)
+                .apply {
+                    isChecked = prefs.getBoolean("sync2", true)
+                }
+                .setOnCheckedChangeListener { buttonView, checked ->
+                    disableEnableControls(checked, cardview_layout_water as ViewGroup)
+                    buttonView.isEnabled = true
+                    val editor = prefs.edit()
+                    editor.putBoolean("sync2", checked)
+                    editor.apply()
+                }
         }
 
         return rootView
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val prefs: SharedPreferences =
+            PreferenceManager.getDefaultSharedPreferences(context)
+
+        cardview_layout_water.findViewById<SwitchCompat>(R.id.swCardEnable)
+            .apply {
+                isChecked = prefs.getBoolean("sync2", true)
+            }
+        cardview_layout_stretching.findViewById<SwitchCompat>(R.id.swCardEnable)
+            .apply {
+                isChecked = prefs.getBoolean("sync", true)
+            }
     }
 }

@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.util.Log
+import android.view.View
+import android.view.ViewGroup
 
 
 // Generates log TAG constant automatically
@@ -38,4 +40,14 @@ fun isServiceRunning(context: Context, className: String): Boolean {
         if (className == aInfo.service.className) return true
     }
     return false
+}
+
+fun disableEnableControls(enable: Boolean, vg: ViewGroup) {
+    for (i in 0 until vg.childCount) {
+        val child: View = vg.getChildAt(i)
+        child.isEnabled = enable
+        if (child is ViewGroup) {
+            disableEnableControls(enable, child as ViewGroup)
+        }
+    }
 }
