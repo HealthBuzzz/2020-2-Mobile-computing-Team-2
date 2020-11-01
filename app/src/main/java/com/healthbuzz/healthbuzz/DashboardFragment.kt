@@ -17,6 +17,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
+import kotlinx.android.synthetic.main.fragment_dashboard.*
 import kotlinx.android.synthetic.main.fragment_dashboard.view.*
 
 
@@ -170,5 +171,20 @@ class DashboardFragment : Fragment() {
         }
 
         return rootView
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val prefs: SharedPreferences =
+            PreferenceManager.getDefaultSharedPreferences(context)
+
+        cardview_layout_water.findViewById<SwitchCompat>(R.id.swCardEnable)
+            .apply {
+                isChecked = prefs.getBoolean("sync2", true)
+            }
+        cardview_layout_stretching.findViewById<SwitchCompat>(R.id.swCardEnable)
+            .apply {
+                isChecked = prefs.getBoolean("sync", true)
+            }
     }
 }
