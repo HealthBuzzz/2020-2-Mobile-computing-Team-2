@@ -9,19 +9,18 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.LimitLine;
+
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
-import com.github.mikephil.charting.formatter.ValueFormatter;
-import com.google.android.material.appbar.CollapsingToolbarLayout;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -43,7 +42,13 @@ class stretchingMonth {
         }
     }
 }
+class YAxisValueFormatterForStretch extends ValueFormatter {
 
+    @Override
+    public String getAxisLabel(float value, AxisBase axis) {
+        return value + "회";
+    }
+}
 public class StretchingDetailActivity extends AppCompatActivity {
 
     private LineChart lineChart;
@@ -69,12 +74,12 @@ public class StretchingDetailActivity extends AppCompatActivity {
 //        toolBarLayout.setTitle(getTitle());
 
         // This is mock data
-        int[] dayArr1 = new int[]{1, 2, 3, 4};
-        int[] dayArr2 = new int[]{1, 2, 3, 4, 5};
-        int[] quantityArr1 = new int[]{100, 200, 300, 100};
-        int[] quantityArr2 = new int[]{300, 200, 300, 100, 400};
-        stretchingMonths = new stretchingMonth[]{new stretchingMonth(2020, 10, dayArr1, quantityArr1),
-                new stretchingMonth(2020, 9, dayArr2, quantityArr2)};
+        int[] dayArr1 = new int[]{1, 2, 8, 17, 30};
+        int[] dayArr2 = new int[]{1, 2, 3, 14, 30};
+        int[] quantityArr1 = new int[]{1, 2, 5, 6, 1};
+        int[] quantityArr2 = new int[]{3, 2, 6, 1, 4};
+        stretchingMonths = new stretchingMonth[]{new stretchingMonth(2020, 11, dayArr1, quantityArr1),
+                new stretchingMonth(2020, 10, dayArr2, quantityArr2)};
 
         // Get current year&month for initial showing
         Calendar cal = Calendar.getInstance();
@@ -92,8 +97,9 @@ public class StretchingDetailActivity extends AppCompatActivity {
 
         // textProgress configure
         TextView textProgress = findViewById(R.id.textProgress);
-        textProgress.setText("  " + com.healthbuzz.healthbuzz.SingleObject.getInstance().stretching_count.getValue() + "/" + dayNeedStretching);
-
+        //textProgress.setText("  " + com.healthbuzz.healthbuzz.SingleObject.getInstance().stretching_count.getValue() + "/" + dayNeedStretching);
+        textProgress.setText("  " + todayStretching + "/" + dayNeedStretching);
+/*
         com.healthbuzz.healthbuzz.SingleObject.getInstance().stretching_count.registerObserver(new Observer() {
             @Override
             public void update(long value) {
@@ -104,18 +110,32 @@ public class StretchingDetailActivity extends AppCompatActivity {
                 } else {
                     progressBar.setProgress(progressValue);
                 }
+*/
+        textProgress.setText("  " + RealtimeModel.INSTANCE.getStretching_count().getValue() + "/" + dayNeedStretching);
+
+        RealtimeModel.INSTANCE.getStretching_count().observe(this, aLong -> {
+            textProgress.setText("  " + aLong + "/" + dayNeedStretching);
+            progressValue = Math.round((float) aLong / dayNeedStretching * 100);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                progressBar.setProgress(progressValue, true);
+            } else {
+                progressBar.setProgress(progressValue);
+
             }
         });
 
         // textBuzz configure, this must be called every minute ?through service?
         buzzTextUpdate();
-        com.healthbuzz.healthbuzz.SingleObject.getInstance().stretching_time_left.registerObserver(new Observer() {
+
+        RealtimeModel.INSTANCE.getStretching_time_left().observe(this, new androidx.lifecycle.Observer<Long>() {
+
             @Override
-            public void update(long value) {
+            public void onChanged(Long aLong) {
                 TextView textBuzz = findViewById(R.id.textBuzz);
-                textBuzz.setText("BUZZ " + value + " minutes left!");
+                textBuzz.setText("BUZZ " + aLong + " minutes left!");
             }
         });
+
         TextView textBuzz = findViewById(R.id.textBuzz);
         textBuzz.setTypeface(null, Typeface.BOLD);
 
@@ -125,18 +145,33 @@ public class StretchingDetailActivity extends AppCompatActivity {
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setTextColor(Color.BLACK);
         xAxis.enableGridDashedLine(8, 24, 0);
+        xAxis.setTextSize(15f);
+        xAxis.setAxisMinimum(0);
+        xAxis.setAxisMaximum(30);
+
 
         YAxis yLAxis = lineChart.getAxisLeft();
         yLAxis.setTextColor(Color.BLACK);
+        yLAxis.setAxisMinimum(0);
+        yLAxis.setAxisMaximum(8);
+        LimitLine lim = new LimitLine(5, "Day objective"); // Create a limit line. This line also has some related methods for drawing properties. Just look at it yourself, not much.
+        yLAxis.addLimitLine(lim);
         YAxis yRAxis = lineChart.getAxisRight();
         yRAxis.setDrawLabels(false);
         yRAxis.setDrawAxisLine(false);
         yRAxis.setDrawGridLines(false);
-        lineChart.getDescription().setEnabled(false);
         lineChart.getLegend().setEnabled(false);
         lineChart.setDoubleTapToZoomEnabled(false);
         lineChart.setDrawGridBackground(false);
         lineChart.animateY(2000, Easing.EaseInCubic);
+
+        lineChart.getDescription().setEnabled(true);
+        Description description = new Description();
+        description.setText("Day");
+        description.setTextSize(30f);
+        lineChart.setDescription(description);
+        yLAxis.setValueFormatter(new YAxisValueFormatterForStretch());
+
         lineChartDataUpdate();
         lineChart.invalidate();
         historyTextUpdate();
