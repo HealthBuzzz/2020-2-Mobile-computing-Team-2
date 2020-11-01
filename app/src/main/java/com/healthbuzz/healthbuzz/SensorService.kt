@@ -16,6 +16,7 @@ import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.core.app.NotificationCompat
 import androidx.core.content.getSystemService
 import androidx.preference.PreferenceManager
 import weka.classifiers.Classifier
@@ -26,6 +27,8 @@ import java.util.*
 
 class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListener {
     private var ttsInit: Boolean = false
+    private val CHANNEL_ID = "HealthBuzzSensorService"
+    private val CHANNEL_NAME = "HealthBuzz sensor service"
 
     private val binder = SensorBinder()
 
@@ -105,7 +108,7 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
 
         val channelId =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                createNotificationChannel("HealthBuzzSensorService", "HealthBuzz sensor service")
+                createNotificationChannel(CHANNEL_ID, CHANNEL_NAME)
             } else {
                 // If earlier version channel ID is not used
                 // https://developer.android.com/reference/android/support/v4/app/NotificationCompat.Builder.html#NotificationCompat.Builder(android.content.Context)
@@ -132,6 +135,10 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
 //            SensorThread.run(this)
 //        }
 //        thread?.start()
+
+//        RealtimeModel.stretching_count.observeForever {
+//            isNotifying = false
+//        }
 
         sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
@@ -225,8 +232,26 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
                     if (0 > left_minutes) {
 //                        TODO("Show notification channel")
                         if (!isNotifying) {
-                            notiBuilder.setContentText("You need to move $time_diff")
-                            notiManager.notify(1, notiBuilder.build())
+                            val stretchIntent =
+                                Intent(this, StretchBroadcastReceiver::class.java).apply {
+                                    action = "ACTION_STRETCH"
+                                    putExtra("stretched", true)
+//                                    putExtra(EXTRA_NOTIFICATION_ID, 0)
+                                }
+                            val snoozePendingIntent: PendingIntent =
+                                PendingIntent.getBroadcast(this, 0, stretchIntent, 0)
+                            val builder = NotificationCompat.Builder(this, CHANNEL_ID)
+                                .setSmallIcon(R.drawable.stretching)
+                                .setContentTitle("You need to stretch now!")
+                                .setContentText("Happy stretching")
+                                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                                .setContentIntent(snoozePendingIntent)
+                                .addAction(
+                                    R.drawable.stretching, "I stretched!",
+                                    snoozePendingIntent
+                                ).setAutoCancel(true)
+//                            notiBuilder.setContentText("You need to move $time_diff")
+                            notiManager.notify(1, builder.build())
                             if (ttsInit) {
 
                             }
@@ -238,19 +263,18 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
                     } else {
                         isNotifying = false
                         Log.d(TAG, "val:${labelList[prediction]}")
-                        notiBuilder.setContentText("You need to move ${labelList[prediction]}")
+                        notiBuilder.setContentText("Current status: ${labelList[prediction]}")
                         notiManager.notify(1, notiBuilder.build())
 //                        inferenceResultView.setText(labelList[prediction])
                     }
-                } else {
+                } else { // moving!
                     not_stop_count += 1
                     if (not_stop_count >= 3) {
                         stop_count = 0
                         last_time_move = System.currentTimeMillis()
                     }
-                    notiBuilder.setContentText("You need to move ${labelList[prediction]}")
+                    notiBuilder.setContentText("Current status: ${labelList[prediction]}")
                     notiManager.notify(1, notiBuilder.build())
-
                     Log.d(TAG, "val:${labelList[prediction]}")
 //                    inferenceResultView.setText(labelList[prediction])
                 }
