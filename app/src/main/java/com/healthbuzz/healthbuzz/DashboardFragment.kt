@@ -56,15 +56,22 @@ class DashboardFragment : Fragment() {
             val intValue = value?.toInt() ?: 9999
             Log.e(TAG, "update value $value")
             rootView.cardview_layout_stretching.findViewById<TextView>(R.id.tvCardContent).text =
-                getString(R.string.dashboard_minutes_left, intValue)
+                if (intValue >= 0) {
+                    getString(R.string.dashboard_minutes_left, intValue)
+                } else {
+                    "You need to stretch now"
+                }
         }
         RealtimeModel.water_time_left.observe(viewLifecycleOwner) { value ->
             val intValue = value?.toInt() ?: 9999
             Log.e(TAG, "update value2 $value")
             rootView.cardview_layout_water.findViewById<TextView>(R.id.tvCardContent).text =
-                getString(R.string.dashboard_minutes_left, intValue)
+                if(intValue >=0) {
+                    getString(R.string.dashboard_minutes_left, intValue)
+                } else {
+                    "You need to drink water now"
+                }
         }
-
 
 //        SingleObject.getInstance().stretching_time_left.registerObserver { value ->
 //            Log.e(TAG, "update value ${value}")
