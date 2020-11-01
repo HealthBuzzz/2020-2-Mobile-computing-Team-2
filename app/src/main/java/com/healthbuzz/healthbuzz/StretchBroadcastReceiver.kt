@@ -13,7 +13,7 @@ class StretchBroadcastReceiver : BroadcastReceiver() {
         Log.d(TAG, "Action:$action")
         if ("ACTION_STRETCH" == action) {
             RealtimeModel.stretching_count.postValue(
-                RealtimeModel.stretching_count.value?.toLong() ?: 0 + 1
+                (RealtimeModel.stretching_count.value?.toLong() ?: 0) + 1
             ) // add 1
         }
     }

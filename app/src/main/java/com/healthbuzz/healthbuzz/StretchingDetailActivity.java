@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -119,6 +120,7 @@ public class StretchingDetailActivity extends AppCompatActivity {
         textProgress.setText("  " + RealtimeModel.INSTANCE.getStretching_count().getValue() + "/" + dayNeedStretching);
 
         RealtimeModel.INSTANCE.getStretching_count().observe(this, aLong -> {
+            Log.d("StretchingDetail", "changed to" + aLong);
             todayStretching = aLong.intValue();
             textProgress.setText("  " + aLong + "/" + dayNeedStretching);
             progressValue = Math.round((float) todayStretching / dayNeedStretching * 100);
@@ -126,7 +128,6 @@ public class StretchingDetailActivity extends AppCompatActivity {
                 progressBar.setProgress(progressValue, true);
             } else {
                 progressBar.setProgress(progressValue);
-
             }
         });
 
@@ -137,7 +138,10 @@ public class StretchingDetailActivity extends AppCompatActivity {
             @Override
             public void onChanged(Long aLong) {
                 TextView textBuzz = findViewById(R.id.textBuzz);
-                textBuzz.setText("BUZZ " + aLong + " minutes left!");
+                if(aLong >=0)
+                    textBuzz.setText("BUZZ " + aLong + " minutes left!");
+                else
+                    textBuzz.setText("You need to stretch now");
             }
         });
 
