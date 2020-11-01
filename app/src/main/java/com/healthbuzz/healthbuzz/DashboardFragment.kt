@@ -161,7 +161,7 @@ class DashboardFragment : Fragment() {
                     isChecked = prefs.getBoolean("sync2", true)
                 }
                 .setOnCheckedChangeListener { buttonView, checked ->
-                    disableEnableControls(checked, cardview_layout_stretching as ViewGroup)
+                    disableEnableControls(checked, cardview_layout_water as ViewGroup)
                     buttonView.isEnabled = true
                     val editor = prefs.edit()
                     editor.putBoolean("sync2", checked)
