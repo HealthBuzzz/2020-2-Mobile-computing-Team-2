@@ -48,7 +48,7 @@ class LongWrapper implements Subject {
     }
 }
 
-public class SingleObject {
+class SingleObject {
 
     //create an object of SingleObject
     private static final SingleObject instance = new SingleObject();

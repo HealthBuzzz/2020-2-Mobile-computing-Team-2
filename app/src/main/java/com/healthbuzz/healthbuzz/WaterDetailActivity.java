@@ -78,7 +78,7 @@ public class WaterDetailActivity extends AppCompatActivity {
         ArrayList<PieEntry> pieEntries = new ArrayList();
 
         pieEntries.add(new PieEntry(todayDrink, ""));
-        todayDrink = SingleObject.getInstance().water_count.getValue();
+        todayDrink = RealtimeModel.INSTANCE.getWater_count().getValue();
         long marginToday = dayNeedDrink - todayDrink;
         if (marginToday < 0) {
             marginToday = 0;
@@ -97,31 +97,28 @@ public class WaterDetailActivity extends AppCompatActivity {
         pieChart.animate();
         pieChart.invalidate();
 
-        SingleObject.getInstance().water_count.registerObserver(new Observer() {
-            @Override
-            public void update(long todayDrink) {
-                ArrayList<PieEntry> pieEntries = new ArrayList();
+        RealtimeModel.INSTANCE.getWater_count().observe(this, todayDrink -> {
+            ArrayList<PieEntry> pieEntries1 = new ArrayList();
 
-                pieEntries.add(new PieEntry(todayDrink, ""));
-                long marginToday = dayNeedDrink - todayDrink;
-                if (marginToday < 0) {
-                    marginToday = 0;
-                }
-                pieEntries.add(new PieEntry(marginToday, ""));
-                PieDataSet pieDataSet = new PieDataSet(pieEntries, "");
-                pieDataSet.setColors(colorArray);
-
-                PieData pieData = new PieData(pieDataSet);
-                pieData.setValueTextSize(15f); // <- here
-                pieChart.setData(pieData);
-                pieChart.getDescription().setEnabled(false);
-                pieChart.getLegend().setEnabled(false);
-                pieChart.setCenterText("You drinked\n" + Math.round((float) todayDrink / dayNeedDrink * 100) + "%");
-                pieChart.setCenterTextSize(15f);
-                pieChart.animate();
-                pieChart.invalidate();
-
+            pieEntries1.add(new PieEntry(todayDrink, ""));
+            long marginToday1 = dayNeedDrink - todayDrink;
+            if (marginToday1 < 0) {
+                marginToday1 = 0;
             }
+            pieEntries1.add(new PieEntry(marginToday1, ""));
+            PieDataSet pieDataSet1 = new PieDataSet(pieEntries1, "");
+            pieDataSet1.setColors(colorArray);
+
+            PieData pieData1 = new PieData(pieDataSet1);
+            pieData1.setValueTextSize(15f); // <- here
+            pieChart.setData(pieData1);
+            pieChart.getDescription().setEnabled(false);
+            pieChart.getLegend().setEnabled(false);
+            pieChart.setCenterText("You drinked\n" + Math.round((float) todayDrink / dayNeedDrink * 100) + "%");
+            pieChart.setCenterTextSize(15f);
+            pieChart.animate();
+            pieChart.invalidate();
+
         });
 
         ////// LINE CHART BELOW

@@ -87,30 +87,29 @@ public class StretchingDetailActivity extends AppCompatActivity {
 
         // textProgress configure
         TextView textProgress = findViewById(R.id.textProgress);
-        textProgress.setText("  " + com.healthbuzz.healthbuzz.SingleObject.getInstance().stretching_count.getValue() + "/" + dayNeedStretching);
+        textProgress.setText("  " + RealtimeModel.INSTANCE.getStretching_count().getValue() + "/" + dayNeedStretching);
 
-        com.healthbuzz.healthbuzz.SingleObject.getInstance().stretching_count.registerObserver(new Observer() {
-            @Override
-            public void update(long value) {
-                textProgress.setText("  " + value + "/" + dayNeedStretching);
-                progressValue = Math.round((float) value / dayNeedStretching * 100);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    progressBar.setProgress(progressValue, true);
-                } else {
-                    progressBar.setProgress(progressValue);
-                }
+        RealtimeModel.INSTANCE.getStretching_count().observe(this, aLong -> {
+            textProgress.setText("  " + aLong + "/" + dayNeedStretching);
+            progressValue = Math.round((float) aLong / dayNeedStretching * 100);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                progressBar.setProgress(progressValue, true);
+            } else {
+                progressBar.setProgress(progressValue);
             }
         });
 
         // textBuzz configure, this must be called every minute ?through service?
         buzzTextUpdate();
-        com.healthbuzz.healthbuzz.SingleObject.getInstance().stretching_time_left.registerObserver(new Observer() {
+
+        RealtimeModel.INSTANCE.getStretching_time_left().observe(this, new androidx.lifecycle.Observer<Long>() {
             @Override
-            public void update(long value) {
+            public void onChanged(Long aLong) {
                 TextView textBuzz = findViewById(R.id.textBuzz);
-                textBuzz.setText("BUZZ " + value + " minutes left!");
+                textBuzz.setText("BUZZ " + aLong + " minutes left!");
             }
         });
+
         TextView textBuzz = findViewById(R.id.textBuzz);
         textBuzz.setTypeface(null, Typeface.BOLD);
 
