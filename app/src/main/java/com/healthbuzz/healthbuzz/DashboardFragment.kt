@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.widget.SwitchCompat
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
@@ -142,6 +143,29 @@ class DashboardFragment : Fragment() {
             cardview_layout_water.findViewById<ConstraintLayout>(R.id.cardview_root)
                 .setOnClickListener {
                     startActivity(Intent(context, WaterDetailActivity::class.java))
+                }
+
+            cardview_layout_stretching.findViewById<SwitchCompat>(R.id.swCardEnable)
+                .apply {
+                    isChecked = prefs.getBoolean("sync", true)
+                }
+                .setOnCheckedChangeListener { buttonView, checked ->
+                    disableEnableControls(checked, cardview_layout_stretching as ViewGroup)
+                    buttonView.isEnabled = true
+                    val editor = prefs.edit()
+                    editor.putBoolean("sync", checked)
+                    editor.apply()
+                }
+            cardview_layout_water.findViewById<SwitchCompat>(R.id.swCardEnable)
+                .apply {
+                    isChecked = prefs.getBoolean("sync2", true)
+                }
+                .setOnCheckedChangeListener { buttonView, checked ->
+                    disableEnableControls(checked, cardview_layout_stretching as ViewGroup)
+                    buttonView.isEnabled = true
+                    val editor = prefs.edit()
+                    editor.putBoolean("sync2", checked)
+                    editor.apply()
                 }
         }
 
