@@ -38,14 +38,7 @@ class DashboardFragment : Fragment() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-//        Intent(context, SensorService::class.java).also { intent ->
-//            context?.bindService(intent, connection, Context.BIND_AUTO_CREATE)
-//        }
-    }
-
-//    override fun onStop() {
+    //    override fun onStop() {
 //        super.onStop()
 //        context?.unbindService(connection)
 //        mBound = false

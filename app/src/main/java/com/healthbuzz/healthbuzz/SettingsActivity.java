@@ -46,18 +46,18 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
-    private static void bindSummaryValue(Preference preference){
+    private static void bindSummaryValue(Preference preference) {
         preference.setOnPreferenceChangeListener(listener);
         listener.onPreferenceChange(preference,
                 PreferenceManager.getDefaultSharedPreferences(preference.getContext())
-                .getString(preference.getKey(), ""));
+                        .getString(preference.getKey(), ""));
     }
 
-    private static Preference.OnPreferenceChangeListener listener = new Preference.OnPreferenceChangeListener() {
+    private static final Preference.OnPreferenceChangeListener listener = new Preference.OnPreferenceChangeListener() {
         @Override
         public boolean onPreferenceChange(Preference preference, Object newValue) {
             String stringValue = newValue.toString();
-            if (preference instanceof EditTextPreference){
+            if (preference instanceof EditTextPreference) {
                 preference.setSummary(stringValue);
                 ((EditTextPreference) preference).setText(stringValue);
             }

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 class LongWrapper implements Subject {
     private final String TAG = "LongWrapper";
-    private ArrayList<Observer> observers;
+    private final ArrayList<Observer> observers;
     private long value;
 
     public LongWrapper() {
@@ -48,10 +48,10 @@ class LongWrapper implements Subject {
     }
 }
 
-public class SingleObject {
+class SingleObject {
 
     //create an object of SingleObject
-    private static SingleObject instance = new SingleObject();
+    private static final SingleObject instance = new SingleObject();
 
     public LongWrapper stretching_count = new LongWrapper();
     public LongWrapper water_count = new LongWrapper();
