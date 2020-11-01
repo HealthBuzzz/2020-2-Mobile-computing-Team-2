@@ -118,7 +118,7 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
         val notification: Notification =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 notiBuilder = Notification.Builder(this, channelId)
-                    .setContentTitle(getText(R.string.app_name))
+                    .setContentTitle(getText(R.string.ticker_text))
                     .setContentText(getText(R.string.ticker_text))
                     .setSmallIcon(R.drawable.ic_launcher_foreground)
                     .setContentIntent(pendingIntent)
@@ -136,9 +136,10 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
 //        }
 //        thread?.start()
 
-//        RealtimeModel.stretching_count.observeForever {
-//            isNotifying = false
-//        }
+        RealtimeModel.stretching_count.observeForever {
+            isNotifying = false
+            last_time_move = System.currentTimeMillis()
+        }
 
         sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
