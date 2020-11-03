@@ -60,6 +60,18 @@ public class SettingsActivity extends AppCompatActivity {
             if (preference instanceof EditTextPreference) {
                 preference.setSummary(stringValue);
                 ((EditTextPreference) preference).setText(stringValue);
+                if (stringValue == "")
+                    stringValue = "20";
+                int intValue = Integer.parseInt(stringValue);
+                String key = preference.getKey();
+                switch (key) {
+                    case "time_interval_water":
+                        RealtimeModel.INSTANCE.getWater_time_left().postValue((long) intValue);
+                        break;
+                    case "time_interval_stretch":
+                        RealtimeModel.INSTANCE.getStretching_time_left().postValue((long) intValue);
+                        break;
+                }
             }
             return false;
         }

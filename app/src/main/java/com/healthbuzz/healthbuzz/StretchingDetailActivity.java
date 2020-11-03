@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -90,6 +91,9 @@ public class StretchingDetailActivity extends AppCompatActivity {
 
         // ProgressBar configure
         progressBar = findViewById(R.id.progressBar);
+
+        todayStretching = (int) RealtimeModel.INSTANCE.getStretching_count().getValue().intValue();
+
         progressValue = Math.round((float) todayStretching / dayNeedStretching * 100);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             progressBar.setProgress(progressValue, true);
@@ -116,13 +120,14 @@ public class StretchingDetailActivity extends AppCompatActivity {
         textProgress.setText("  " + RealtimeModel.INSTANCE.getStretching_count().getValue() + "/" + dayNeedStretching);
 
         RealtimeModel.INSTANCE.getStretching_count().observe(this, aLong -> {
+            Log.d("StretchingDetail", "changed to" + aLong);
+            todayStretching = aLong.intValue();
             textProgress.setText("  " + aLong + "/" + dayNeedStretching);
-            progressValue = Math.round((float) aLong / dayNeedStretching * 100);
+            progressValue = Math.round((float) todayStretching / dayNeedStretching * 100);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 progressBar.setProgress(progressValue, true);
             } else {
                 progressBar.setProgress(progressValue);
-
             }
         });
 
@@ -130,11 +135,13 @@ public class StretchingDetailActivity extends AppCompatActivity {
         buzzTextUpdate();
 
         RealtimeModel.INSTANCE.getStretching_time_left().observe(this, new androidx.lifecycle.Observer<Long>() {
-
             @Override
             public void onChanged(Long aLong) {
                 TextView textBuzz = findViewById(R.id.textBuzz);
-                textBuzz.setText("BUZZ " + aLong + " minutes left!");
+                if (aLong >= 0)
+                    textBuzz.setText("BUZZ " + aLong + " minutes left!");
+                else
+                    textBuzz.setText("You need to stretch now");
             }
         });
 

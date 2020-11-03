@@ -30,8 +30,7 @@
             app:dependency="sync"
             app:key="time_interval_stretch"
             app:title="time interval"
-            app:summary="(minute)"
-            />
+            app:summary="(minute)" />
 
     </PreferenceCategory>
 
@@ -45,8 +44,7 @@
             app:dependency="sync2"
             app:key="time_interval_water"
             app:title="time interval"
-            app:summary="(minute)"
-            />
+            app:summary="(minute)" />
 
     </PreferenceCategory>
 
