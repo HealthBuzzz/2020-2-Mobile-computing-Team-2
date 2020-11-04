@@ -140,7 +140,7 @@ public class StretchingDetailActivity extends AppCompatActivity {
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setTextColor(Color.BLACK);
         xAxis.enableGridDashedLine(8, 24, 0);
-        xAxis.setTextSize(5f);
+        xAxis.setTextSize(12f);
         xAxis.setAxisMinimum(0);
         xAxis.setAxisMaximum(30);
 
