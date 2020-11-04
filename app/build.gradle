@@ -52,6 +52,8 @@ dependencies {
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     implementation 'com.opencsv:opencsv:5.2'
     implementation project(':weka')
+    implementation 'androidx.annotation:annotation:1.1.0'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'
 
 
     testImplementation 'junit:junit:4.12'
