@@ -44,6 +44,9 @@ class stretchingMonth {
             dayQuantityPairs.add(new Pair(day[i], quantity[i]));
         }
     }
+    int getYear(){
+        return year;
+    }
 }
 class YAxisValueFormatterForStretch extends ValueFormatter {
 
@@ -137,7 +140,7 @@ public class StretchingDetailActivity extends AppCompatActivity {
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setTextColor(Color.BLACK);
         xAxis.enableGridDashedLine(8, 24, 0);
-        xAxis.setTextSize(15f);
+        xAxis.setTextSize(5f);
         xAxis.setAxisMinimum(0);
         xAxis.setAxisMaximum(30);
 
