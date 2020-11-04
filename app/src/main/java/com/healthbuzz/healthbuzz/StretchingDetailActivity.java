@@ -114,7 +114,7 @@ public class StretchingDetailActivity extends AppCompatActivity {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     progressBar.setProgress(progressValue, true);
                 } else {
-                    progressBar.setProgress(progressValue);
+                    progressBar.setProgress(progressValue); 
                 }
             }
         });
