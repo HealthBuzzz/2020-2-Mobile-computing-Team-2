@@ -1,4 +1,3 @@
 package com.healthbuzz.healthbuzz.repository
 
-object SettingRepository {
-}
+object SettingRepository

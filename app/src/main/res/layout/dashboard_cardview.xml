@@ -15,30 +15,35 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cardview_root"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/cardview_root"
-        android:background="@color/colorAccent">
+        android:background="@color/colorDashboard">
 
         <TextView
             android:id="@+id/tvCardTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            android:text="Moving the"
             app:layout_constraintEnd_toEndOf="parent"
-            android:text="Moving the" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/ivCardImage"
             android:layout_width="150dp"
             android:layout_height="150dp"
-            app:layout_constraintTop_toBottomOf="@id/tvCardTitle"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvCardTitle"
             tools:src="@tools:sample/avatars" />
 
         <com.akexorcist.roundcornerprogressbar.IconRoundCornerProgressBar
+            android:id="@+id/pbCardProgress"
+            android:layout_width="0dp"
             android:layout_height="30dp"
+            app:layout_constraintEnd_toStartOf="@id/swCardEnable"
+            app:layout_constraintStart_toEndOf="@id/ivCardImage"
+            app:layout_constraintTop_toBottomOf="@id/tvCardTitle"
             app:rcBackgroundColor="#0A000000"
             app:rcBackgroundPadding="2dp"
             app:rcMax="100"
@@ -46,21 +51,16 @@
             app:rcProgressColor="#EF5350"
             app:rcRadius="10dp"
             app:rcSecondaryProgress="90"
-            app:rcSecondaryProgressColor="#40EF5350"
-            android:id="@+id/pbCardProgress"
-            android:layout_width="0dp"
-            app:layout_constraintEnd_toStartOf="@id/swCardEnable"
-            app:layout_constraintStart_toEndOf="@id/ivCardImage"
-            app:layout_constraintTop_toBottomOf="@id/tvCardTitle" />
+            app:rcSecondaryProgressColor="#40EF5350" />
 
         <TextView
             android:id="@+id/tvCardContent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toEndOf="@id/ivCardImage"
+            android:text="Yeah"
             app:layout_constraintEnd_toStartOf="@id/swCardEnable"
-            app:layout_constraintTop_toBottomOf="@id/pbCardProgress"
-            android:text="Yeah" />
+            app:layout_constraintStart_toEndOf="@id/ivCardImage"
+            app:layout_constraintTop_toBottomOf="@id/pbCardProgress" />
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/swCardEnable"
