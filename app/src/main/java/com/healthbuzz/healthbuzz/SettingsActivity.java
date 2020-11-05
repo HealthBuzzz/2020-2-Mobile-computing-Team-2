@@ -66,10 +66,10 @@ public class SettingsActivity extends AppCompatActivity {
                 String key = preference.getKey();
                 switch (key) {
                     case "time_interval_water":
-                        RealtimeModel.INSTANCE.getWater_time_left().postValue((long) intValue);
+                        RealtimeModel.INSTANCE.getWater_time_left().postValue((long) intValue * 60);
                         break;
                     case "time_interval_stretch":
-                        RealtimeModel.INSTANCE.getStretching_time_left().postValue((long) intValue);
+                        RealtimeModel.INSTANCE.getStretching_time_left().postValue((long) intValue * 60);
                         break;
                 }
             }
