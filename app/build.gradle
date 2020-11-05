@@ -52,6 +52,7 @@ dependencies {
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     implementation 'com.opencsv:opencsv:5.2'
     implementation project(':weka')
+    implementation 'androidx.preference:preference:1.1.1'
 
 
     testImplementation 'junit:junit:4.12'

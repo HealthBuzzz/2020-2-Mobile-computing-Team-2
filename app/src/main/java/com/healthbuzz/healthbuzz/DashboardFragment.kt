@@ -143,7 +143,7 @@ class DashboardFragment : Fragment() {
                 }
             cardview_layout_water.findViewById<ConstraintLayout>(R.id.cardview_root)
                 .setOnClickListener {
-                    startActivity(Intent(context, WaterDetailActivity::class.java))
+                    startActivity(Intent(context, BluetoothActivity::class.java))
                 }
 
             cardview_layout_stretching.findViewById<SwitchCompat>(R.id.swCardEnable)
