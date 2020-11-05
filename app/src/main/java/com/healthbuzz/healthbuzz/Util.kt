@@ -51,3 +51,12 @@ fun disableEnableControls(enable: Boolean, vg: ViewGroup) {
         }
     }
 }
+
+fun formatTime(context: Context, seconds: Int): String {
+    return if (seconds >= 60) {
+        val minutes = seconds / 60
+        context.getString(R.string.dashboard_minutes_left, minutes)
+    } else {
+        context.getString(R.string.dashboard_seconds_left, seconds)
+    }
+}
