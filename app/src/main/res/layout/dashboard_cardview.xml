@@ -64,6 +64,7 @@
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/swCardEnable"
+            android:theme="@style/BuzzSwitch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Switch"

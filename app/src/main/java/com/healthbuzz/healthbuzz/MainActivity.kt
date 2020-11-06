@@ -1,19 +1,22 @@
 package com.healthbuzz.healthbuzz
 
 import android.Manifest
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Environment
-import android.provider.Settings
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import com.healthbuzz.healthbuzz.data.LoginDataSource
+import kotlinx.android.synthetic.main.fragment_welcome.*
 
 class MainActivity : AppCompatActivity() {
 
+    public var userName : LiveData<String> = MutableLiveData()
     private val requestPermissionLauncher =
         registerForActivityResult(
             ActivityResultContracts.RequestPermission()
@@ -26,7 +29,7 @@ class MainActivity : AppCompatActivity() {
             } else {
                 Toast.makeText(
                     this,
-                    "This app requires permission to work properly.",
+                    getString(R.string.require_storage_permission),
                     Toast.LENGTH_LONG
                 ).show()
                 finish()
@@ -37,6 +40,12 @@ class MainActivity : AppCompatActivity() {
                 // decision.
             }
         }
+
+    //override fun onResume() {
+        //super.onResume()
+        //welcomeFragment.textView2.setText(LoginDataSource.name)
+    //}
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,15 +98,8 @@ class MainActivity : AppCompatActivity() {
             requestPermissionLauncher.launch(
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
             )
-        } else {
-            if (!isExternalStorageManager) {
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
-                    startActivity(Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION))
-                }
-            }
         }
-
-        if (hasPermission && isExternalStorageManager)
+        if (hasPermission)
             startSensorService(this)
 
     }
