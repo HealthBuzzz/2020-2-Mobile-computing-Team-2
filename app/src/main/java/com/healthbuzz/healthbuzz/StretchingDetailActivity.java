@@ -141,10 +141,11 @@ public class StretchingDetailActivity extends AppCompatActivity {
             @Override
             public void onChanged(Long aLong) {
                 TextView textBuzz = findViewById(R.id.textBuzz);
+                String message = UtilKt.formatTime(StretchingDetailActivity.this, aLong.intValue());
                 if (aLong >= 0)
-                    textBuzz.setText("BUZZ " + aLong + " minutes left!");
+                    textBuzz.setText("BUZZ " + message);
                 else
-                    textBuzz.setText("You need to stretch now");
+                    textBuzz.setText(getString(R.string.you_need_stretch));
             }
         });
 
@@ -192,7 +193,7 @@ public class StretchingDetailActivity extends AppCompatActivity {
     // textBuzz configure, this must be updated every minute ?through service?
     public void buzzTextUpdate() {
         TextView textBuzz = findViewById(R.id.textBuzz);
-        textBuzz.setText("BUZZ " + minutesToBUZZ + " minutes left!");
+        textBuzz.setText("BUZZ " + UtilKt.formatTime(this, RealtimeModel.INSTANCE.getStretching_time_left().getValue().intValue()));
     }
 
     private void lineChartDataUpdate() {
