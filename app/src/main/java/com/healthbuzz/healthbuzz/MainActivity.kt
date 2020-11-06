@@ -11,6 +11,8 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.healthbuzz.healthbuzz.data.LoginDataSource
+import kotlinx.android.synthetic.main.fragment_welcome.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -37,6 +39,12 @@ class MainActivity : AppCompatActivity() {
                 // decision.
             }
         }
+
+    //override fun onResume() {
+        //super.onResume()
+        //welcomeFragment.textView2.setText(LoginDataSource.name)
+    //}
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,6 +77,7 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager.beginTransaction()
                 .add(R.id.welcome_container, welcomeFragment)
                 .commit()
+            //welcomeFragment.textView2.setText(LoginDataSource.name)
         }
 
         val isExternalStorageManager =

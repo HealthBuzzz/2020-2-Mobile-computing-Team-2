@@ -5,19 +5,19 @@ package com.healthbuzz.healthbuzz.data.model;
  */
 public class LoggedInUser {
 
-    private String userId;
-    private String displayName;
+    private int id;
+    private String name;
 
-    public LoggedInUser(String userId, String displayName) {
-        this.userId = userId;
-        this.displayName = displayName;
+    public LoggedInUser(int userId, String displayName) {
+        this.id = userId;
+        this.name = displayName;
     }
 
-    public String getUserId() {
-        return userId;
+    public int getId() {
+        return id;
     }
 
     public String getDisplayName() {
-        return displayName;
+        return name;
     }
 }

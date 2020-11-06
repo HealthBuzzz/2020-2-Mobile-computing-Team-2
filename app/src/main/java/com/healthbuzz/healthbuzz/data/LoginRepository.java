@@ -1,5 +1,7 @@
 package com.healthbuzz.healthbuzz.data;
 
+import android.util.Log;
+
 import com.healthbuzz.healthbuzz.data.model.LoggedInUser;
 
 /**
@@ -45,6 +47,7 @@ public class LoginRepository {
 
     public Result<LoggedInUser> login(String email, String password) {
         // handle login
+        Log.i("LRR","SSSS");
         Result<LoggedInUser> result = dataSource.login(email, password);
         if (result instanceof Result.Success) {
             setLoggedInUser(((Result.Success<LoggedInUser>) result).getData());

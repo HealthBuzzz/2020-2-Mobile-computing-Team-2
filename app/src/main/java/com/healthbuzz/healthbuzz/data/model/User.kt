@@ -1,7 +1,8 @@
 package com.healthbuzz.healthbuzz.data.model
 
-data class User(
-    val username: String,
-    val email: String,
-    val password: String
+class User(
+    var username: String,
+    var email: String = "",
+    var password: String = "",
+    var id: Int,
 )

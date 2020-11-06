@@ -1,5 +1,6 @@
 package com.healthbuzz.healthbuzz.Retrofit;
 
+import com.healthbuzz.healthbuzz.data.model.LoggedInUser;
 import com.healthbuzz.healthbuzz.data.model.User;
 
 import java.util.List;
@@ -15,7 +16,7 @@ import retrofit2.http.Path;
 public interface RetrofitAPI{
 
     @POST("/api/signin/")
-    Call<User> postSignIn(@Body User user);
+    Call<LoggedInUser> postSignIn(@Body User user);
 
     @POST("/api/signup/")
     Call<User> postSignUp(@Body User user);

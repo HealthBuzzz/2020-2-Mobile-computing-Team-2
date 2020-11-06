@@ -50,18 +50,18 @@ public class LoginDataSource {
     }
     public Result<LoggedInUser> login(String email, String password) {
         initMyAPI(BASE_URL);
-        Log.d(TAG,"POST");
-
-        User user = new User("No need", email, password);
-        Call<User> postCall = mMyAPI.postSignIn(user);
-        postCall.enqueue(new Callback<User>() {
+        User user = new User("No need", email, password, 0);
+        Call<LoggedInUser> postCall = mMyAPI.postSignIn(user);
+        postCall.enqueue(new Callback<LoggedInUser>() {
             @Override
-            public void onResponse(Call<User> call, Response<User> response) {
+            public void onResponse(Call<LoggedInUser> call, Response<LoggedInUser> response) {
                 if(response.isSuccessful()){
                     Log.d(TAG,"로그인 완료");
+                    LoggedInUser postResponse = response.body();
                     assert response.body() != null;
                     LoginDataSource.loggedIn = true;
-                    LoginDataSource.name = response.body().getUsername();
+                    LoginDataSource.name = response.body().getDisplayName();
+                    Log.d(TAG,"After setting static variable");
                 }else {
                     Log.d(TAG,"Status Code : " + response.code());
                     Log.d(TAG,response.errorBody().toString());
@@ -70,15 +70,20 @@ public class LoginDataSource {
             }
 
             @Override
-            public void onFailure(Call<User> call, Throwable t) {
+            public void onFailure(Call<LoggedInUser> call, Throwable t) {
                 Log.d(TAG,"Fail msg : " + t.getMessage());
             }
         });
-        SystemClock.sleep(2000);
+        // This is trick by now. for async.
+        int a = 1000000;
+        while(a>0){
+            a--;
+        }
+        Log.d(TAG,"I need static set");
         LoggedInUser fakeUser =
                 new LoggedInUser(
-                        java.util.UUID.randomUUID().toString(),
-                        name);
+                        0,
+                        "");
         if(loggedIn) {
             return new Result.Success<>(fakeUser);
         }else{
