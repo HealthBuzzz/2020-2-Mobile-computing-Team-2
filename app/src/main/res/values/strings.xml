@@ -21,6 +21,11 @@
     <string name="processing">Processing</string>
     <string name="not_inferencing">Not inferencing</string>
     <string name="inference_failed">Inference failed</string>
+    <string name="dashboard_seconds_left">%d seconds left</string>
+    <string name="you_need_stretch">You need to stretch now</string>
+    <string name="you_need_drink">You need to drink water now</string>
+    <string name="require_storage_permission">This app requires permission to work properly.</string>
+
     <string name="title_activity_login">LoginActivity</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
