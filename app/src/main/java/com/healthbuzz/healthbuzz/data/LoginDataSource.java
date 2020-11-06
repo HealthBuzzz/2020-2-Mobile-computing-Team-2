@@ -5,8 +5,13 @@ import android.os.AsyncTask;
 import android.os.SystemClock;
 import android.util.Log;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+
 import com.healthbuzz.healthbuzz.HTTP.RequestHttpURLConnection;
+import com.healthbuzz.healthbuzz.RealtimeModel;
 import com.healthbuzz.healthbuzz.Retrofit.RetrofitAPI;
+import com.healthbuzz.healthbuzz.UserInfo;
 import com.healthbuzz.healthbuzz.data.URL.OurURL;
 import com.healthbuzz.healthbuzz.data.model.LoggedInUser;
 import com.healthbuzz.healthbuzz.data.model.User;
@@ -34,7 +39,8 @@ public class LoginDataSource {
     private static final String TAG = "MYAPI";
     private final String BASE_URL = OurURL.ourHome;
     private RetrofitAPI mMyAPI;
-    public static boolean loggedIn = false;
+    public static int userId = 0;
+    public static int resultFlag = 0; // 0 is not yet, 1 is success, 2 is failed
     public static String name = null;
 
 
@@ -47,11 +53,14 @@ public class LoginDataSource {
                 .build();
 
         mMyAPI = retrofit.create(RetrofitAPI.class);
+        LoginDataSource.resultFlag = 0;
     }
     public Result<LoggedInUser> login(String email, String password) {
         initMyAPI(BASE_URL);
         User user = new User("No need", email, password, 0);
         Call<LoggedInUser> postCall = mMyAPI.postSignIn(user);
+
+         //   This is for async.
         postCall.enqueue(new Callback<LoggedInUser>() {
             @Override
             public void onResponse(Call<LoggedInUser> call, Response<LoggedInUser> response) {
@@ -59,8 +68,9 @@ public class LoginDataSource {
                     Log.d(TAG,"로그인 완료");
                     LoggedInUser postResponse = response.body();
                     assert response.body() != null;
-                    LoginDataSource.loggedIn = true;
-                    LoginDataSource.name = response.body().getDisplayName();
+                    LoginDataSource.userId = response.body().getId();
+                    LoginDataSource.resultFlag = 1;
+                    UserInfo.INSTANCE.getUserName().setValue(response.body().getDisplayName());
                     Log.d(TAG,"After setting static variable");
                 }else {
                     Log.d(TAG,"Status Code : " + response.code());
@@ -72,20 +82,32 @@ public class LoginDataSource {
             @Override
             public void onFailure(Call<LoggedInUser> call, Throwable t) {
                 Log.d(TAG,"Fail msg : " + t.getMessage());
+                LoginDataSource.resultFlag = 2;
+
             }
         });
-        // This is trick by now. for async.
-        int a = 1000000;
-        while(a>0){
-            a--;
-        }
+        /* This is sync but should be executed in background so i used async.
+        try {
+            Response<LoggedInUser> response = postCall.execute();
+            if(response.code() == 200)
+                resultFlag = 1;
+            else
+                resultFlag = 2;
+            LoggedInUser myUser = response.body();
+            LoginDataSource.userId = myUser.getId();
+            LoginDataSource.name = myUser.getDisplayName();
+        } catch (IOException e){
+            Log.d(TAG, "postCall execute failed");
+            resultFlag = 2;
+        }*/
+
         Log.d(TAG,"I need static set");
-        LoggedInUser fakeUser =
+        LoggedInUser myUser =
                 new LoggedInUser(
-                        0,
-                        "");
-        if(loggedIn) {
-            return new Result.Success<>(fakeUser);
+                        userId,
+                        name);
+        if(resultFlag == 0) {
+            return new Result.Success<>(myUser);
         }else{
             return new Result.Error(new IOException("Error in login"));
         }
