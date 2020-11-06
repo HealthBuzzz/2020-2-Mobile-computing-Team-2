@@ -155,7 +155,7 @@ class DashboardFragment : Fragment() {
                     progressColor =
                         ResourcesCompat.getColor(
                             resources,
-                            R.color.colorWaterDark,
+                            R.color.colorStretchingDark,
                             null
                         )
                 }
@@ -165,7 +165,7 @@ class DashboardFragment : Fragment() {
                 progressBackgroundColor =
                     ResourcesCompat.getColor(
                         resources,
-                        R.color.colorStretchingDark,
+                        R.color.colorWater,
                         null
                     )
                 progressColor = ResourcesCompat.getColor(
