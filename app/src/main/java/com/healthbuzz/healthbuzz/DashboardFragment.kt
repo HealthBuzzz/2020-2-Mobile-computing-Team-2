@@ -16,9 +16,9 @@ import androidx.appcompat.widget.SwitchCompat
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
-
-import com.healthbuzz.healthbuzz.ui.login.LoginActivity
 import androidx.preference.PreferenceManager
+import com.akexorcist.roundcornerprogressbar.IconRoundCornerProgressBar
+import com.healthbuzz.healthbuzz.ui.login.LoginActivity
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 import kotlinx.android.synthetic.main.fragment_dashboard.view.*
 
@@ -88,6 +88,11 @@ class DashboardFragment : Fragment() {
                 } else {
                     getString(R.string.you_need_stretch)
                 }
+            rootView.cardview_layout_stretching.findViewById<IconRoundCornerProgressBar>(R.id.pbCardProgress)
+                .let {
+                    it.max = stretchIntervalSec.toFloat()
+                    it.progress = value.toFloat()
+                }
         }
         RealtimeModel.water_time_left.observe(viewLifecycleOwner) { value ->
             val intValue = value?.toInt() ?: waterIntervalSec
@@ -97,6 +102,11 @@ class DashboardFragment : Fragment() {
                     formatTime(requireContext(), intValue)
                 } else {
                     getString(R.string.you_need_drink)
+                }
+            rootView.cardview_layout_water.findViewById<IconRoundCornerProgressBar>(R.id.pbCardProgress)
+                .let {
+                    it.max = waterIntervalSec.toFloat()
+                    it.progress = value.toFloat()
                 }
         }
 
