@@ -1,6 +1,7 @@
 package com.healthbuzz.healthbuzz
 
 import androidx.lifecycle.MutableLiveData
+import com.healthbuzz.healthbuzz.data.model.LoggedInUser
 
 // unit: seconds
 object RealtimeModel {
@@ -17,3 +18,4 @@ object RealtimeModel {
         it.value = 0
     }
 }
+

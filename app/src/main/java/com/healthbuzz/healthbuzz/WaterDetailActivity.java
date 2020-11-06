@@ -107,7 +107,7 @@ public class WaterDetailActivity extends AppCompatActivity {
         pieChart.getDescription().setEnabled(false);
         pieChart.getLegend().setEnabled(false);
         pieChart.setCenterText("You drinked\n" + Math.round((float) todayDrink / dayNeedDrink * 100) + "%");
-        pieChart.setCenterTextSize(15f);
+        pieChart.setCenterTextSize(10f);
         pieChart.animate();
         pieChart.invalidate();
 /*
@@ -166,7 +166,7 @@ public class WaterDetailActivity extends AppCompatActivity {
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setTextColor(Color.BLACK);
         xAxis.enableGridDashedLine(8, 24, 0);
-        xAxis.setTextSize(15f);
+        xAxis.setTextSize(12f);
         xAxis.setAxisMinimum(0);
         xAxis.setAxisMaximum(30);
 

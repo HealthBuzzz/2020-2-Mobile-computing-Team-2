@@ -9,9 +9,14 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import com.healthbuzz.healthbuzz.data.LoginDataSource
+import kotlinx.android.synthetic.main.fragment_welcome.*
 
 class MainActivity : AppCompatActivity() {
 
+    public var userName : LiveData<String> = MutableLiveData()
     private val requestPermissionLauncher =
         registerForActivityResult(
             ActivityResultContracts.RequestPermission()
@@ -35,6 +40,12 @@ class MainActivity : AppCompatActivity() {
                 // decision.
             }
         }
+
+    //override fun onResume() {
+        //super.onResume()
+        //welcomeFragment.textView2.setText(LoginDataSource.name)
+    //}
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

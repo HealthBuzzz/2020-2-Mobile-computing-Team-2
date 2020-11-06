@@ -16,6 +16,8 @@ import androidx.appcompat.widget.SwitchCompat
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
+
+import com.healthbuzz.healthbuzz.ui.login.LoginActivity
 import androidx.preference.PreferenceManager
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 import kotlinx.android.synthetic.main.fragment_dashboard.view.*
@@ -133,7 +135,8 @@ class DashboardFragment : Fragment() {
 
             cardview_layout_stretching.findViewById<ConstraintLayout>(R.id.cardview_root)
                 .setOnClickListener {
-                    startActivity(Intent(context, StretchingDetailActivity::class.java))
+                    startActivity(Intent(context, LoginActivity::class.java))
+                    //startActivity((Intent(context, LoginActivity::class.java)))
                 }
             cardview_layout_water.findViewById<ConstraintLayout>(R.id.cardview_root)
                 .setOnClickListener {
