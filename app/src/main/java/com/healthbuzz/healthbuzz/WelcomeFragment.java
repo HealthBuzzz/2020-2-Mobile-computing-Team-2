@@ -8,9 +8,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
+
+import com.healthbuzz.healthbuzz.data.LoginDataSource;
+
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -39,6 +43,10 @@ public class WelcomeFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        UserInfo.INSTANCE.getUserName().observe(this, aString -> {
+            TextView userView = (TextView) getView().findViewById(R.id.textView2);
+            userView.setText(aString);
+        });
     }
 
     @Override
@@ -48,27 +56,27 @@ public class WelcomeFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_welcome, container, false);
     }
 
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NotNull Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.settings_menu, menu);
-        return;
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.settings:
-                Intent intent = new Intent(requireActivity(), SettingsActivity.class);
-                startActivity(intent);
+        int itemId = item.getItemId();
+        if (itemId == R.id.settings) {
+            Intent intent = new Intent(requireActivity(), SettingsActivity.class);
+            startActivity(intent);
 //                Toast.makeText(getActivity(), "Go to Settings page", Toast.LENGTH_SHORT).show();
-                return true;
-            case R.id.debug:
-                Toast.makeText(getActivity(), "Go to Debug page", Toast.LENGTH_SHORT).show();
-                return true;
-            case R.id.help:
-                Toast.makeText(getActivity(), "Go to help page", Toast.LENGTH_SHORT).show();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+            return true;
+        } else if (itemId == R.id.debug) {
+//            Toast.makeText(getActivity(), "Go to Debug page", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(requireActivity(), DataGettingActivity.class));
+            return true;
+        } else if (itemId == R.id.help) {
+//            Toast.makeText(getActivity(), "Go to help page", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(requireActivity(), InferenceActivity.class));
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
 }

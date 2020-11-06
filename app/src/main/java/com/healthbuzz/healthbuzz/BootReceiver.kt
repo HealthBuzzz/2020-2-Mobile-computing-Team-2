@@ -10,7 +10,10 @@ class BootReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         // This method is called when the BroadcastReceiver is receiving an Intent broadcast.
-        startSensorService(context)
+        when (intent.action) {
+            Intent.ACTION_BOOT_COMPLETED ->
+                startSensorService(context)
+        }
         Log.i(TAG, "started")
     }
 }

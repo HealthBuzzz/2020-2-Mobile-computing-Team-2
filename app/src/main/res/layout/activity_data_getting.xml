@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    tools:context=".DataGettingActivity">
+
+    <Button
+        android:id="@+id/reset"
+        android:onClick="onResetClick"
+        android:layout_width="70dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="150dp"
+        android:textSize="11sp"
+        android:text="@string/reset"
+        android:layout_marginLeft="150dp" />
+
+    <Button
+        android:id="@+id/stop_collecting"
+        android:onClick="onStopClick"
+        android:layout_width="150dp"
+        android:layout_height="80dp"
+        android:textSize="11sp"
+        android:text="@string/stop_collecting" />
+
+    <Button
+        android:id="@+id/running"
+        android:onClick="onMotionClick"
+        android:tag="@string/ondesk"
+        android:layout_width="150dp"
+        android:layout_height="60dp"
+        android:textSize="11sp"
+        android:text="@string/ondesk" />
+
+    <Button
+        android:id="@+id/standing"
+        android:onClick="onMotionClick"
+        android:tag="@string/standing"
+        android:layout_width="150dp"
+        android:layout_height="60dp"
+        android:textSize="11sp"
+        android:text="@string/standing" />
+
+    <Button
+        android:id="@+id/walking"
+        android:onClick="onMotionClick"
+        android:tag="@string/walking"
+        android:layout_width="150dp"
+        android:layout_height="60dp"
+        android:textSize="11sp"
+        android:text="@string/walking" />
+
+    <Button
+        android:id="@+id/save"
+        android:onClick="onSaveClick"
+        android:tag="@string/save"
+        android:layout_width="150dp"
+        android:layout_height="60dp"
+        android:textSize="11sp"
+        android:text="@string/save" />
+
+</LinearLayout>

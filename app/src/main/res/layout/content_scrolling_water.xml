@@ -86,13 +86,22 @@
 
         </LinearLayout>
 
-        <com.github.mikephil.charting.charts.LineChart xmlns:android="http://schemas.android.com/apk/res/android"
+        <com.github.mikephil.charting.charts.LineChart
             android:id="@+id/chart"
             android:layout_width="400dp"
-            android:layout_height="300dp"
+            android:layout_height="296dp"
             android:layout_gravity="center_horizontal|center_vertical"
             android:layout_margin="@dimen/text_margin"
-            android:layout_weight="1" />
+            android:layout_marginBottom="10dp"
+            android:layout_weight="1">
+
+        </com.github.mikephil.charting.charts.LineChart>
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="invisible" />
 
     </LinearLayout>
 
