@@ -48,7 +48,7 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
     private val processor = Processor(windowSize, strideSize)
     private var stop_count = 0
     private var not_stop_count = 0
-    private var last_time_move = System.currentTimeMillis()
+    private var lastTimeMoveSec = System.currentTimeMillis()
 
     private val xAttr = Attribute("x")
     private val yAttr = Attribute("y")
@@ -138,7 +138,7 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
 
         RealtimeModel.stretching_count.observeForever {
             isNotifying = false
-            last_time_move = System.currentTimeMillis()
+            lastTimeMoveSec = System.currentTimeMillis()
         }
 
         sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
@@ -150,7 +150,7 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
 
         sensorManager.registerListener(this, accelerometer, samplingRate)
         sensorManager.registerListener(this, gyroscope, samplingRate)
-        last_time_move = System.currentTimeMillis()
+        lastTimeMoveSec = System.currentTimeMillis()
         return START_STICKY
     }
 
@@ -211,27 +211,26 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
                 if (prediction == 0) {
                     stop_count += 1
                     not_stop_count = 0
-                    val current_time = System.currentTimeMillis()
-                    val time_diff = (current_time - last_time_move) / 1000
+                    val currentTimeSec = System.currentTimeMillis()
+                    val timeDiffSec = (currentTimeSec - lastTimeMoveSec) / 1000
 
-                    Log.d("time_diff", time_diff.toString())
+                    Log.d(TAG, "time_diff$timeDiffSec")
 
                     //bad practice which always read the value
                     val prefs: SharedPreferences =
                         PreferenceManager.getDefaultSharedPreferences(this)
-                    var time_interval_stretch: String =
+                    var timeIntervalStretch: String =
                         prefs.getString("time_interval_stretch", "20") ?: "20"
-                    if (time_interval_stretch.isEmpty())
-                        time_interval_stretch = "20"
-                    Log.d("time_interval_stretch", time_interval_stretch.toString())
+                    if (timeIntervalStretch.isEmpty())
+                        timeIntervalStretch = "20"
+                    Log.d(TAG, "time_interval_stretch$timeIntervalStretch")
 
-                    val left_minutes = Integer.parseInt(time_interval_stretch) - time_diff / 60
+                    val leftSeconds = Integer.parseInt(timeIntervalStretch) * 60 - timeDiffSec
 
 //                    SingleObject.getInstance().stretching_time_left.value = left_minutes
-                    RealtimeModel.stretching_time_left.value = left_minutes
+                    RealtimeModel.stretching_time_left.value = leftSeconds
 
-                    if (0 > left_minutes) {
-//                        TODO("Show notification channel")
+                    if (0 >= leftSeconds) {
                         if (!isNotifying) {
                             val stretchIntent =
                                 Intent(this, StretchBroadcastReceiver::class.java).apply {
@@ -259,7 +258,7 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
                             isNotifying = true
                         }
                         // https://developer.android.com/training/notify-user/build-notification
-                        Log.d(TAG, "You need to move $time_diff")
+                        Log.d(TAG, "You need to move $timeDiffSec")
                         // inferenceResultView.setText("you need to move")
                     } else {
                         isNotifying = false
@@ -272,7 +271,7 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
                     not_stop_count += 1
                     if (not_stop_count >= 3) {
                         stop_count = 0
-                        last_time_move = System.currentTimeMillis()
+                        lastTimeMoveSec = System.currentTimeMillis()
                     }
                     notiBuilder.setContentText("Current status: ${labelList[prediction]}")
                     notiManager.notify(1, notiBuilder.build())
