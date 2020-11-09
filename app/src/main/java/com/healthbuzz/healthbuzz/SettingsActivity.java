@@ -50,6 +50,18 @@ public class SettingsActivity extends AppCompatActivity {
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
+            CheckBoxPreference BlActivityCheckBox=findPreference("goToBlActivity");
+            BlActivityCheckBox.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+
+                    Intent i=new Intent(getContext() , BlActivity.class);
+                    startActivity(i);
+
+                    return false;
+                }
+            });
+
             CheckBoxPreference BlCheckBox=findPreference("smartwatch");
             BluetoothAdapter BlAdapter=BluetoothAdapter.getDefaultAdapter();
             if(BlAdapter.isEnabled()){

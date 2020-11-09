@@ -25,8 +25,6 @@ import android.widget.Toast;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
-import java.util.ArrayList;
-
 public class SelectBlDeviceActivity extends AppCompatActivity {
 
 
@@ -40,36 +38,35 @@ public class SelectBlDeviceActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_bl_device);
+
         listView=(ListView)findViewById(R.id.listView);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Log.w("CYT_LOG" , i+"");
+                Log.w("T_LOG" , i+"");
                 BluetoothDevice device=mDevices.get(i);
                 if(device != null ){
-                    Log.e("CYT_LOG" , "pair start");
+                    Log.e("T_LOG" , "pair start");
                     pairDevice(device);
-                    Log.e("CYT_LOG" , "pair end");
+                    Log.e("T_LOG" , "pair end");
 
                 }
             }
         });
 
-
-
         IntentFilter filter = new IntentFilter();
         filter.addAction(BluetoothDevice.ACTION_FOUND);
         //IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-
         registerReceiver(mReceiver, filter);
+
         checkPermission();
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
-
         mBluetoothAdapter.startDiscovery();
 
     }
+
+
 
 
     @Override
@@ -80,7 +77,7 @@ public class SelectBlDeviceActivity extends AppCompatActivity {
 
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
-            Log.e("Y_LOG" , intent.getAction());
+            Log.e("T_LOG" , intent.getAction());
             String action = intent.getAction();
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 BluetoothDevice device = intent
@@ -88,13 +85,14 @@ public class SelectBlDeviceActivity extends AppCompatActivity {
                 mDeviceList.add(device.getName() + "\n" + device.getAddress());
                 mDevices.add(device);
 
-                Log.i("Y_LOG", device.getName() + "\n" + device.getAddress());
-
+                Log.i("T_LOG", device.getName() + "\n" + device.getAddress());
                 listView.setAdapter(new ArrayAdapter<String>(context,
                         android.R.layout.simple_list_item_1, mDeviceList));
+
             }
         }
     };
+
     private void pairDevice(BluetoothDevice device) {
         try {
             Log.d("pairDevice()", "Start Pairing...");
@@ -125,5 +123,4 @@ public class SelectBlDeviceActivity extends AppCompatActivity {
             checkPermission();
         }
     }
-
 }
