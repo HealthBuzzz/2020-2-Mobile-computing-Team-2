@@ -1,24 +1,24 @@
 package com.healthbuzz.healthbuzz;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.CheckBoxPreference;
 import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.content.Intent;
-import android.util.Log;
-import android.widget.Toast;
-import androidx.annotation.Nullable;
-import androidx.preference.CheckBoxPreference;
-import java.util.Set;
 
+import java.util.Set;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -50,6 +50,9 @@ public class SettingsActivity extends AppCompatActivity {
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
+
+            //BL start
+
             CheckBoxPreference BlActivityCheckBox=findPreference("goToBlActivity");
             BlActivityCheckBox.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
@@ -62,6 +65,7 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             });
 
+
             CheckBoxPreference BlCheckBox=findPreference("smartwatch");
             BluetoothAdapter BlAdapter=BluetoothAdapter.getDefaultAdapter();
             if(BlAdapter.isEnabled()){
@@ -70,11 +74,10 @@ public class SettingsActivity extends AppCompatActivity {
             }else{
                 BlCheckBox.setChecked(false);
             }
-
             BlCheckBox.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                   // BluetoothAdapter BlAdapter=BluetoothAdapter.getDefaultAdapter();
+
                     if(((CheckBoxPreference)preference).isChecked()){
 
                         // check if device supports bluetooth
@@ -83,7 +86,7 @@ public class SettingsActivity extends AppCompatActivity {
                             return false;
                         }
 
-                        // try to enable blurtotth if it is not enabled
+                        // try to enable blurtooth if it is not enabled
                         if(!BlAdapter.isEnabled()){
                             Intent eintent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                             startActivityForResult(eintent, 103);
@@ -100,37 +103,30 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             });
 
+            //BL end
+
             bindSummaryValue(findPreference("time_interval_water"));
             bindSummaryValue(findPreference("time_interval_stretch"));
         }
+
+        // BL2
         @Override
         public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
             super.onActivityResult(requestCode, resultCode, data);
 
             if(requestCode == 103){
                 if(resultCode==0){
-                    Toast.makeText(getContext() , "you need to enable bluetoth to use this functionality" , Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext() , "you need to enable bluetooth to use this functionality" , Toast.LENGTH_LONG).show();
                     ((CheckBoxPreference)findPreference("smartwatch")).setChecked(false);
                 }else{
-                    BluetoothAdapter BlAdapter=BluetoothAdapter.getDefaultAdapter();
-                    Set<BluetoothDevice> pairedDevices = BlAdapter.getBondedDevices();
-                    if (pairedDevices.size() > 0) {
-                        // There are paired devices. Get the name and address of each paired device.
-                        for (BluetoothDevice device : pairedDevices) {
-                            String deviceName = device.getName();
-                            String deviceHardwareAddress = device.getAddress(); // MAC address
-                        }
-                    }
                     // go for device selection
                     Intent i=new Intent(getContext() , SelectBlDeviceActivity.class);
                     startActivity(i);
-
                 }
-                Log.e("Y_LOG" , resultCode+"");
+
             }
 
         }
-
     }
 
     private static void bindSummaryValue(Preference preference) {

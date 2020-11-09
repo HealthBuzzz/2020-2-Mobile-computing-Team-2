@@ -126,12 +126,8 @@ public class BlActivity extends AppCompatActivity {
 
                 List<Node> nodes = Tasks.await(wearableList);
                 for (Node node : nodes) {
-                    Task<Integer> sendMessageTask =
-
-//Send the message//
-
-                            Wearable.getMessageClient(BlActivity.this).sendMessage(node.getId(), path, message.getBytes());
-
+                    //Send the message//
+                    Task<Integer> sendMessageTask = Wearable.getMessageClient(BlActivity.this).sendMessage(node.getId(), path, message.getBytes());
                     try {
 
 //Block on a task and get the result synchronously//
