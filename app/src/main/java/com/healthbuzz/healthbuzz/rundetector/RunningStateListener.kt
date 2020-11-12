@@ -5,4 +5,5 @@ interface RunningStateListener {
     fun onEndRunning()
     fun onSpeedDown()
     fun onSpeedUp()
+    fun onRequirePermission()
 }
