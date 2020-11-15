@@ -75,7 +75,7 @@ class GpsRunDetector @Throws(IllegalStateException::class) constructor(
                 }
                 RunState.RUNNING -> when (state) {
                     RunState.STOPPED -> listener.onStopRunning(state)
-                    RunState.WALKING -> listener.onStopWalking(state)
+                    RunState.WALKING -> listener.onStopRunning(state)
                     RunState.RUNNING -> listener.onStateContinued()
                     else -> return
                 }

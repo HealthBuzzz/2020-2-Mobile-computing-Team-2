@@ -314,27 +314,86 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
     }
 
     override fun onStartWalking() {
-        TODO("Not yet implemented")
+        if (isWalking)
+            return
+        isWalking = true
+        lastTimeWalkSec = System.currentTimeMillis() / 1000
     }
 
     override fun onStopWalking(newState: GpsRunDetector.RunState) {
-        TODO("Not yet implemented")
+        if (!isWalking)
+            return
+        isWalking = false
+        val nowTimeSec = System.currentTimeMillis() / 1000
+        val walkingTime = nowTimeSec - lastTimeWalkSec
+        if (walkingTime >= 1800) {
+            // recommend stretching for walking
+        }
     }
 
     override fun onStartRunning() {
-        TODO("Not yet implemented")
+        if (isRunning)
+            return
+        isRunning = true
+        lastTimeRunSec = System.currentTimeMillis() / 1000
     }
 
     override fun onStopRunning(newState: GpsRunDetector.RunState) {
-        TODO("Not yet implemented")
+        if (!isRunning)
+            return
+        isRunning = false
+        if (newState == GpsRunDetector.RunState.STOPPED)
+            isWalking = false
+        val nowTimeSec = System.currentTimeMillis() / 1000
+        val runningTime = nowTimeSec - lastTimeRunSec
+        if (runningTime >= 1800) {
+            // recommend stretching after running
+        }
     }
 
     override fun onRequirePermission() {
-        TODO("Not yet implemented")
+        // ignore
+        Log.e(TAG, "Why is it called?")
     }
 
     override fun onStateContinued() {
-        TODO("Not yet implemented")
+        // do nothing
+        Log.v(TAG, "onStateContinued")
     }
 
+    fun recommendStretching(type: StretchingType? = null) {
+        val keyword = when (type) {
+            null -> "stretching"
+            StretchingType.COOLING -> "stretching+for+cool+down"
+            StretchingType.AFTER_WALK -> "stretching+after+walking"
+            StretchingType.AFTER_RUN -> "stretching+after+running"
+            StretchingType.AFTER_SITTING -> "stretching+after+sitting+all+day"
+            StretchingType.AFTER_WAKEUP -> "wakeup+stretching"
+        }
+        val url = "https://www.youtube.com/results?search_query=$keyword"
+        if (!isNotifying) {
+            val stretchIntent =
+                Intent(this, StretchBroadcastReceiver::class.java).apply {
+                    action = "ACTION_STRETCH"
+                    putExtra("stretched", true)
+//                                    putExtra(EXTRA_NOTIFICATION_ID, 0)
+                }
+            val snoozePendingIntent: PendingIntent =
+                PendingIntent.getBroadcast(this, 0, stretchIntent, 0)
+            val builder = NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.drawable.stretching)
+                .setContentTitle("You need to stretch now!")
+                .setContentText(url)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setContentIntent(snoozePendingIntent)
+                .addAction(
+                    R.drawable.stretching, "I stretched!",
+                    snoozePendingIntent
+                ).setAutoCancel(true)
+//                            notiBuilder.setContentText("You need to move $time_diff")
+            notiManager.notify(1, builder.build())
+            isNotifying = true
+        }
+
+    }
 }
