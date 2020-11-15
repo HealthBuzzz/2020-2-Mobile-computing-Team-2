@@ -6,4 +6,5 @@ interface RunningStateListener {
     fun onStartRunning()
     fun onStopRunning(newState: GpsRunDetector.RunState)
     fun onRequirePermission()
+    fun onStateContinued()
 }

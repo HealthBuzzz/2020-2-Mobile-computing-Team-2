@@ -19,13 +19,16 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.getSystemService
 import androidx.preference.PreferenceManager
+import com.healthbuzz.healthbuzz.rundetector.GpsRunDetector
+import com.healthbuzz.healthbuzz.rundetector.RunningStateListener
 import weka.classifiers.Classifier
 import weka.core.*
 import java.io.IOException
 import java.util.*
 
 
-class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListener {
+class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListener,
+    RunningStateListener {
     private var ttsInit: Boolean = false
     private val CHANNEL_ID = "HealthBuzzSensorService"
     private val CHANNEL_NAME = "HealthBuzz sensor service"
@@ -41,7 +44,8 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
     private lateinit var gyroscope: Sensor
     private lateinit var accelerometer: Sensor
     private lateinit var sensorManager: SensorManager
-    private var thread: Thread? = null
+
+    private lateinit var runDetector: GpsRunDetector
 
     private val windowSize = 100
     private val strideSize = 20
@@ -49,6 +53,11 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
     private var stop_count = 0
     private var not_stop_count = 0
     private var lastTimeMoveSec = System.currentTimeMillis()
+
+    private var lastTimeWalkSec = System.currentTimeMillis()
+    private var lastTimeRunSec = System.currentTimeMillis()
+    private var isWalking = false
+    private var isRunning = false
 
     private val xAttr = Attribute("x")
     private val yAttr = Attribute("y")
@@ -150,6 +159,8 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
 
         sensorManager.registerListener(this, accelerometer, samplingRate)
         sensorManager.registerListener(this, gyroscope, samplingRate)
+
+        runDetector = GpsRunDetector(this, this)
         lastTimeMoveSec = System.currentTimeMillis()
         return START_STICKY
     }
@@ -300,6 +311,30 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
 
     override fun onInit(status: Int) {
         ttsInit = true
+    }
+
+    override fun onStartWalking() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onStopWalking(newState: GpsRunDetector.RunState) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onStartRunning() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onStopRunning(newState: GpsRunDetector.RunState) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onRequirePermission() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onStateContinued() {
+        TODO("Not yet implemented")
     }
 
 }
