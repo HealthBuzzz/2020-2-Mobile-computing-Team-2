@@ -246,18 +246,22 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
 
                     if (0 >= leftSeconds) {
                         if (!isNotifying) {
-                            if (soundSetting.equals("Buzz")) {
-                                val vibrator: Vibrator =
-                                    getSystemService(VIBRATOR_SERVICE) as Vibrator
-                                vibrator.vibrate(
-                                    VibrationEffect.createOneShot(
-                                        200,
-                                        DEFAULT_AMPLITUDE
-                                    )
-                                ) // 0.5초간 진동
-                            } else if (soundSetting.equals("Sound")) {
-                                val toneGen1 = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
-                                toneGen1.startTone(ToneGenerator.TONE_CDMA_ABBR_ALERT, 300)
+                            val prefs: SharedPreferences =
+                                PreferenceManager.getDefaultSharedPreferences(this)
+                            if (!prefs.getBoolean("n_bother",false)) {
+                                if (soundSetting.equals("Buzz")) {
+                                    val vibrator: Vibrator =
+                                        getSystemService(VIBRATOR_SERVICE) as Vibrator
+                                    vibrator.vibrate(
+                                        VibrationEffect.createOneShot(
+                                            200,
+                                            DEFAULT_AMPLITUDE
+                                        )
+                                    ) // 0.5초간 진동
+                                } else if (soundSetting.equals("Sound")) {
+                                    val toneGen1 = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
+                                    toneGen1.startTone(ToneGenerator.TONE_CDMA_ABBR_ALERT, 300)
+                                }
                             }
                             val stretchIntent =
                                 Intent(this, StretchBroadcastReceiver::class.java).apply {

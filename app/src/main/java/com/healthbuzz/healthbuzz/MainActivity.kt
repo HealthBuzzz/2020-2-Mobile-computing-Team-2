@@ -15,7 +15,6 @@ import com.healthbuzz.healthbuzz.data.LoginDataSource
 import kotlinx.android.synthetic.main.fragment_welcome.*
 
 class MainActivity : AppCompatActivity() {
-
     public var userName : LiveData<String> = MutableLiveData()
     private val requestPermissionLauncher =
         registerForActivityResult(
