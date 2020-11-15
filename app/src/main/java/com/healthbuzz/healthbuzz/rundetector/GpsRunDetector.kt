@@ -59,6 +59,8 @@ class GpsRunDetector @Throws(IllegalStateException::class) constructor(
     override fun onLocationChanged(location: Location) {
         if (location.hasSpeed()) {
             val speed = location.speed
+            Log.d(TAG, "Yay has speed $speed !!!!")
+
             val state = RunState.fromFloat(speed)
             when (prevRunState) {
                 RunState.STOPPED -> when (state) {

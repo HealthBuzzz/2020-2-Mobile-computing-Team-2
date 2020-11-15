@@ -58,6 +58,7 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
     private var lastTimeRunSec = System.currentTimeMillis()
     private var isWalking = false
     private var isRunning = false
+    private var currentRunState: GpsRunDetector.RunState = GpsRunDetector.RunState.STOPPED
 
     private val xAttr = Attribute("x")
     private val yAttr = Attribute("y")
@@ -274,7 +275,7 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
                     } else {
                         isNotifying = false
                         Log.d(TAG, "val:${labelList[prediction]}")
-                        notiBuilder.setContentText("Current status: ${labelList[prediction]}")
+                        notiBuilder.setContentText("Current status: ${labelList[prediction]}, gps: $currentRunState")
                         notiManager.notify(1, notiBuilder.build())
 //                        inferenceResultView.setText(labelList[prediction])
                     }
@@ -314,6 +315,7 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
     }
 
     override fun onStartWalking() {
+        Log.d(TAG, "Start Walking $isWalking")
         if (isWalking)
             return
         isWalking = true
@@ -321,6 +323,7 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
     }
 
     override fun onStopWalking(newState: GpsRunDetector.RunState) {
+        Log.d(TAG, "Stop Walking $isWalking")
         if (!isWalking)
             return
         isWalking = false
@@ -332,6 +335,7 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
     }
 
     override fun onStartRunning() {
+        Log.d(TAG, "Start Running $isRunning")
         if (isRunning)
             return
         isRunning = true
@@ -339,6 +343,7 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
     }
 
     override fun onStopRunning(newState: GpsRunDetector.RunState) {
+        Log.d(TAG, "Stop Running $isRunning")
         if (!isRunning)
             return
         isRunning = false
@@ -356,9 +361,13 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
         Log.e(TAG, "Why is it called?")
     }
 
-    override fun onStateContinued() {
+    override fun onStateContinued(state: GpsRunDetector.RunState) {
+        currentRunState = state
         // do nothing
         Log.v(TAG, "onStateContinued")
+        // notify!
+//        notiBuilder.setContentText("Current status: ${labelList[prediction]}")
+//        notiManager.notify(1, notiBuilder.build())
     }
 
     fun recommendStretching(type: StretchingType? = null) {
