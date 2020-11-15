@@ -10,7 +10,7 @@
 
         <ListPreference
             app:dependency="noBother"
-            app:defaultValue="Buzz"
+            app:defaultValue="1"
             app:entries="@array/sound_entries"
             app:entryValues="@array/sound_values"
             app:key="sound"
