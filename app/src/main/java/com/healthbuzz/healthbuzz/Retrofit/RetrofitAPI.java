@@ -22,7 +22,7 @@ public interface RetrofitAPI{
     Call<User> postSignUp(@Body User user);
 
     @GET("/api/signout/")
-    Call<LoggedInUser> getSignOut();
+    Call<Void> getSignOut();
 
     @GET("/api/waterdata/")
     Call<LoggedInUser> getWaterData();

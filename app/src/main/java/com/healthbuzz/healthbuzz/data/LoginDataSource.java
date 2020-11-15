@@ -18,6 +18,7 @@ import com.healthbuzz.healthbuzz.UserInfo;
 import com.healthbuzz.healthbuzz.data.URL.OurURL;
 import com.healthbuzz.healthbuzz.data.model.LoggedInUser;
 import com.healthbuzz.healthbuzz.data.model.User;
+import com.healthbuzz.healthbuzz.ui.login.LoginActivity;
 
 import org.json.JSONObject;
 
@@ -53,13 +54,13 @@ public class LoginDataSource {
 
         Log.d(TAG,"initMyAPI : " + baseUrl);
 
-
+        /*
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-
-        mMyAPI = retrofit.create(RetrofitAPI.class);
+           */
+        mMyAPI = LoginActivity.retrofit.create(RetrofitAPI.class);
         LoginDataSource.resultFlag = 0;
     }
     public Result<LoggedInUser> login(String email, String password) {
@@ -121,15 +122,16 @@ public class LoginDataSource {
     }
 
     public static void logout() {
-        Call<LoggedInUser> postCall = mMyAPI.getSignOut();
-        postCall.enqueue(new Callback<LoggedInUser>() {
+        Log.d(TAG, "로그아웃 시도1");
+        Call<Void> postCall = mMyAPI.getSignOut();
+        Log.d(TAG, "로그아웃 시도2");
+
+        postCall.enqueue(new Callback<Void>() {
             @Override
-            public void onResponse(Call<LoggedInUser> call, Response<LoggedInUser> response) {
+            public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
                     Log.d(TAG, "로그아웃 완료");
-                    LoggedInUser postResponse = response.body();
-                    assert response.body() != null;
-                    LoginDataSource.userId = response.body().getId();
+                    assert response.body() == null;
                     UserInfo.INSTANCE.getUserName().setValue("");
                 } else {
                     Log.d(TAG, "Status Code : " + response.code());
@@ -141,7 +143,7 @@ public class LoginDataSource {
             }
 
             @Override
-            public void onFailure(Call<LoggedInUser> call, Throwable t) {
+            public void onFailure(Call<Void> call, Throwable t) {
                 Log.d(TAG, "Fail msg : " + t.getMessage());
             }
         });
