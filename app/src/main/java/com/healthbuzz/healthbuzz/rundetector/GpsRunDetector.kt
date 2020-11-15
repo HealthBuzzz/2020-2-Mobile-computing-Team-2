@@ -12,7 +12,7 @@ import androidx.core.content.getSystemService
 import com.healthbuzz.healthbuzz.TAG
 
 
-class RunDetector @Throws(IllegalStateException::class) constructor(
+class GpsRunDetector @Throws(IllegalStateException::class) constructor(
     val context: Context,
     val listener: RunningStateListener
 ) :
@@ -52,7 +52,7 @@ class RunDetector @Throws(IllegalStateException::class) constructor(
         ) {
             throw IllegalStateException("Permission not granted")
         }
-        manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0.0f, this)
+        manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 0.0f, this)
     }
 
 
@@ -60,7 +60,24 @@ class RunDetector @Throws(IllegalStateException::class) constructor(
         if (location.hasSpeed()) {
             val speed = location.speed
             val state = RunState.fromFloat(speed)
-
+            when (prevRunState) {
+                RunState.STOPPED -> when (state) {
+                    RunState.WALKING -> listener.onStartWalking()
+                    RunState.RUNNING -> listener.onStartRunning()
+                    else -> return
+                }
+                RunState.WALKING -> when (state) {
+                    RunState.STOPPED -> listener.onStopWalking(state)
+                    RunState.RUNNING -> listener.onStartRunning()
+                    else -> return
+                }
+                RunState.RUNNING -> when (state) {
+                    RunState.STOPPED -> listener.onStopRunning(state)
+                    RunState.WALKING -> listener.onStopWalking(state)
+                    else -> return
+                }
+                else -> return
+            }
         } else {
             Log.d(TAG, "Nooooooo Pleaseeeeeeee")
         }

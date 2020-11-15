@@ -1,9 +1,9 @@
 package com.healthbuzz.healthbuzz.rundetector
 
 interface RunningStateListener {
+    fun onStartWalking()
+    fun onStopWalking(newState: GpsRunDetector.RunState)
     fun onStartRunning()
-    fun onEndRunning()
-    fun onSpeedDown()
-    fun onSpeedUp()
+    fun onStopRunning(newState: GpsRunDetector.RunState)
     fun onRequirePermission()
 }
