@@ -62,23 +62,24 @@ class GpsRunDetector @Throws(IllegalStateException::class) constructor(
             Log.d(TAG, "Yay has speed $speed !!!!")
 
             val state = RunState.fromFloat(speed)
+            listener.onStateMayUpdate(state)
             when (prevRunState) {
                 RunState.STOPPED -> when (state) {
-                    RunState.STOPPED -> listener.onStateContinued()
+                    RunState.STOPPED -> listener.onStateMayUpdate(state)
                     RunState.WALKING -> listener.onStartWalking()
                     RunState.RUNNING -> listener.onStartRunning()
                     else -> return
                 }
                 RunState.WALKING -> when (state) {
                     RunState.STOPPED -> listener.onStopWalking(state)
-                    RunState.WALKING -> listener.onStateContinued()
+                    RunState.WALKING -> listener.onStateMayUpdate(state)
                     RunState.RUNNING -> listener.onStartRunning()
                     else -> return
                 }
                 RunState.RUNNING -> when (state) {
                     RunState.STOPPED -> listener.onStopRunning(state)
                     RunState.WALKING -> listener.onStopRunning(state)
-                    RunState.RUNNING -> listener.onStateContinued()
+                    RunState.RUNNING -> listener.onStateMayUpdate(state)
                     else -> return
                 }
                 else -> return

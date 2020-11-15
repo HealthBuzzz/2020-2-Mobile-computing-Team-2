@@ -361,7 +361,7 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
         Log.e(TAG, "Why is it called?")
     }
 
-    override fun onStateContinued(state: GpsRunDetector.RunState) {
+    override fun onStateMayUpdate(state: GpsRunDetector.RunState) {
         currentRunState = state
         // do nothing
         Log.v(TAG, "onStateContinued")
