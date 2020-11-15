@@ -24,4 +24,16 @@ public interface RetrofitAPI{
     @GET("/api/signout/")
     Call<LoggedInUser> getSignOut();
 
+    @GET("/api/waterdata/")
+    Call<LoggedInUser> getWaterData();
+
+    @POST("/api/waterdata/")
+    Call<LoggedInUser> postWaterData();
+
+    @GET("/api/stretchingdata/")
+    Call<LoggedInUser> getStretchingData();
+
+    @POST("/api/stretchingdata/")
+    Call<LoggedInUser> postStretchingData();
+
 }

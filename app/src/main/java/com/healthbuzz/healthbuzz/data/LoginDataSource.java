@@ -8,6 +8,9 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.franmontiel.persistentcookiejar.PersistentCookieJar;
+import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
+import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
 import com.healthbuzz.healthbuzz.HTTP.RequestHttpURLConnection;
 import com.healthbuzz.healthbuzz.RealtimeModel;
 import com.healthbuzz.healthbuzz.Retrofit.RetrofitAPI;
@@ -26,6 +29,8 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import okhttp3.CookieJar;
+import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -47,6 +52,8 @@ public class LoginDataSource {
     private void initMyAPI(String baseUrl){
 
         Log.d(TAG,"initMyAPI : " + baseUrl);
+
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -128,6 +135,8 @@ public class LoginDataSource {
                     Log.d(TAG, "Status Code : " + response.code());
                     Log.d(TAG, response.errorBody().toString());
                     Log.d(TAG, call.request().body().toString());
+                    UserInfo.INSTANCE.getUserName().setValue("");
+
                 }
             }
 

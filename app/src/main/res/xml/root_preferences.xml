@@ -11,8 +11,7 @@
             app:entries="@array/sound_entries"
             app:entryValues="@array/sound_values"
             app:key="sound"
-            app:title="Sound setting"
-            app:useSimpleSummaryProvider="true" />
+            app:title="Sound setting" />
 
         <CheckBoxPreference
             app:key="smartwatch"
