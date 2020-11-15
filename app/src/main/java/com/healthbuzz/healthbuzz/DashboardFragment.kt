@@ -17,7 +17,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
-import com.akexorcist.roundcornerprogressbar.IconRoundCornerProgressBar
+import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar
 import com.healthbuzz.healthbuzz.ui.login.LoginActivity
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 import kotlinx.android.synthetic.main.fragment_dashboard.view.*
@@ -88,8 +88,9 @@ class DashboardFragment : Fragment() {
                 } else {
                     getString(R.string.you_need_stretch)
                 }
-            rootView.cardview_layout_stretching.findViewById<IconRoundCornerProgressBar>(R.id.pbCardProgress)
+            rootView.cardview_layout_stretching.findViewById<RoundCornerProgressBar>(R.id.pbCardProgress)
                 .let {
+                    it.secondaryProgress = 0F
                     it.max = stretchIntervalSec.toFloat()
                     it.progress = value.toFloat()
                 }
@@ -103,8 +104,9 @@ class DashboardFragment : Fragment() {
                 } else {
                     getString(R.string.you_need_drink)
                 }
-            rootView.cardview_layout_water.findViewById<IconRoundCornerProgressBar>(R.id.pbCardProgress)
+            rootView.cardview_layout_water.findViewById<RoundCornerProgressBar>(R.id.pbCardProgress)
                 .let {
+                    it.secondaryProgress = 0F
                     it.max = waterIntervalSec.toFloat()
                     it.progress = value.toFloat()
                 }
@@ -124,6 +126,55 @@ class DashboardFragment : Fragment() {
 
 
         with(rootView) {
+            cardview_layout_stretching.findViewById<ConstraintLayout>(R.id.cardview_root)
+                .setBackgroundColor(
+                    ResourcesCompat.getColor(
+                        resources,
+                        R.color.colorStretchingLight,
+                        null
+                    )
+                )
+
+            cardview_layout_water.findViewById<ConstraintLayout>(R.id.cardview_root)
+                .setBackgroundColor(
+                    ResourcesCompat.getColor(
+                        resources,
+                        R.color.colorWaterLight,
+                        null
+                    )
+                )
+
+            cardview_layout_stretching.findViewById<RoundCornerProgressBar>(R.id.pbCardProgress)
+                .apply {
+                    progressBackgroundColor =
+                        ResourcesCompat.getColor(
+                            resources,
+                            R.color.colorStretching,
+                            null
+                        )
+                    progressColor =
+                        ResourcesCompat.getColor(
+                            resources,
+                            R.color.colorStretchingDark,
+                            null
+                        )
+                }
+
+
+            cardview_layout_water.findViewById<RoundCornerProgressBar>(R.id.pbCardProgress).apply {
+                progressBackgroundColor =
+                    ResourcesCompat.getColor(
+                        resources,
+                        R.color.colorWater,
+                        null
+                    )
+                progressColor = ResourcesCompat.getColor(
+                    resources,
+                    R.color.colorWaterDark,
+                    null
+                )
+            }
+
             cardview_layout_stretching.findViewById<ImageView>(R.id.ivCardImage)
                 .setImageDrawable(stretchingDrawable)
             cardview_layout_water.findViewById<ImageView>(R.id.ivCardImage)
