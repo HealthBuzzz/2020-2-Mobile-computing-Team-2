@@ -22,6 +22,6 @@ public interface RetrofitAPI{
     Call<User> postSignUp(@Body User user);
 
     @GET("/api/signout/")
-    Call<List<User>> getSignOut();
+    Call<LoggedInUser> getSignOut();
 
 }
