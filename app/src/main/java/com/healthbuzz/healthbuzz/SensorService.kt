@@ -285,7 +285,7 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
                         stop_count = 0
                         lastTimeMoveSec = System.currentTimeMillis()
                     }
-                    notiBuilder.setContentText("Current status: ${labelList[prediction]}")
+                    notiBuilder.setContentText("Current status: ${labelList[prediction]}, gps: $currentRunState")
                     notiManager.notify(1, notiBuilder.build())
                     Log.d(TAG, "val:${labelList[prediction]}")
 //                    inferenceResultView.setText(labelList[prediction])

@@ -53,6 +53,7 @@ class GpsRunDetector @Throws(IllegalStateException::class) constructor(
             throw IllegalStateException("Permission not granted")
         }
         manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 0.0f, this)
+        manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 0.0f, this)
     }
 
 
