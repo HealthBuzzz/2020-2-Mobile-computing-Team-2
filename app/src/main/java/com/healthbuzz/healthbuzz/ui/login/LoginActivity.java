@@ -22,13 +22,27 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.franmontiel.persistentcookiejar.ClearableCookieJar;
+import com.franmontiel.persistentcookiejar.PersistentCookieJar;
+import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
+import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
 import com.healthbuzz.healthbuzz.R;
+import com.healthbuzz.healthbuzz.data.URL.OurURL;
 import com.healthbuzz.healthbuzz.ui.login.LoginViewModel;
 import com.healthbuzz.healthbuzz.ui.login.LoginViewModelFactory;
+
+import java.net.CookieManager;
+import java.net.CookiePolicy;
+
+import okhttp3.OkHttpClient;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class LoginActivity extends AppCompatActivity {
 
     private LoginViewModel loginViewModel;
+    public static Retrofit retrofit = null;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -102,6 +116,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    makeClient();
                     loginViewModel.login(emailEditText.getText().toString(),
                             passwordEditText.getText().toString());
                 }
@@ -112,6 +127,7 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                makeClient();
                 loadingProgressBar.setVisibility(View.VISIBLE);
                 loginViewModel.login(emailEditText.getText().toString(),
                         passwordEditText.getText().toString());
@@ -123,6 +139,20 @@ public class LoginActivity extends AppCompatActivity {
         String welcome = getString(R.string.welcome) + model.getDisplayName();
         // TODO : initiate successful logged in experience
         Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
+    }
+
+    public void makeClient() {
+        ClearableCookieJar cookieJar = new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(this));
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .cookieJar(cookieJar)
+                .build();
+        if (retrofit==null) {
+            retrofit = new Retrofit.Builder()
+                    .baseUrl(OurURL.ourHome)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .client(okHttpClient)
+                    .build();
+        }
     }
 
     private void showLoginFailed(@StringRes Integer errorString) {

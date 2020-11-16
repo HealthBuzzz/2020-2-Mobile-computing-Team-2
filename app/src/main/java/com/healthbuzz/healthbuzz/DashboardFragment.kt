@@ -245,7 +245,7 @@ class DashboardFragment : Fragment() {
 
             cardview_layout_stretching.findViewById<ConstraintLayout>(R.id.cardview_root)
                 .setOnClickListener {
-                    startActivity(Intent(context, LoginActivity::class.java))
+                    startActivity(Intent(context, StretchingDetailActivity::class.java))
                     //startActivity((Intent(context, LoginActivity::class.java)))
                 }
             cardview_layout_water.findViewById<ConstraintLayout>(R.id.cardview_root)

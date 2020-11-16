@@ -1,7 +1,9 @@
 package com.healthbuzz.healthbuzz;
 
+import android.content.ClipData;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,6 +15,7 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 
 import com.healthbuzz.healthbuzz.data.LoginDataSource;
+import com.healthbuzz.healthbuzz.ui.login.LoginActivity;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -58,6 +61,14 @@ public class WelcomeFragment extends Fragment {
 
     public void onCreateOptionsMenu(@NotNull Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.settings_menu, menu);
+        UserInfo.INSTANCE.getUserName().observe(this, aString -> {
+            MenuItem item = menu.findItem(R.id.login);
+            if(aString.equals("")) {
+                item.setTitle("Login");
+            } else {
+                item.setTitle("Logout");
+            }
+        });
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -74,6 +85,16 @@ public class WelcomeFragment extends Fragment {
         } else if (itemId == R.id.help) {
 //            Toast.makeText(getActivity(), "Go to help page", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(requireActivity(), InferenceActivity.class));
+            return true;
+        } else if (itemId == R.id.login) {
+//            Toast.makeText(getActivity(), "Go to help page", Toast.LENGTH_SHORT).show();
+            // If user wants login
+            if (UserInfo.INSTANCE.getUserName().getValue().equals("")) {
+                startActivity(new Intent(requireActivity(), LoginActivity.class));
+            } else {
+                LoginDataSource.logout();
+            }
+
             return true;
         }
         return super.onOptionsItemSelected(item);
