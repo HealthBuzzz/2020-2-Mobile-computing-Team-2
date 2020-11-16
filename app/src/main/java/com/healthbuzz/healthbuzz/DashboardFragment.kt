@@ -17,6 +17,8 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
+import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar
+import com.healthbuzz.healthbuzz.ui.login.LoginActivity
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 import kotlinx.android.synthetic.main.fragment_dashboard.view.*
 
@@ -59,42 +61,54 @@ class DashboardFragment : Fragment() {
 
         val prefs: SharedPreferences =
             PreferenceManager.getDefaultSharedPreferences(context)
-        var time_interval_stretch: String =
+        var timeIntervalStretchMin: String =
             prefs.getString("time_interval_stretch", "20") ?: "20"
-        if (time_interval_stretch.isEmpty())
-            time_interval_stretch = "20"
+        if (timeIntervalStretchMin.isEmpty())
+            timeIntervalStretchMin = "20"
 
-        var time_interval_water: String =
+        var timeIntervalWaterMin: String =
             prefs.getString("time_interval_water", "20") ?: "20"
-        if (time_interval_water.isEmpty())
-            time_interval_water = "20"
+        if (timeIntervalWaterMin.isEmpty())
+            timeIntervalWaterMin = "20"
 
 
-        val stretch_interval = Integer.parseInt(time_interval_stretch)
-        val water_interval = Integer.parseInt(time_interval_water)
+        val stretchIntervalSec = Integer.parseInt(timeIntervalStretchMin) * 60
+        val waterIntervalSec = Integer.parseInt(timeIntervalWaterMin) * 60
 
-        RealtimeModel.stretching_time_left.value = stretch_interval.toLong()
-        RealtimeModel.water_time_left.value = water_interval.toLong()
+        RealtimeModel.stretching_time_left.value = stretchIntervalSec.toLong()
+        RealtimeModel.water_time_left.value = waterIntervalSec.toLong()
 
 
         RealtimeModel.stretching_time_left.observe(viewLifecycleOwner) { value ->
-            val intValue = value?.toInt() ?: stretch_interval
+            val intValue = value?.toInt() ?: stretchIntervalSec
             Log.e(TAG, "update value $value")
             rootView.cardview_layout_stretching.findViewById<TextView>(R.id.tvCardContent).text =
-                if (intValue >= 0) {
-                    getString(R.string.dashboard_minutes_left, intValue)
+                if (intValue > 0) {
+                    formatTime(requireContext(), intValue)
                 } else {
-                    "You need to stretch now"
+                    getString(R.string.you_need_stretch)
+                }
+            rootView.cardview_layout_stretching.findViewById<RoundCornerProgressBar>(R.id.pbCardProgress)
+                .let {
+                    it.secondaryProgress = 0F
+                    it.max = stretchIntervalSec.toFloat()
+                    it.progress = value.toFloat()
                 }
         }
         RealtimeModel.water_time_left.observe(viewLifecycleOwner) { value ->
-            val intValue = value?.toInt() ?: water_interval
+            val intValue = value?.toInt() ?: waterIntervalSec
             Log.e(TAG, "update value2 $value")
             rootView.cardview_layout_water.findViewById<TextView>(R.id.tvCardContent).text =
-                if (intValue >= 0) {
-                    getString(R.string.dashboard_minutes_left, intValue)
+                if (intValue > 0) {
+                    formatTime(requireContext(), intValue)
                 } else {
-                    "You need to drink water now"
+                    getString(R.string.you_need_drink)
+                }
+            rootView.cardview_layout_water.findViewById<RoundCornerProgressBar>(R.id.pbCardProgress)
+                .let {
+                    it.secondaryProgress = 0F
+                    it.max = waterIntervalSec.toFloat()
+                    it.progress = value.toFloat()
                 }
         }
 
@@ -112,6 +126,55 @@ class DashboardFragment : Fragment() {
 
 
         with(rootView) {
+            cardview_layout_stretching.findViewById<ConstraintLayout>(R.id.cardview_root)
+                .setBackgroundColor(
+                    ResourcesCompat.getColor(
+                        resources,
+                        R.color.colorStretchingLight,
+                        null
+                    )
+                )
+
+            cardview_layout_water.findViewById<ConstraintLayout>(R.id.cardview_root)
+                .setBackgroundColor(
+                    ResourcesCompat.getColor(
+                        resources,
+                        R.color.colorWaterLight,
+                        null
+                    )
+                )
+
+            cardview_layout_stretching.findViewById<RoundCornerProgressBar>(R.id.pbCardProgress)
+                .apply {
+                    progressBackgroundColor =
+                        ResourcesCompat.getColor(
+                            resources,
+                            R.color.colorStretching,
+                            null
+                        )
+                    progressColor =
+                        ResourcesCompat.getColor(
+                            resources,
+                            R.color.colorStretchingDark,
+                            null
+                        )
+                }
+
+
+            cardview_layout_water.findViewById<RoundCornerProgressBar>(R.id.pbCardProgress).apply {
+                progressBackgroundColor =
+                    ResourcesCompat.getColor(
+                        resources,
+                        R.color.colorWater,
+                        null
+                    )
+                progressColor = ResourcesCompat.getColor(
+                    resources,
+                    R.color.colorWaterDark,
+                    null
+                )
+            }
+
             cardview_layout_stretching.findViewById<ImageView>(R.id.ivCardImage)
                 .setImageDrawable(stretchingDrawable)
             cardview_layout_water.findViewById<ImageView>(R.id.ivCardImage)
@@ -121,25 +184,20 @@ class DashboardFragment : Fragment() {
             cardview_layout_water.findViewById<TextView>(R.id.tvCardTitle)
                 .setText(R.string.dashboard_water_title_default)
             cardview_layout_stretching.findViewById<TextView>(R.id.tvCardContent).text =
-                (RealtimeModel.stretching_time_left.value?.toInt() ?: stretch_interval).let {
+                (RealtimeModel.stretching_time_left.value?.toInt() ?: stretchIntervalSec).let {
                     val intVal = it
-                    getString(
-                        R.string.dashboard_minutes_left,
-                        intVal
-                    )
+                    formatTime(context, intVal)
                 }
             cardview_layout_water.findViewById<TextView>(R.id.tvCardContent).text =
-                (RealtimeModel.water_time_left.value?.toInt() ?: water_interval).let {
+                (RealtimeModel.water_time_left.value?.toInt() ?: waterIntervalSec).let {
                     val intVal = it
-                    getString(
-                        R.string.dashboard_minutes_left,
-                        intVal
-                    )
+                    formatTime(context, intVal)
                 }
 
             cardview_layout_stretching.findViewById<ConstraintLayout>(R.id.cardview_root)
                 .setOnClickListener {
-                    startActivity(Intent(context, StretchingDetailActivity::class.java))
+                    startActivity(Intent(context, LoginActivity::class.java))
+                    //startActivity((Intent(context, LoginActivity::class.java)))
                 }
             cardview_layout_water.findViewById<ConstraintLayout>(R.id.cardview_root)
                 .setOnClickListener {
