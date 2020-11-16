@@ -9,9 +9,10 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.os.Binder
-import android.os.Build
-import android.os.IBinder
+import android.media.AudioManager
+import android.media.ToneGenerator
+import android.os.*
+import android.os.VibrationEffect.DEFAULT_AMPLITUDE
 import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.widget.Toast
@@ -79,6 +80,16 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
 
 
     companion object {
+
+        // We need to make this false when user not allow vibrate initially
+
+        var soundSetting = "Buzz"
+
+        @JvmStatic
+        fun setSound(setting: String) {
+            soundSetting = setting
+        }
+
         private const val ONGOING_NOTIFICATION_ID = 1
     }
 
@@ -159,6 +170,7 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
 //        thread?.interrupt()
         sensorManager.unregisterListener(this, accelerometer)
         sensorManager.unregisterListener(this, gyroscope)
+
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -174,6 +186,7 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
         return channelId
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onSensorChanged(event: SensorEvent?) {
         if (event?.sensor == accelerometer) {
             val sample: Instance = DenseInstance(attributes.size)
@@ -194,6 +207,7 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
 //        TODO("Not yet implemented")
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun handleInference(sample: Instance) {
         inferenceSegment.add(sample)
         if (inferenceSegment.size >= windowSize) {
@@ -232,6 +246,23 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
 
                     if (0 >= leftSeconds) {
                         if (!isNotifying) {
+                            val prefs: SharedPreferences =
+                                PreferenceManager.getDefaultSharedPreferences(this)
+                            if (!prefs.getBoolean("n_bother",false)) {
+                                if (soundSetting.equals("Buzz")) {
+                                    val vibrator: Vibrator =
+                                        getSystemService(VIBRATOR_SERVICE) as Vibrator
+                                    vibrator.vibrate(
+                                        VibrationEffect.createOneShot(
+                                            200,
+                                            DEFAULT_AMPLITUDE
+                                        )
+                                    ) // 0.5초간 진동
+                                } else if (soundSetting.equals("Sound")) {
+                                    val toneGen1 = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
+                                    toneGen1.startTone(ToneGenerator.TONE_CDMA_ABBR_ALERT, 300)
+                                }
+                            }
                             val stretchIntent =
                                 Intent(this, StretchBroadcastReceiver::class.java).apply {
                                     action = "ACTION_STRETCH"

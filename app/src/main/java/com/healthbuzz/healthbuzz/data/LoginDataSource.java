@@ -8,6 +8,9 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.franmontiel.persistentcookiejar.PersistentCookieJar;
+import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
+import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
 import com.healthbuzz.healthbuzz.HTTP.RequestHttpURLConnection;
 import com.healthbuzz.healthbuzz.RealtimeModel;
 import com.healthbuzz.healthbuzz.Retrofit.RetrofitAPI;
@@ -15,6 +18,7 @@ import com.healthbuzz.healthbuzz.UserInfo;
 import com.healthbuzz.healthbuzz.data.URL.OurURL;
 import com.healthbuzz.healthbuzz.data.model.LoggedInUser;
 import com.healthbuzz.healthbuzz.data.model.User;
+import com.healthbuzz.healthbuzz.ui.login.LoginActivity;
 
 import org.json.JSONObject;
 
@@ -26,6 +30,8 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import okhttp3.CookieJar;
+import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -38,7 +44,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class LoginDataSource {
     private static final String TAG = "MYAPI";
     private final String BASE_URL = OurURL.ourHome;
-    private RetrofitAPI mMyAPI;
+    public static RetrofitAPI mMyAPI;
     public static int userId = 0;
     public static int resultFlag = 0; // 0 is not yet, 1 is success, 2 is failed
     public static String name = null;
@@ -47,12 +53,14 @@ public class LoginDataSource {
     private void initMyAPI(String baseUrl){
 
         Log.d(TAG,"initMyAPI : " + baseUrl);
+
+        /*
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-
-        mMyAPI = retrofit.create(RetrofitAPI.class);
+           */
+        mMyAPI = LoginActivity.retrofit.create(RetrofitAPI.class);
         LoginDataSource.resultFlag = 0;
     }
     public Result<LoggedInUser> login(String email, String password) {
@@ -113,80 +121,32 @@ public class LoginDataSource {
         }
     }
 
-    public void logout() {
+    public static void logout() {
+        Log.d(TAG, "로그아웃 시도1");
+        Call<Void> postCall = mMyAPI.getSignOut();
+        Log.d(TAG, "로그아웃 시도2");
+
+        postCall.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Log.d(TAG, "로그아웃 완료");
+                    assert response.body() == null;
+                    UserInfo.INSTANCE.getUserName().setValue("");
+                } else {
+                    Log.d(TAG, "Status Code : " + response.code());
+                    Log.d(TAG, response.errorBody().toString());
+                    Log.d(TAG, call.request().body().toString());
+                    UserInfo.INSTANCE.getUserName().setValue("");
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.d(TAG, "Fail msg : " + t.getMessage());
+            }
+        });
         // TODO: revoke authentication
-    }
-    public static String loginPOST(String url, User person){
-        InputStream is = null;
-        String result = "";
-        try {
-            URL urlCon = new URL(url);
-            HttpURLConnection httpCon = (HttpURLConnection)urlCon.openConnection();
-            String json = "";
-            // build jsonObject
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.accumulate("email", person.getEmail());
-            jsonObject.accumulate("password", person.getPassword());
-            // convert JSONObject to JSON to String
-            json = jsonObject.toString();
-            // ** Alternative way to convert Person object to JSON string usin Jackson Lib
-            // ObjectMapper mapper = new ObjectMapper();
-            // json = mapper.writeValueAsString(person);
-            // Set some headers to inform server about the type of the content
-            httpCon.setRequestProperty("Accept", "application/json");
-            httpCon.setRequestProperty("Content-type", "application/json");
-            // OutputStream으로 POST 데이터를 넘겨주겠다는 옵션.
-            httpCon.setDoOutput(true);
-            // InputStream으로 서버로 부터 응답을 받겠다는 옵션.
-            httpCon.setDoInput(true);
-            Log.i("tttt","1");
-            OutputStream os = null;
-            os = httpCon.getOutputStream();
-            Log.i("tttt","2");
-            os.write(json.getBytes("euc-kr"));
-
-            Log.i("tttt","3");
-            os.flush();
-            Log.i("tttt","4");
-            // receive response as inputStream
-            try {
-                is = httpCon.getInputStream();
-                // convert inputstream to string
-                if(is != null)
-                    result = convertInputStreamToString(is);
-                else
-                    result = "Did not work!";
-            }
-            catch (IOException e) {
-                e.printStackTrace();
-            }
-            finally {
-                httpCon.disconnect();
-            }
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-        catch (Exception e) {
-            Log.d("InputStream", e.getLocalizedMessage());
-        }
-        return result;
-    }
-
-    private static String convertInputStreamToString(InputStream is) {
-        //creating an InputStreamReader object
-        InputStreamReader isReader = new InputStreamReader(is);
-        //Creating a BufferedReader object
-        BufferedReader reader = new BufferedReader(isReader);
-        StringBuffer sb = new StringBuffer();
-        String str;
-        try {
-            while ((str = reader.readLine()) != null) {
-                sb.append(str);
-            }
-        } catch(IOException e){
-            Log.i("error","convertInputStreamToString in LoginDataSource error");
-        }
-        return sb.toString();
     }
 }

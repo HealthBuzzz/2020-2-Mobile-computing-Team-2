@@ -2,14 +2,14 @@
 <resources>
     <!-- sound Preference -->
     <string-array name="sound_entries">
-        <item>No sound</item>
+        <item>No</item>
         <item>Buzz</item>
         <item>Sound</item>
     </string-array>
 
     <string-array name="sound_values">
-        <item>No sound</item>
-        <item>Buzz</item>
-        <item>Sound</item>
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
     </string-array>
 </resources>
