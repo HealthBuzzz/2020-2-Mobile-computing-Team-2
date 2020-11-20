@@ -1,3 +1,4 @@
+include ':wear'
 include ':weka'
 include ':app'
 rootProject.name = "HealthBuzz"
