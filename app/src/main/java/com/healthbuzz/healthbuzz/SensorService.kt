@@ -406,6 +406,7 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
         val runningTime = nowTimeSec - lastTimeRunSec
         if (runningTime >= 1800) {
             // recommend stretching after running
+            recommendStretching(StretchingType.AFTER_RUN)
         }
     }
 
