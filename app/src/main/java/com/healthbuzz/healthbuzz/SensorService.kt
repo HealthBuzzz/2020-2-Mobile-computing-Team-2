@@ -316,7 +316,7 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
             Intent(this, StretchBroadcastReceiver::class.java).apply {
                 action = "ACTION_STRETCH"
                 putExtra("stretched", true)
-    //                                    putExtra(EXTRA_NOTIFICATION_ID, 0)
+                //                                    putExtra(EXTRA_NOTIFICATION_ID, 0)
             }
         val snoozePendingIntent: PendingIntent =
             PendingIntent.getBroadcast(this, 0, stretchIntent, 0)

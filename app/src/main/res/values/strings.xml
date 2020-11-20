@@ -8,6 +8,8 @@
     <string name="menu_item1">Settings</string>
     <string name="menu_item2">Debug</string>
     <string name="menu_item3">Help</string>
+    <string name="menu_item4">Debug_Drinking</string>
+    <string name="menu_item5">Debug_Movement</string>
     <string name="ticker_text">HealthBuzz is guarding your health :)</string>
     <string name="title_activity_water_detail">Water Detail</string>
     <string name="title_activity_stretching_detail">Stretching Detail</string>
@@ -16,7 +18,12 @@
     <string name="ondesk">ondesk</string>
     <string name="standing">standing</string>
     <string name="walking">walking</string>
+    <string name="running">running</string>
     <string name="reset">reset</string>
+    <string name="normal">Normal</string>
+    <string name="up">Up</string>
+    <string name="drinking">Drinking</string>
+    <string name="down">Down</string>
     <string name="stop_collecting">stop collecting</string>
     <string name="save">save</string>
 

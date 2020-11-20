@@ -79,7 +79,7 @@ public class SettingsActivity extends AppCompatActivity {
                         RealtimeModel.INSTANCE.getStretching_time_left().postValue((long) intValue * 60);
                         break;
                 }
-            } else if (preference instanceof ListPreference){
+            } else if (preference instanceof ListPreference) {
                 ListPreference listPreference = (ListPreference) preference;
                 int index = listPreference.findIndexOfValue(stringValue);
 
