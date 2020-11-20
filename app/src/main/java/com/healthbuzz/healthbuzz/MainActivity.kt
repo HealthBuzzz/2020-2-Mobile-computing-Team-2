@@ -85,20 +85,22 @@ class MainActivity : AppCompatActivity() {
                 true
             }
 
-        val hasPermission = ContextCompat.checkSelfPermission(
-            applicationContext,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-        ) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
-            applicationContext,
-            Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
+        val hasPermission =
+//            ContextCompat.checkSelfPermission(
+//            applicationContext,
+//            Manifest.permission.WRITE_EXTERNAL_STORAGE
+//        ) == PackageManager.PERMISSION_GRANTED &&
+            ContextCompat.checkSelfPermission(
+                applicationContext,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
 
         if (!hasPermission) {
             // You can directly ask for the permission.
             // The registered ActivityResultCallback gets the result of this request.
-            requestPermissionLauncher.launch(
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            )
+//            requestPermissionLauncher.launch(
+//                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+//            )
             requestPermissionLauncher.launch(
                 Manifest.permission.ACCESS_FINE_LOCATION,
             )
