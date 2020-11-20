@@ -199,7 +199,6 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
         return channelId
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onSensorChanged(event: SensorEvent?) {
         if (event?.sensor == accelerometer) {
             val sample: Instance = DenseInstance(attributes.size)
@@ -258,51 +257,7 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
 
                     if (0 >= leftSeconds) {
                         if (!isNotifying) {
-                            val prefs: SharedPreferences =
-                                PreferenceManager.getDefaultSharedPreferences(this)
-                            if (!prefs.getBoolean("n_bother", false)) {
-                                if (soundSetting == "Buzz") {
-                                    val vibrator: Vibrator =
-                                        getSystemService(VIBRATOR_SERVICE) as Vibrator
-                                    if (Build.VERSION.SDK_INT >= 26) {
-                                        vibrator.vibrate(
-                                            VibrationEffect.createOneShot(
-                                                200,
-                                                DEFAULT_AMPLITUDE
-                                            )
-                                        ) // 0.5초간 진동
-                                    } else {
-                                        vibrator.vibrate(200);
-                                    }
-                                } else if (soundSetting == "Sound") {
-                                    val toneGen1 = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
-                                    toneGen1.startTone(ToneGenerator.TONE_CDMA_ABBR_ALERT, 300)
-                                }
-                            }
-                            val stretchIntent =
-                                Intent(this, StretchBroadcastReceiver::class.java).apply {
-                                    action = "ACTION_STRETCH"
-                                    putExtra("stretched", true)
-//                                    putExtra(EXTRA_NOTIFICATION_ID, 0)
-                                }
-                            val snoozePendingIntent: PendingIntent =
-                                PendingIntent.getBroadcast(this, 0, stretchIntent, 0)
-                            val builder = NotificationCompat.Builder(this, CHANNEL_ID)
-                                .setSmallIcon(R.drawable.stretching)
-                                .setContentTitle("You need to stretch now!")
-                                .setContentText("Happy stretching")
-                                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                                .setContentIntent(snoozePendingIntent)
-                                .addAction(
-                                    R.drawable.stretching, "I stretched!",
-                                    snoozePendingIntent
-                                ).setAutoCancel(true)
-//                            notiBuilder.setContentText("You need to move $time_diff")
-                            notiManager.notify(1, builder.build())
-                            if (ttsInit) {
-
-                            }
-                            isNotifying = true
+                            alarmToStretch()
                         }
                         // https://developer.android.com/training/notify-user/build-notification
                         Log.d(TAG, "You need to move $timeDiffSec")
@@ -310,8 +265,7 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
                     } else {
                         isNotifying = false
                         Log.d(TAG, "val:${labelList[prediction]}")
-                        notiBuilder.setContentText("Current status: ${labelList[prediction]}, gps: $currentRunState")
-                        notiManager.notify(1, notiBuilder.build())
+                        showDebugToNoti(prediction)
 //                        inferenceResultView.setText(labelList[prediction])
                     }
                 } else { // moving!
@@ -320,8 +274,7 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
                         stop_count = 0
                         lastTimeMoveSec = System.currentTimeMillis()
                     }
-                    notiBuilder.setContentText("Current status: ${labelList[prediction]}, gps: $currentRunState")
-                    notiManager.notify(1, notiBuilder.build())
+                    showDebugToNoti(prediction)
                     Log.d(TAG, "val:${labelList[prediction]}")
 //                    inferenceResultView.setText(labelList[prediction])
                 }
@@ -330,6 +283,59 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
                 Toast.makeText(applicationContext, "Inference failed!", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    private fun showDebugToNoti(prediction: Int) {
+        notiBuilder.setContentText("Current status: ${labelList[prediction]}, gps: $currentRunState")
+        notiManager.notify(1, notiBuilder.build())
+    }
+
+    private fun alarmToStretch() {
+        val prefs: SharedPreferences =
+            PreferenceManager.getDefaultSharedPreferences(this)
+        if (!prefs.getBoolean("n_bother", false)) {
+            if (soundSetting == "Buzz") {
+                val vibrator: Vibrator =
+                    getSystemService(VIBRATOR_SERVICE) as Vibrator
+                if (Build.VERSION.SDK_INT >= 26) {
+                    vibrator.vibrate(
+                        VibrationEffect.createOneShot(
+                            200,
+                            DEFAULT_AMPLITUDE
+                        )
+                    ) // 0.5초간 진동
+                } else {
+                    vibrator.vibrate(200);
+                }
+            } else if (soundSetting == "Sound") {
+                val toneGen1 = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
+                toneGen1.startTone(ToneGenerator.TONE_CDMA_ABBR_ALERT, 300)
+            }
+        }
+        val stretchIntent =
+            Intent(this, StretchBroadcastReceiver::class.java).apply {
+                action = "ACTION_STRETCH"
+                putExtra("stretched", true)
+    //                                    putExtra(EXTRA_NOTIFICATION_ID, 0)
+            }
+        val snoozePendingIntent: PendingIntent =
+            PendingIntent.getBroadcast(this, 0, stretchIntent, 0)
+        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setSmallIcon(R.drawable.stretching)
+            .setContentTitle("You need to stretch now!")
+            .setContentText("Happy stretching")
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(snoozePendingIntent)
+            .addAction(
+                R.drawable.stretching, "I stretched!",
+                snoozePendingIntent
+            ).setAutoCancel(true)
+        //                            notiBuilder.setContentText("You need to move $time_diff")
+        notiManager.notify(1, builder.build())
+        if (ttsInit) {
+
+        }
+        isNotifying = true
     }
 
     private fun loadModel(model_name: String) {
