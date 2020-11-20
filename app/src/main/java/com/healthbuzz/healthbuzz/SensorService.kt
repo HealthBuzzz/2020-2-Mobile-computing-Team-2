@@ -173,6 +173,7 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
         sensorManager.registerListener(this, gyroscope, samplingRate)
 
         runDetector = GpsRunDetector(this, this)
+        runDetector.startDetection()
         lastTimeMoveSec = System.currentTimeMillis()
         return START_STICKY
     }
@@ -260,7 +261,7 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
                         if (!isNotifying) {
                             val prefs: SharedPreferences =
                                 PreferenceManager.getDefaultSharedPreferences(this)
-                            if (!prefs.getBoolean("n_bother",false)) {
+                            if (!prefs.getBoolean("n_bother", false)) {
                                 if (soundSetting.equals("Buzz")) {
                                     val vibrator: Vibrator =
                                         getSystemService(VIBRATOR_SERVICE) as Vibrator

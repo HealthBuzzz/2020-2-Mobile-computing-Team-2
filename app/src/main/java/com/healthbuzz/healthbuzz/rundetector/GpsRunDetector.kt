@@ -58,6 +58,7 @@ class GpsRunDetector @Throws(IllegalStateException::class) constructor(
 
 
     override fun onLocationChanged(location: Location) {
+        Log.d(TAG, "onLocation changed $location")
         if (location.hasSpeed()) {
             val speed = location.speed
             Log.d(TAG, "Yay has speed $speed !!!!")
