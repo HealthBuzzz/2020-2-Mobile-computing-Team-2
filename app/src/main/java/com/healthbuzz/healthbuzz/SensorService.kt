@@ -220,7 +220,6 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
 //        TODO("Not yet implemented")
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun handleInference(sample: Instance) {
         inferenceSegment.add(sample)
         if (inferenceSegment.size >= windowSize) {
@@ -262,16 +261,20 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
                             val prefs: SharedPreferences =
                                 PreferenceManager.getDefaultSharedPreferences(this)
                             if (!prefs.getBoolean("n_bother", false)) {
-                                if (soundSetting.equals("Buzz")) {
+                                if (soundSetting == "Buzz") {
                                     val vibrator: Vibrator =
                                         getSystemService(VIBRATOR_SERVICE) as Vibrator
-                                    vibrator.vibrate(
-                                        VibrationEffect.createOneShot(
-                                            200,
-                                            DEFAULT_AMPLITUDE
-                                        )
-                                    ) // 0.5초간 진동
-                                } else if (soundSetting.equals("Sound")) {
+                                    if (Build.VERSION.SDK_INT >= 26) {
+                                        vibrator.vibrate(
+                                            VibrationEffect.createOneShot(
+                                                200,
+                                                DEFAULT_AMPLITUDE
+                                            )
+                                        ) // 0.5초간 진동
+                                    } else {
+                                        vibrator.vibrate(200);
+                                    }
+                                } else if (soundSetting == "Sound") {
                                     val toneGen1 = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
                                     toneGen1.startTone(ToneGenerator.TONE_CDMA_ABBR_ALERT, 300)
                                 }
