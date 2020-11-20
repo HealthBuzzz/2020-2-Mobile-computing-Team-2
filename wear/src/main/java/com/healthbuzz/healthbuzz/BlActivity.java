@@ -31,8 +31,8 @@ public class BlActivity extends WearableActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bl);
-        textView =  findViewById(R.id.text);
-        talkButton =  findViewById(R.id.talkClick);
+        textView = findViewById(R.id.text);
+        talkButton = findViewById(R.id.talkClick);
 
 //Create an OnClickListener//
 

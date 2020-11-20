@@ -7,9 +7,9 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
-  <!-- <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" /> -->
+    <!-- <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" /> -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-  <uses-permission android:name = "android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
 
     <!-- Network using -->
@@ -78,13 +78,16 @@
         <service
             android:name=".BlService"
             android:enabled="true"
-            android:exported="true" >
+            android:exported="true">
 
 
             <intent-filter>
                 <action android:name="com.google.android.gms.wearable.MESSAGE_RECEIVED" />
 
-                <data android:scheme="wear" android:host="*" android:pathPrefix="/my_path" />
+                <data
+                    android:scheme="wear"
+                    android:host="*"
+                    android:pathPrefix="/my_path" />
             </intent-filter>
         </service>
     </application>

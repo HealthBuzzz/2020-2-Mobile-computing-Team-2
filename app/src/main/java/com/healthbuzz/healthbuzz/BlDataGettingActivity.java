@@ -91,7 +91,7 @@ public class BlDataGettingActivity extends AppCompatActivity {
 //Upon receiving each message from the wearable, display the following text//
 
             String message = "I just received a message from the wearable " + receivedMessageNumber++;
-            message=intent.getStringExtra("message" );
+            message = intent.getStringExtra("message");
 
             textview.setText(message);
 
@@ -101,8 +101,8 @@ public class BlDataGettingActivity extends AppCompatActivity {
     EditText et;
 
     public void talkClick(View v) {
-        et=(EditText) findViewById(R.id.editText);
-        String message =et.getText().toString(); //"Sending message.... ";
+        et = (EditText) findViewById(R.id.editText);
+        String message = et.getText().toString(); //"Sending message.... ";
         textview.setText(message);
 
 //Sending a message can block the main UI thread, so use a new thread//
@@ -111,7 +111,7 @@ public class BlDataGettingActivity extends AppCompatActivity {
 
     }
 
-    public void sendMessageOnclick(View v){
+    public void sendMessageOnclick(View v) {
         switch (v.getId()) {
             case R.id.btn_normal:
                 new NewThread("/my_path", "_ondesk").start();
@@ -119,29 +119,29 @@ public class BlDataGettingActivity extends AppCompatActivity {
             case R.id.btn_standing:
                 new NewThread("/my_path", "_standing").start();
                 break;
-            case  R.id.btn_drinking:
+            case R.id.btn_drinking:
                 new NewThread("/my_path", "_walking").start();
                 break;
-            case  R.id.btn_stop:
+            case R.id.btn_stop:
                 new NewThread("/my_path", "_stop").start();
                 break;
-            case  R.id.btn_save:
+            case R.id.btn_save:
                 new NewThread("/my_path", "_stop").start();
                 //save BlService.output to file
                 saveToFile(BlService.output);
                 break;
-            case  R.id.btn_rest:
+            case R.id.btn_rest:
                 new NewThread("/my_path", "_stop").start();
                 //clear all from BlService.output
                 BlService.output.clear();
-                Log.e("CYT_LOG" , BlService.output.size()+"");
+                Log.e("CYT_LOG", BlService.output.size() + "");
                 break;
         }
 
 
     }
 
-    public void saveToFile(LinkedList<String[]> output){
+    public void saveToFile(LinkedList<String[]> output) {
 
         String filename = new SimpleDateFormat("'SensorData'yyyyMMddHHmm'_W.csv'", Locale.KOREA).format(new Date());
 

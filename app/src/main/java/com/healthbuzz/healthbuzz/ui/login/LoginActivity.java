@@ -1,16 +1,7 @@
 package com.healthbuzz.healthbuzz.ui.login;
 
 import android.app.Activity;
-
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
-
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -22,17 +13,18 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+
 import com.franmontiel.persistentcookiejar.ClearableCookieJar;
 import com.franmontiel.persistentcookiejar.PersistentCookieJar;
 import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
 import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
 import com.healthbuzz.healthbuzz.R;
 import com.healthbuzz.healthbuzz.data.URL.OurURL;
-import com.healthbuzz.healthbuzz.ui.login.LoginViewModel;
-import com.healthbuzz.healthbuzz.ui.login.LoginViewModelFactory;
-
-import java.net.CookieManager;
-import java.net.CookiePolicy;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
@@ -146,7 +138,7 @@ public class LoginActivity extends AppCompatActivity {
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .cookieJar(cookieJar)
                 .build();
-        if (retrofit==null) {
+        if (retrofit == null) {
             retrofit = new Retrofit.Builder()
                     .baseUrl(OurURL.ourHome)
                     .addConverterFactory(GsonConverterFactory.create())
