@@ -316,10 +316,18 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
             Intent(this, StretchBroadcastReceiver::class.java).apply {
                 action = "ACTION_STRETCH"
                 putExtra("stretched", true)
-    //                                    putExtra(EXTRA_NOTIFICATION_ID, 0)
+                //                                    putExtra(EXTRA_NOTIFICATION_ID, 0)
             }
+        val notStretchIntent = Intent(
+            this, StretchBroadcastReceiver::class.java
+        ).apply {
+            action = "ACTION_STRETCH"
+            putExtra("stretched", false)
+        }
         val snoozePendingIntent: PendingIntent =
             PendingIntent.getBroadcast(this, 0, stretchIntent, 0)
+        val snoozePendingIntent2: PendingIntent =
+            PendingIntent.getBroadcast(this, 0, notStretchIntent, 0)
         val builder = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.stretching)
             .setContentTitle("You need to stretch now!")
@@ -327,9 +335,13 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setContentIntent(snoozePendingIntent)
             .addAction(
-                R.drawable.stretching, "I stretched!",
+                R.drawable.stretching, "I will stretch now!",
                 snoozePendingIntent
-            ).setAutoCancel(true)
+            ).addAction(
+                R.drawable.icon, "later",
+                snoozePendingIntent2
+            )
+            .setAutoCancel(true)
         //                            notiBuilder.setContentText("You need to move $time_diff")
         notiManager.notify(1, builder.build())
         if (ttsInit) {
