@@ -2,6 +2,7 @@ package com.healthbuzz.healthbuzz;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -11,6 +12,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.healthbuzz.healthbuzz.data.LoginDataSource;
@@ -56,6 +59,13 @@ public class WelcomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
+        return inflater.inflate(R.layout.fragment_welcome, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
         ImageView manView = getView().findViewById(R.id.man);
         ImageView treeView = getView().findViewById(R.id.tree);
         RealtimeModel.INSTANCE.getStretching_count().observe(getViewLifecycleOwner(), stretching_count -> {
@@ -77,7 +87,7 @@ public class WelcomeFragment extends Fragment {
                     manView.setImageResource(R.drawable.man3);
                     break;
                 default:
-                    throw new IllegalStateException();
+                    //throw new IllegalStateException();
             }
         });
         RealtimeModel.INSTANCE.getWater_count().observe(getViewLifecycleOwner(), water_count -> {
@@ -97,11 +107,9 @@ public class WelcomeFragment extends Fragment {
                     treeView.setImageResource(R.drawable.tree3);
                     break;
                 default:
-                    throw new IllegalStateException();
+                    //throw new IllegalStateException();
             }
         });
-
-        return inflater.inflate(R.layout.fragment_welcome, container, false);
     }
 
     public void onCreateOptionsMenu(@NotNull Menu menu, MenuInflater inflater) {
