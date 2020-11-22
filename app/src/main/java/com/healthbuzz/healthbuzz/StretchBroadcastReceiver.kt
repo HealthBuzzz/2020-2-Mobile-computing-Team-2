@@ -12,9 +12,13 @@ class StretchBroadcastReceiver : BroadcastReceiver() {
         val action = intent.action
         Log.d(TAG, "Action:$action")
         if ("ACTION_STRETCH" == action) {
-            RealtimeModel.stretching_count.postValue(
-                (RealtimeModel.stretching_count.value?.toLong() ?: 0) + 1
-            ) // add 1
+            val willStretchNow = intent.getBooleanExtra("stretched", false)
+            if (willStretchNow) {
+                showYoutubeSearch(context, SearchKeywords.office)
+                RealtimeModel.stretching_count.postValue(
+                    (RealtimeModel.stretching_count.value?.toLong() ?: 0) + 1
+                ) // add 1
+            }
         }
     }
 }
