@@ -52,6 +52,7 @@ public class WelcomeFragment extends Fragment {
             TextView userView = (TextView) getView().findViewById(R.id.textView2);
             userView.setText(aString);
         });
+
     }
 
     @Override

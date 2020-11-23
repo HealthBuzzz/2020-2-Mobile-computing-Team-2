@@ -2,14 +2,20 @@ package com.healthbuzz.healthbuzz.data;
 
 import android.util.Log;
 
+import com.healthbuzz.healthbuzz.RealtimeModel;
 import com.healthbuzz.healthbuzz.Retrofit.RetrofitAPI;
 import com.healthbuzz.healthbuzz.UserInfo;
 import com.healthbuzz.healthbuzz.data.URL.OurURL;
 import com.healthbuzz.healthbuzz.data.model.LoggedInUser;
+import com.healthbuzz.healthbuzz.data.model.TodayData;
+import com.healthbuzz.healthbuzz.data.model.TodayStretching;
 import com.healthbuzz.healthbuzz.data.model.User;
 import com.healthbuzz.healthbuzz.ui.login.LoginActivity;
 
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -72,21 +78,6 @@ public class LoginDataSource {
 
             }
         });
-        /* This is sync but should be executed in background so i used async.
-        try {
-            Response<LoggedInUser> response = postCall.execute();
-            if(response.code() == 200)
-                resultFlag = 1;
-            else
-                resultFlag = 2;
-            LoggedInUser myUser = response.body();
-            LoginDataSource.userId = myUser.getId();
-            LoginDataSource.name = myUser.getDisplayName();
-        } catch (IOException e){
-            Log.d(TAG, "postCall execute failed");
-            resultFlag = 2;
-        }*/
-
         Log.d(TAG, "I need static set");
         LoggedInUser myUser =
                 new LoggedInUser(
@@ -125,6 +116,73 @@ public class LoginDataSource {
                 Log.d(TAG, "Fail msg : " + t.getMessage());
             }
         });
-        // TODO: revoke authentication
+    }
+    public static void getTodayData() {
+        Log.d(TAG, "get TodayData Trial");
+        Call<TodayData> postCall = mMyAPI.getTodayData();
+        Log.d(TAG, "로그아웃 시도2");
+
+        postCall.enqueue(new Callback<TodayData>() {
+            @Override
+            public void onResponse(Call<TodayData> call, Response<TodayData> response) {
+                if (response.isSuccessful()) {
+                    Log.d(TAG, "getTodayData 완료");
+                    TodayData responseData = response.body();
+                    RealtimeModel.INSTANCE.getStretching_count()
+                            .setValue(new Long(responseData.getToday_stretching_count()));
+                    RealtimeModel.INSTANCE.getWater_count()
+                            .setValue(new Long(responseData.getToday_water_count()));
+                    RealtimeModel.INSTANCE.getRanking()
+                            .setValue(new Long(responseData.getToday_ranking()));
+                    Log.d(TAG, "getTodayData 완료2");
+                } else {
+                    Log.d(TAG, "Status Code : " + response.code());
+                    Log.d(TAG, response.errorBody().toString());
+                    Log.d(TAG, call.request().body().toString());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<TodayData> call, Throwable t) {
+                Log.d(TAG, "Fail msg : " + t.getMessage());
+            }
+        });
+    }
+    public static void postTodayStretching() {
+        Log.d(TAG, "get TodayStretching Trial");
+        Date date = new Date();   // given date
+        Calendar calendar = GregorianCalendar.getInstance(); // creates a new calendar instance
+        calendar.setTime(date);   // assigns calendar to given date
+        int hour = calendar.get(Calendar.HOUR_OF_DAY); // gets hour in 24h format
+        int minute =calendar.get(Calendar.MINUTE);
+
+        TodayStretching todayStretching = new TodayStretching(hour,minute);
+        Call<TodayData> postCall = mMyAPI.postTodayStretching(todayStretching);
+
+        postCall.enqueue(new Callback<TodayData>() {
+            @Override
+            public void onResponse(Call<TodayData> call, Response<TodayData> response) {
+                if (response.isSuccessful()) {
+                    Log.d(TAG, "getTodayStretching 완료");
+                    TodayData responseData = response.body();
+                    RealtimeModel.INSTANCE.getStretching_count()
+                            .setValue(new Long(responseData.getToday_stretching_count()));
+                    RealtimeModel.INSTANCE.getWater_count()
+                            .setValue(new Long(responseData.getToday_water_count()));
+                    RealtimeModel.INSTANCE.getRanking()
+                            .setValue(new Long(responseData.getToday_ranking()));
+                    Log.d(TAG, "getTodayStretching 완료2");
+                } else {
+                    Log.d(TAG, "Status Code : " + response.code());
+                    Log.d(TAG, response.errorBody().toString());
+                    Log.d(TAG, call.request().body().toString());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<TodayData> call, Throwable t) {
+                Log.d(TAG, "Fail msg : " + t.getMessage());
+            }
+        });
     }
 }

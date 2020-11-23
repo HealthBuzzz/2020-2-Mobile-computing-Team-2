@@ -4,6 +4,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import com.healthbuzz.healthbuzz.UserInfo.userName
+import com.healthbuzz.healthbuzz.data.LoginDataSource
 
 class StretchBroadcastReceiver : BroadcastReceiver() {
 
@@ -18,6 +20,9 @@ class StretchBroadcastReceiver : BroadcastReceiver() {
                 RealtimeModel.stretching_count.postValue(
                     (RealtimeModel.stretching_count.value?.toLong() ?: 0) + 1
                 ) // add 1
+                if(!userName.getValue().equals("")) {
+                    LoginDataSource.postTodayStretching()
+                }
             }
         }
     }

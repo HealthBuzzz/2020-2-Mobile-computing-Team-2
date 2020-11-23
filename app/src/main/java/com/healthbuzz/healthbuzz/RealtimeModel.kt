@@ -16,13 +16,8 @@ object RealtimeModel {
     val water_count = MutableLiveData<Long>().also {
         it.value = 0
     }
-
-    val run_time_left = MutableLiveData<Long>().also {
-        it.value = 1200
-    }
-
-    val run_stretching_count = MutableLiveData<Long>().also {
-        it.value = 0
+    val ranking = MutableLiveData<Long>().also {
+        it.value = 100
     }
 }
 

@@ -18,6 +18,11 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar
+import com.healthbuzz.healthbuzz.RealtimeModel.ranking
+
+
+import com.healthbuzz.healthbuzz.UserInfo.userName
+import com.healthbuzz.healthbuzz.data.LoginDataSource
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 import kotlinx.android.synthetic.main.fragment_dashboard.view.*
 
@@ -56,7 +61,7 @@ class DashboardFragment : Fragment() {
         val rootView = inflater.inflate(R.layout.fragment_dashboard, container, false)
         val stretchingDrawable = ResourcesCompat.getDrawable(resources, R.drawable.stretching, null)
         val waterDrawable = ResourcesCompat.getDrawable(resources, R.drawable.drink_water, null)
-//        val runDrawable = ResourcesCompat.getDrawable(resources, R.drawable.run, null)
+        val rankingDrawable = ResourcesCompat.getDrawable(resources, R.drawable.run, null)
 
         val prefs: SharedPreferences =
             PreferenceManager.getDefaultSharedPreferences(context)
@@ -70,20 +75,12 @@ class DashboardFragment : Fragment() {
         if (timeIntervalWaterMin.isEmpty())
             timeIntervalWaterMin = "20"
 
-//        var timeIntervalRunMin: String =
-//            prefs.getString("time_interval_run", "20") ?: "20"
-//        if (timeIntervalRunMin.isEmpty())
-//            timeIntervalRunMin = "20"
-
-
         val stretchIntervalSec = Integer.parseInt(timeIntervalStretchMin) * 60
         val waterIntervalSec = Integer.parseInt(timeIntervalWaterMin) * 60
-//        val runIntervalSec = Integer.parseInt(timeIntervalRunMin) * 60
 
 
         RealtimeModel.stretching_time_left.value = stretchIntervalSec.toLong()
         RealtimeModel.water_time_left.value = waterIntervalSec.toLong()
-//        RealtimeModel.run_time_left.value = runIntervalSec.toLong()
 
 
         RealtimeModel.stretching_time_left.observe(viewLifecycleOwner) { value ->
@@ -119,23 +116,23 @@ class DashboardFragment : Fragment() {
                     it.progress = value.toFloat()
                 }
         }
-
-//        RealtimeModel.run_time_left.observe(viewLifecycleOwner) { value ->
-//            val intValue = value?.toInt() ?: runIntervalSec
-//            Log.e(TAG, "update value3 $value")
-//            rootView.cardview_layout_running.findViewById<TextView>(R.id.tvCardContent).text =
-//                if (intValue > 0) {
-//                    formatTime(requireContext(), intValue)
-//                } else {
-//                    getString(R.string.you_need_run)
-//                }
-//            rootView.cardview_layout_running.findViewById<RoundCornerProgressBar>(R.id.pbCardProgress)
-//                .let {
-//                    it.secondaryProgress = 0F
-//                    it.max = waterIntervalSec.toFloat()
-//                    it.progress = value.toFloat()
-//                }
-//        }
+        /*
+        RealtimeModel.run_time_left.observe(viewLifecycleOwner) { value ->
+            val intValue = value?.toInt() ?: runIntervalSec
+            Log.e(TAG, "update value3 $value")
+            rootView.cardview_layout_running.findViewById<TextView>(R.id.tvCardContent).text =
+                if (intValue > 0) {
+                    formatTime(requireContext(), intValue)
+                } else {
+                    getString(R.string.you_need_run)
+                }
+            rootView.cardview_layout_running.findViewById<RoundCornerProgressBar>(R.id.pbCardProgress)
+                .let {
+                    it.secondaryProgress = 0F
+                    it.max = waterIntervalSec.toFloat()
+                    it.progress = value.toFloat()
+                }
+        }*/
 
         with(rootView) {
             cardview_layout_stretching.findViewById<ConstraintLayout>(R.id.cardview_root)
@@ -156,14 +153,14 @@ class DashboardFragment : Fragment() {
                     )
                 )
 
-//            cardview_layout_running.findViewById<ConstraintLayout>(R.id.cardview_root)
-//                .setBackgroundColor(
-//                    ResourcesCompat.getColor(
-//                        resources,
-//                        R.color.colorRunLight,
-//                        null
-//                    )
-//                )
+            cardview_layout_community.findViewById<ConstraintLayout>(R.id.cardview_root)
+                .setBackgroundColor(
+                    ResourcesCompat.getColor(
+                        resources,
+                        R.color.colorRunLight,
+                        null
+                    )
+                )
 
             cardview_layout_stretching.findViewById<RoundCornerProgressBar>(R.id.pbCardProgress)
                 .apply {
@@ -196,34 +193,20 @@ class DashboardFragment : Fragment() {
                     )
                 }
 
-//            cardview_layout_running.findViewById<RoundCornerProgressBar>(R.id.pbCardProgress)
-//                .apply {
-//                    progressBackgroundColor =
-//                        ResourcesCompat.getColor(
-//                            resources,
-//                            R.color.colorRun,
-//                            null
-//                        )
-//                    progressColor = ResourcesCompat.getColor(
-//                        resources,
-//                        R.color.colorRunDark,
-//                        null
-//                    )
-//                }
 
             cardview_layout_stretching.findViewById<ImageView>(R.id.ivCardImage)
                 .setImageDrawable(stretchingDrawable)
             cardview_layout_water.findViewById<ImageView>(R.id.ivCardImage)
                 .setImageDrawable(waterDrawable)
-//            cardview_layout_running.findViewById<ImageView>(R.id.ivCardImage)
-//                .setImageDrawable(runDrawable)
+            cardview_layout_community.findViewById<ImageView>(R.id.ivCardImage)
+                .setImageDrawable(rankingDrawable)
 
             cardview_layout_stretching.findViewById<TextView>(R.id.tvCardTitle)
                 .setText(R.string.dashboard_stretching_title_default)
             cardview_layout_water.findViewById<TextView>(R.id.tvCardTitle)
                 .setText(R.string.dashboard_water_title_default)
-//            cardview_layout_running.findViewById<TextView>(R.id.tvCardTitle)
-//                .setText(R.string.dashboard_run_title_default)
+            cardview_layout_community.findViewById<TextView>(R.id.tvCardTitle)
+                .setText(R.string.dashboard_community_title)
 
             cardview_layout_stretching.findViewById<TextView>(R.id.tvCardContent).text =
                 (RealtimeModel.stretching_time_left.value?.toInt() ?: stretchIntervalSec).let {
@@ -235,17 +218,10 @@ class DashboardFragment : Fragment() {
                     val intVal = it
                     formatTime(context, intVal)
                 }
-//            cardview_layout_running.findViewById<TextView>(R.id.tvCardContent).text =
-//                (RealtimeModel.run_time_left.value?.toInt() ?: runIntervalSec).let {
-//                    val intVal = it
-//                    formatTime(context, intVal)
-//                }
-
 
             cardview_layout_stretching.findViewById<ConstraintLayout>(R.id.cardview_root)
                 .setOnClickListener {
                     startActivity(Intent(context, StretchingDetailActivity::class.java))
-                    //startActivity((Intent(context, LoginActivity::class.java)))
                 }
             cardview_layout_water.findViewById<ConstraintLayout>(R.id.cardview_root)
                 .setOnClickListener {
@@ -275,21 +251,17 @@ class DashboardFragment : Fragment() {
                     editor.putBoolean("sync2", checked)
                     editor.apply()
                 }
-
-//            cardview_layout_running.findViewById<SwitchCompat>(R.id.swCardEnable)
-//                .apply {
-//                    isChecked = prefs.getBoolean("sync3", true)
-//                }
-//                .setOnCheckedChangeListener { buttonView, checked ->
-//                    disableEnableControls(checked, cardview_layout_running as ViewGroup)
-//                    buttonView.isEnabled = true
-//                    val editor = prefs.edit()
-//                    editor.putBoolean("sync3", checked)
-//                    editor.apply()
-//                }
         }
 
         return rootView
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        ranking.observe(viewLifecycleOwner, { aLong: Long? ->
+            val rankingView = requireView().findViewById<TextView>(R.id.ranking)
+            rankingView.setText("TOP $aLong% Healther")
+        })
     }
 
     override fun onResume() {
@@ -305,11 +277,8 @@ class DashboardFragment : Fragment() {
             .apply {
                 isChecked = prefs.getBoolean("sync", true)
             }
-//        cardview_layout_running.findViewById<SwitchCompat>(R.id.swCardEnable)
-//            .apply {
-//                isChecked = prefs.getBoolean("sync3", true)
-//            }
-
-
+        if(!userName.getValue().equals("")) {
+            LoginDataSource.getTodayData()
+        }
     }
 }

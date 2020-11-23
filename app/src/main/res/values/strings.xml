@@ -45,4 +45,6 @@
     <string name="debug_movement">debug_movement</string>
 
     <string name="running">running</string>
+
+    <string name="dashboard_community_title">Compare with Your Community!</string>
 </resources>
