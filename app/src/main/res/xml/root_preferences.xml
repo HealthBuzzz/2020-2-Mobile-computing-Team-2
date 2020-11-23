@@ -1,18 +1,20 @@
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory app:title="General">
 
         <SwitchPreferenceCompat
-            app:key="n_bother"
+            app:key="noBother"
+            android:disableDependentsState="true"
             app:title="Don't bother" />
 
         <ListPreference
-            app:defaultValue="Buzz"
+            app:dependency="noBother"
+            app:defaultValue="1"
             app:entries="@array/sound_entries"
             app:entryValues="@array/sound_values"
             app:key="sound"
-            app:title="Sound setting"
-            app:useSimpleSummaryProvider="true" />
+            app:title="Sound setting" />
 
         <CheckBoxPreference
             app:key="smartwatch"

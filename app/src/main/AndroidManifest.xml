@@ -2,11 +2,21 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.healthbuzz.healthbuzz">
 
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
-<!--    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />-->
+<!--        <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />-->
+     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <!-- <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" /> -->
+
+
+
     <!-- Network using -->
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -24,9 +34,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+        <activity android:name=".MovementDataGettingActivity"></activity>
+        <activity android:name=".DrinkingDataGettingActivity" />
+
         <activity
             android:name=".ui.login.LoginActivity"
-            android:label="@string/title_activity_login"/>
+            android:label="@string/title_activity_login" />
+
         <receiver
             android:name=".StretchBroadcastReceiver"
             android:enabled="true"
@@ -65,6 +79,22 @@
         <activity android:name=".StretchingDetailActivity" />
         <activity android:name=".WaterDetailActivity" />
         <activity android:name=".DataGettingActivity" />
+
+        <service
+            android:name=".BlService"
+            android:enabled="true"
+            android:exported="true">
+
+
+            <intent-filter>
+                <action android:name="com.google.android.gms.wearable.MESSAGE_RECEIVED" />
+
+                <data
+                    android:scheme="wear"
+                    android:host="*"
+                    android:pathPrefix="/my_path" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

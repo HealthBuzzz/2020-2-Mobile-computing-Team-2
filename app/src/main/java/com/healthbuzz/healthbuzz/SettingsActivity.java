@@ -7,11 +7,15 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.EditTextPreference;
+import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
+import androidx.preference.SwitchPreference;
 
 public class SettingsActivity extends AppCompatActivity {
+
+    public SwitchPreference noBotherPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +30,7 @@ public class SettingsActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+
     }
 
     @Override
@@ -44,6 +49,7 @@ public class SettingsActivity extends AppCompatActivity {
 
             bindSummaryValue(findPreference("time_interval_water"));
             bindSummaryValue(findPreference("time_interval_stretch"));
+            bindSummaryValue(findPreference("sound"));
         }
     }
 
@@ -73,8 +79,26 @@ public class SettingsActivity extends AppCompatActivity {
                         RealtimeModel.INSTANCE.getStretching_time_left().postValue((long) intValue * 60);
                         break;
                 }
+            } else if (preference instanceof ListPreference) {
+                ListPreference listPreference = (ListPreference) preference;
+                int index = listPreference.findIndexOfValue(stringValue);
+
+                switch (index) {
+                    case 0:
+                        SensorService.setSound("No Sound");
+                        break;
+                    case 1:
+                        SensorService.setSound("Buzz");
+                        break;
+                    case 2:
+                        SensorService.setSound("Sound");
+                        break;
+                }
+                preference
+                        .setSummary(index >= 0 ? listPreference.getEntries()[index]
+                                : null);
             }
-            return false;
+            return true;
         }
     };
 }

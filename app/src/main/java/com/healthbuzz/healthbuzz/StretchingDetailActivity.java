@@ -42,7 +42,8 @@ class stretchingMonth {
             dayQuantityPairs.add(new Pair(day[i], quantity[i]));
         }
     }
-    int getYear(){
+
+    int getYear() {
         return year;
     }
 }

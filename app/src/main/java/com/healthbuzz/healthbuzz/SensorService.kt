@@ -9,9 +9,10 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.os.Binder
-import android.os.Build
-import android.os.IBinder
+import android.media.AudioManager
+import android.media.ToneGenerator
+import android.os.*
+import android.os.VibrationEffect.DEFAULT_AMPLITUDE
 import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.widget.Toast
@@ -19,13 +20,16 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.getSystemService
 import androidx.preference.PreferenceManager
+import com.healthbuzz.healthbuzz.rundetector.GpsRunDetector
+import com.healthbuzz.healthbuzz.rundetector.RunningStateListener
 import weka.classifiers.Classifier
 import weka.core.*
 import java.io.IOException
 import java.util.*
 
 
-class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListener {
+class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListener,
+    RunningStateListener {
     private var ttsInit: Boolean = false
     private val CHANNEL_ID = "HealthBuzzSensorService"
     private val CHANNEL_NAME = "HealthBuzz sensor service"
@@ -41,7 +45,8 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
     private lateinit var gyroscope: Sensor
     private lateinit var accelerometer: Sensor
     private lateinit var sensorManager: SensorManager
-    private var thread: Thread? = null
+
+    private lateinit var runDetector: GpsRunDetector
 
     private val windowSize = 100
     private val strideSize = 20
@@ -49,6 +54,12 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
     private var stop_count = 0
     private var not_stop_count = 0
     private var lastTimeMoveSec = System.currentTimeMillis()
+
+    private var lastTimeWalkSec = System.currentTimeMillis()
+    private var lastTimeRunSec = System.currentTimeMillis()
+    private var isWalking = false
+    private var isRunning = false
+    private var currentRunState: GpsRunDetector.RunState = GpsRunDetector.RunState.STOPPED
 
     private val xAttr = Attribute("x")
     private val yAttr = Attribute("y")
@@ -79,6 +90,16 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
 
 
     companion object {
+
+        // We need to make this false when user not allow vibrate initially
+
+        var soundSetting = "Buzz"
+
+        @JvmStatic
+        fun setSound(setting: String) {
+            soundSetting = setting
+        }
+
         private const val ONGOING_NOTIFICATION_ID = 1
     }
 
@@ -150,6 +171,9 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
 
         sensorManager.registerListener(this, accelerometer, samplingRate)
         sensorManager.registerListener(this, gyroscope, samplingRate)
+
+        runDetector = GpsRunDetector(this, this)
+        runDetector.startDetection()
         lastTimeMoveSec = System.currentTimeMillis()
         return START_STICKY
     }
@@ -159,6 +183,7 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
 //        thread?.interrupt()
         sensorManager.unregisterListener(this, accelerometer)
         sensorManager.unregisterListener(this, gyroscope)
+
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -232,30 +257,7 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
 
                     if (0 >= leftSeconds) {
                         if (!isNotifying) {
-                            val stretchIntent =
-                                Intent(this, StretchBroadcastReceiver::class.java).apply {
-                                    action = "ACTION_STRETCH"
-                                    putExtra("stretched", true)
-//                                    putExtra(EXTRA_NOTIFICATION_ID, 0)
-                                }
-                            val snoozePendingIntent: PendingIntent =
-                                PendingIntent.getBroadcast(this, 0, stretchIntent, 0)
-                            val builder = NotificationCompat.Builder(this, CHANNEL_ID)
-                                .setSmallIcon(R.drawable.stretching)
-                                .setContentTitle("You need to stretch now!")
-                                .setContentText("Happy stretching")
-                                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                                .setContentIntent(snoozePendingIntent)
-                                .addAction(
-                                    R.drawable.stretching, "I stretched!",
-                                    snoozePendingIntent
-                                ).setAutoCancel(true)
-//                            notiBuilder.setContentText("You need to move $time_diff")
-                            notiManager.notify(1, builder.build())
-                            if (ttsInit) {
-
-                            }
-                            isNotifying = true
+                            alarmToStretch()
                         }
                         // https://developer.android.com/training/notify-user/build-notification
                         Log.d(TAG, "You need to move $timeDiffSec")
@@ -263,8 +265,7 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
                     } else {
                         isNotifying = false
                         Log.d(TAG, "val:${labelList[prediction]}")
-                        notiBuilder.setContentText("Current status: ${labelList[prediction]}")
-                        notiManager.notify(1, notiBuilder.build())
+                        showDebugToNoti(prediction)
 //                        inferenceResultView.setText(labelList[prediction])
                     }
                 } else { // moving!
@@ -273,8 +274,7 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
                         stop_count = 0
                         lastTimeMoveSec = System.currentTimeMillis()
                     }
-                    notiBuilder.setContentText("Current status: ${labelList[prediction]}")
-                    notiManager.notify(1, notiBuilder.build())
+                    showDebugToNoti(prediction)
                     Log.d(TAG, "val:${labelList[prediction]}")
 //                    inferenceResultView.setText(labelList[prediction])
                 }
@@ -283,6 +283,71 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
                 Toast.makeText(applicationContext, "Inference failed!", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    private fun showDebugToNoti(prediction: Int) {
+        notiBuilder.setContentText("Current status: ${labelList[prediction]}, gps: $currentRunState")
+        notiManager.notify(1, notiBuilder.build())
+    }
+
+    private fun alarmToStretch() {
+        val prefs: SharedPreferences =
+            PreferenceManager.getDefaultSharedPreferences(this)
+        if (!prefs.getBoolean("n_bother", false)) {
+            if (soundSetting == "Buzz") {
+                val vibrator: Vibrator =
+                    getSystemService(VIBRATOR_SERVICE) as Vibrator
+                if (Build.VERSION.SDK_INT >= 26) {
+                    vibrator.vibrate(
+                        VibrationEffect.createOneShot(
+                            200,
+                            DEFAULT_AMPLITUDE
+                        )
+                    ) // 0.5초간 진동
+                } else {
+                    vibrator.vibrate(200);
+                }
+            } else if (soundSetting == "Sound") {
+                val toneGen1 = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
+                toneGen1.startTone(ToneGenerator.TONE_CDMA_ABBR_ALERT, 300)
+            }
+        }
+        val stretchIntent =
+            Intent(this, StretchBroadcastReceiver::class.java).apply {
+                action = "ACTION_STRETCH"
+                putExtra("stretched", true)
+                //                                    putExtra(EXTRA_NOTIFICATION_ID, 0)
+            }
+        val notStretchIntent = Intent(
+            this, StretchBroadcastReceiver::class.java
+        ).apply {
+            action = "ACTION_STRETCH"
+            putExtra("stretched", false)
+        }
+        val snoozePendingIntent: PendingIntent =
+            PendingIntent.getBroadcast(this, 0, stretchIntent, 0)
+        val snoozePendingIntent2: PendingIntent =
+            PendingIntent.getBroadcast(this, 0, notStretchIntent, 0)
+        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setSmallIcon(R.drawable.stretching)
+            .setContentTitle("You need to stretch now!")
+            .setContentText("Happy stretching")
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(snoozePendingIntent)
+            .addAction(
+                R.drawable.stretching, "I will stretch now!",
+                snoozePendingIntent
+            ).addAction(
+                R.drawable.icon, "later",
+                snoozePendingIntent2
+            )
+            .setAutoCancel(true)
+        //                            notiBuilder.setContentText("You need to move $time_diff")
+        notiManager.notify(1, builder.build())
+        if (ttsInit) {
+
+        }
+        isNotifying = true
     }
 
     private fun loadModel(model_name: String) {
@@ -302,4 +367,96 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
         ttsInit = true
     }
 
+    override fun onStartWalking() {
+        Log.d(TAG, "Start Walking $isWalking")
+        if (isWalking)
+            return
+        isWalking = true
+        lastTimeWalkSec = System.currentTimeMillis() / 1000
+    }
+
+    override fun onStopWalking(newState: GpsRunDetector.RunState) {
+        Log.d(TAG, "Stop Walking $isWalking")
+        if (!isWalking)
+            return
+        isWalking = false
+        val nowTimeSec = System.currentTimeMillis() / 1000
+        val walkingTime = nowTimeSec - lastTimeWalkSec
+        if (walkingTime >= 1800) {
+            // recommend stretching for walking
+        }
+    }
+
+    override fun onStartRunning() {
+        Log.d(TAG, "Start Running $isRunning")
+        if (isRunning)
+            return
+        isRunning = true
+        lastTimeRunSec = System.currentTimeMillis() / 1000
+    }
+
+    override fun onStopRunning(newState: GpsRunDetector.RunState) {
+        Log.d(TAG, "Stop Running $isRunning")
+        if (!isRunning)
+            return
+        isRunning = false
+        if (newState == GpsRunDetector.RunState.STOPPED)
+            isWalking = false
+        val nowTimeSec = System.currentTimeMillis() / 1000
+        val runningTime = nowTimeSec - lastTimeRunSec
+        if (runningTime >= 1800) {
+            // recommend stretching after running
+            recommendStretching(StretchingType.AFTER_RUN)
+        }
+    }
+
+    override fun onRequirePermission() {
+        // ignore
+        Log.e(TAG, "Why is it called?")
+    }
+
+    override fun onStateMayUpdate(state: GpsRunDetector.RunState) {
+        currentRunState = state
+        // do nothing
+        Log.v(TAG, "onStateContinued")
+        // notify!
+//        notiBuilder.setContentText("Current status: ${labelList[prediction]}")
+//        notiManager.notify(1, notiBuilder.build())
+    }
+
+    fun recommendStretching(type: StretchingType? = null) {
+        val keyword = when (type) {
+            null -> "stretching"
+            StretchingType.COOLING -> "stretching+for+cool+down"
+            StretchingType.AFTER_WALK -> "stretching+after+walking"
+            StretchingType.AFTER_RUN -> "stretching+after+running"
+            StretchingType.AFTER_SITTING -> "stretching+after+sitting+all+day"
+            StretchingType.AFTER_WAKEUP -> "wakeup+stretching"
+        }
+        val url = "https://www.youtube.com/results?search_query=$keyword"
+        if (!isNotifying) {
+            val stretchIntent =
+                Intent(this, StretchBroadcastReceiver::class.java).apply {
+                    action = "ACTION_STRETCH"
+                    putExtra("stretched", true)
+//                                    putExtra(EXTRA_NOTIFICATION_ID, 0)
+                }
+            val snoozePendingIntent: PendingIntent =
+                PendingIntent.getBroadcast(this, 0, stretchIntent, 0)
+            val builder = NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.drawable.stretching)
+                .setContentTitle("You need to stretch now!")
+                .setContentText(url)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setContentIntent(snoozePendingIntent)
+                .addAction(
+                    R.drawable.stretching, "I stretched!",
+                    snoozePendingIntent
+                ).setAutoCancel(true)
+//                            notiBuilder.setContentText("You need to move $time_diff")
+            notiManager.notify(1, builder.build())
+            isNotifying = true
+        }
+
+    }
 }
