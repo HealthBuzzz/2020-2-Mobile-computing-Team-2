@@ -1,5 +1,8 @@
 package com.healthbuzz.healthbuzz;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,9 +17,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
-public class MovementDataGettingActivity extends AppCompatActivity {
+public class MovementDataGettingActivity  extends AppCompatActivity {
 
     Button talkbutton;
     TextView textview;
@@ -91,7 +91,7 @@ public class MovementDataGettingActivity extends AppCompatActivity {
 //Upon receiving each message from the wearable, display the following text//
 
             String message = "I just received a message from the wearable " + receivedMessageNumber++;
-            message = intent.getStringExtra("message");
+            message=intent.getStringExtra("message" );
 
             textview.setText(message);
 
@@ -101,8 +101,8 @@ public class MovementDataGettingActivity extends AppCompatActivity {
     EditText et;
 
     public void talkClick(View v) {
-        et = (EditText) findViewById(R.id.editText);
-        String message = et.getText().toString(); //"Sending message.... ";
+        et=(EditText) findViewById(R.id.editText);
+        String message =et.getText().toString(); //"Sending message.... ";
         textview.setText(message);
 
 //Sending a message can block the main UI thread, so use a new thread//
@@ -111,7 +111,7 @@ public class MovementDataGettingActivity extends AppCompatActivity {
 
     }
 
-    public void sendMessageOnclick(View v) {
+    public void sendMessageOnclick(View v){
         switch (v.getId()) {
             case R.id.btn_ondesk:
                 new MovementDataGettingActivity.NewThread("/my_path", "_ondesk").start();
@@ -119,18 +119,18 @@ public class MovementDataGettingActivity extends AppCompatActivity {
             case R.id.btn_walking:
                 new MovementDataGettingActivity.NewThread("/my_path", "_walking").start();
                 break;
-            case R.id.btn_running:
+            case  R.id.btn_running:
                 new MovementDataGettingActivity.NewThread("/my_path", "_running").start();
                 break;
-            case R.id.btn_stop:
+            case  R.id.btn_stop:
                 new MovementDataGettingActivity.NewThread("/my_path", "_stop").start();
                 break;
-            case R.id.btn_save:
+            case  R.id.btn_save:
                 new MovementDataGettingActivity.NewThread("/my_path", "_stop").start();
                 //save BlService.output to file
                 saveToFile(BlService.output);
                 break;
-            case R.id.btn_rest:
+            case  R.id.btn_rest:
                 new MovementDataGettingActivity.NewThread("/my_path", "_stop").start();
                 //clear all from BlService.output
                 BlService.output.clear();
@@ -140,7 +140,7 @@ public class MovementDataGettingActivity extends AppCompatActivity {
 
     }
 
-    public void saveToFile(LinkedList<String[]> output) {
+    public void saveToFile(LinkedList<String[]> output){
 
         String filename = new SimpleDateFormat("'SensorData'yyyyMMddHHmm'_W.csv'", Locale.KOREA).format(new Date());
 
