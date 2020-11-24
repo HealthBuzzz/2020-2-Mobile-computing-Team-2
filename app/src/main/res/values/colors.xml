@@ -11,8 +11,5 @@
     <color name="colorWater">#0BB6FF</color>
     <color name="colorWaterDark">#213FFF</color>
     <color name="colorWaterLight">#76D6FF</color>
-    <color name="colorRun">#FFD400</color>
-    <color name="colorRunDark">#e6c319</color>
-    <color name="colorRunLight">#FFDF40</color>
 
 </resources>

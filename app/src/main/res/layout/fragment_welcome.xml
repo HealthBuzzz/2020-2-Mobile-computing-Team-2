@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".WelcomeFragment">
-
     <LinearLayout
         android:id="@+id/linearlayout"
         android:layout_width="277dp"
@@ -15,23 +14,23 @@
         app:layout_constraintHorizontal_bias="0.015"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.027">
+        app:layout_constraintVertical_bias="0.027"
+        >
 
-        <TextView
-            android:id="@+id/textView1"
-            android:layout_width="130dp"
-            android:layout_height="68dp"
-            android:text="Health BUZZ"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:textColor="@color/colorWhite" />
-
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="137dp"
-            android:layout_height="68dp"
-            android:text="Login First"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:textColor="@color/colorAccent" />
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="130dp"
+        android:layout_height="68dp"
+        android:text="Health BUZZ"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="@color/colorWhite"/>
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="137dp"
+        android:layout_height="68dp"
+        android:text="Login First"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="@color/colorAccent"/>
     </LinearLayout>
 
     <ImageView
