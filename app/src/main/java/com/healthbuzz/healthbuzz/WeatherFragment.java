@@ -1,29 +1,17 @@
 package com.healthbuzz.healthbuzz;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import android.location.Address;
-import android.location.Geocoder;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.snackbar.Snackbar;
@@ -32,18 +20,14 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.healthbuzz.healthbuzz.Retrofit.RetrofitAPI;
 import com.healthbuzz.healthbuzz.data.LoginDataSource;
-import com.healthbuzz.healthbuzz.data.Result;
-import com.healthbuzz.healthbuzz.data.model.LoggedInUser;
 
-import java.io.IOException;
+import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-
-import org.json.JSONObject;
 
 public class WeatherFragment extends Fragment {
 
@@ -57,8 +41,8 @@ public class WeatherFragment extends Fragment {
     private String mParam2;
     private String TAG = "Weather Frag";
     private String OPEN_WEATHER_MAP_KEY = "6a7cef582a7b2dcb6dd7fa7a76cb053c";
-    private String latitude = "37.5" ;
-    private String longitude = "127" ;
+    private String latitude = "37.5";
+    private String longitude = "127";
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
 
     ArrayList<String> temps = new ArrayList<>();
@@ -70,10 +54,15 @@ public class WeatherFragment extends Fragment {
     private String current_weather = "";
     private String current_weather_icon = "";
     private String current_city = "";
+    private ImageView imageView;
+    private TextView textView_city;
+    private TextView textView_temp;
+    private TextView textView_weather;
 
     public WeatherFragment() {
         // Required empty public constructor
     }
+
     private boolean checkPermissions() {
         int permissionState = ActivityCompat.checkSelfPermission(getContext(),
                 Manifest.permission.ACCESS_COARSE_LOCATION);
@@ -102,7 +91,8 @@ public class WeatherFragment extends Fragment {
                         public void onClick(View view) {
                             // Request permission
                             startLocationPermissionRequest();
-                        }}).show();
+                        }
+                    }).show();
 
         } else {
             Log.i(TAG, "Requesting permission");
@@ -114,7 +104,6 @@ public class WeatherFragment extends Fragment {
     }
 
 
-
     public int getWeather() {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://api.openweathermap.org/data/2.5/")
@@ -122,9 +111,9 @@ public class WeatherFragment extends Fragment {
                 .build();
         RetrofitAPI myAPI = retrofit.create(RetrofitAPI.class);
         long unixTime = System.currentTimeMillis() / 1000L;
-        Log.d("time",String.valueOf(unixTime));
-        Call<JsonObject> weatherCall= myAPI.getCurrentWeather(latitude, longitude, OPEN_WEATHER_MAP_KEY);
-        Call<JsonObject> weatherHourlyCall= myAPI.getHourlyWeather(latitude, longitude, String.valueOf(unixTime), OPEN_WEATHER_MAP_KEY);
+        Log.d("time", String.valueOf(unixTime));
+        Call<JsonObject> weatherCall = myAPI.getCurrentWeather(latitude, longitude, OPEN_WEATHER_MAP_KEY);
+        Call<JsonObject> weatherHourlyCall = myAPI.getHourlyWeather(latitude, longitude, String.valueOf(unixTime), OPEN_WEATHER_MAP_KEY);
 
         weatherCall.enqueue(new Callback<JsonObject>() {
             @Override
@@ -142,11 +131,12 @@ public class WeatherFragment extends Fragment {
                 Log.d("curr_weahter_icon", current_weather_icon);
                 Log.d("curr_weahter", current_weather);
                 current_temp = response.body().getAsJsonObject("main").get("temp").toString();
+                updateViews();
             }
 
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
-                Log.d("weather","Fail msg : " + t.getMessage());
+                Log.d("weather", "Fail msg : " + t.getMessage());
                 LoginDataSource.resultFlag = 2;
 
             }
@@ -170,13 +160,13 @@ public class WeatherFragment extends Fragment {
                 }
                 Log.d("weather_temps", temps.toString());
                 Log.d("weather_icons", weather_icons.toString());
-
+                updateViews();
             }
 
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
-                Log.d("weather_Hour","Fail msg : " + t.getMessage());
-                LoginDataSource.resultFlag = 2;
+                Log.d("weather_Hour", "Fail msg : " + t.getMessage());
+                LoginDataSource.resultFlag = 2; // FIXME
 
             }
         });
@@ -191,22 +181,26 @@ public class WeatherFragment extends Fragment {
         */
     }
 
+    private void updateViews() {
+        String weather_icon_string = "https://openweathermap.org/img/wn/" + current_weather_icon + "@2x.png";
+        Glide.with(this).load(weather_icon_string).into(imageView);
+        textView_city.setText(current_city);
+        textView_temp.setText(current_temp);
+        textView_weather.setText(current_weather);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         ViewGroup weatherView = (ViewGroup) inflater.inflate(R.layout.fragment_weather, container, false);
         int result = getWeather();
-        ImageView imageView = (ImageView) weatherView.findViewById(R.id.imageView_weather);
-        TextView textView_city = (TextView) weatherView.findViewById(R.id.textView_city);
-        TextView textView_temp = (TextView) weatherView.findViewById(R.id.textView_temp);
-        TextView textView_weather = (TextView) weatherView.findViewById(R.id.textView_weather);
+        imageView = (ImageView) weatherView.findViewById(R.id.imageView_weather);
+        textView_city = (TextView) weatherView.findViewById(R.id.textView_city);
+        textView_temp = (TextView) weatherView.findViewById(R.id.textView_temp);
+        textView_weather = (TextView) weatherView.findViewById(R.id.textView_weather);
         Log.d("curr_weahter_icon", current_weather_icon);
-        String weather_icon_string = "https://openweathermap.org/img/wn/" + current_weather_icon + "@2x.png";
-        Glide.with(this).load(weather_icon_string).into(imageView);
-        textView_city.setText(current_city);
-        textView_temp.setText(current_temp);
-        textView_weather.setText(current_weather);
+        updateViews();
         return weatherView;
     }
 }
