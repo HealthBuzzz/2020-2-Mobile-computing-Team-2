@@ -118,7 +118,7 @@ public class WeatherFragment extends Fragment {
                 JsonObject current_weather_obj = response.body().getAsJsonArray("weather").get(0).getAsJsonObject();
                 Log.d("curr_weather_obj", current_weather_obj.toString());
                 current_weather = current_weather_obj.get("main").toString();
-                current_weather_icon = current_weather_obj.get("icon").toString();
+                current_weather_icon = current_weather_obj.get("icon").getAsString();
                 Log.d("curr_weather_icon", current_weather_icon);
                 Log.d("curr_weather", current_weather);
                 current_temp = response.body().getAsJsonObject("main").get("temp").toString();
