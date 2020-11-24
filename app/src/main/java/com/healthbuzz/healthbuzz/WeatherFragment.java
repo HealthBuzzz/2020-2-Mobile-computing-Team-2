@@ -21,6 +21,8 @@ import com.google.gson.JsonObject;
 import com.healthbuzz.healthbuzz.Retrofit.RetrofitAPI;
 import com.healthbuzz.healthbuzz.data.LoginDataSource;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 
 import retrofit2.Call;
@@ -30,17 +32,9 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class WeatherFragment extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-    private String TAG = "Weather Frag";
-    private String OPEN_WEATHER_MAP_KEY = "6a7cef582a7b2dcb6dd7fa7a76cb053c";
+    private final String TAG = "Weather Frag";
+    private final String OPEN_WEATHER_MAP_KEY = "6a7cef582a7b2dcb6dd7fa7a76cb053c";
     private String latitude = "37.5";
     private String longitude = "127";
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
@@ -86,12 +80,9 @@ public class WeatherFragment extends Fragment {
             Log.i(TAG, "Displaying permission rationale to provide additional context.");
 
             Snackbar.make(getActivity().findViewById(android.R.id.content), "SnackBar 나와라", Snackbar.LENGTH_LONG)
-                    .setAction("Action", new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            // Request permission
-                            startLocationPermissionRequest();
-                        }
+                    .setAction("Action", view -> {
+                        // Request permission
+                        startLocationPermissionRequest();
                     }).show();
 
         } else {
@@ -117,7 +108,7 @@ public class WeatherFragment extends Fragment {
 
         weatherCall.enqueue(new Callback<JsonObject>() {
             @Override
-            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+            public void onResponse(@NotNull Call<JsonObject> call, @NotNull Response<JsonObject> response) {
                 //JSONObject jsonObj = new JSONObject(response.body().toString());
                 JsonObject response_body = response.body();
                 String res = response_body.toString();
@@ -128,23 +119,24 @@ public class WeatherFragment extends Fragment {
                 Log.d("curr_weather_obj", current_weather_obj.toString());
                 current_weather = current_weather_obj.get("main").toString();
                 current_weather_icon = current_weather_obj.get("icon").toString();
-                Log.d("curr_weahter_icon", current_weather_icon);
-                Log.d("curr_weahter", current_weather);
+                Log.d("curr_weather_icon", current_weather_icon);
+                Log.d("curr_weather", current_weather);
                 current_temp = response.body().getAsJsonObject("main").get("temp").toString();
                 updateViews();
             }
 
             @Override
-            public void onFailure(Call<JsonObject> call, Throwable t) {
+            public void onFailure(@NotNull Call<JsonObject> call, @NotNull Throwable t) {
                 Log.d("weather", "Fail msg : " + t.getMessage());
                 LoginDataSource.resultFlag = 2;
 
             }
         });
 
+        // TODO: show hourly weathers
         weatherHourlyCall.enqueue(new Callback<JsonObject>() {
             @Override
-            public void onResponse(Call<JsonObject> call, Response<JsonObject> response_hourly) {
+            public void onResponse(@NotNull Call<JsonObject> call, @NotNull Response<JsonObject> response_hourly) {
                 //JSONObject jsonObj = new JSONObject(response.body().toString());
                 System.out.println(response_hourly.body());
                 String res_hourly = response_hourly.body().toString();
@@ -164,7 +156,7 @@ public class WeatherFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<JsonObject> call, Throwable t) {
+            public void onFailure(@NotNull Call<JsonObject> call, @NotNull Throwable t) {
                 Log.d("weather_Hour", "Fail msg : " + t.getMessage());
                 LoginDataSource.resultFlag = 2; // FIXME
 
@@ -199,7 +191,7 @@ public class WeatherFragment extends Fragment {
         textView_city = (TextView) weatherView.findViewById(R.id.textView_city);
         textView_temp = (TextView) weatherView.findViewById(R.id.textView_temp);
         textView_weather = (TextView) weatherView.findViewById(R.id.textView_weather);
-        Log.d("curr_weahter_icon", current_weather_icon);
+        Log.d("curr_weather_icon", current_weather_icon);
         updateViews();
         return weatherView;
     }
