@@ -23,8 +23,10 @@ import com.healthbuzz.healthbuzz.RealtimeModel.ranking
 
 import com.healthbuzz.healthbuzz.UserInfo.userName
 import com.healthbuzz.healthbuzz.data.LoginDataSource
+import com.healthbuzz.healthbuzz.data.model.LoggedInUser
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 import kotlinx.android.synthetic.main.fragment_dashboard.view.*
+import org.apache.commons.lang3.math.NumberUtils.toInt
 
 
 /**
@@ -260,7 +262,11 @@ class DashboardFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         ranking.observe(viewLifecycleOwner, { aLong: Long? ->
             val rankingView = requireView().findViewById<TextView>(R.id.ranking)
-            rankingView.setText("TOP $aLong% Healther")
+            if(aLong == null || aLong.toInt() == (-1)){
+                rankingView.setText("Login First!")
+            }else {
+                rankingView.setText("TOP $aLong% Healther")
+            }
         })
     }
 

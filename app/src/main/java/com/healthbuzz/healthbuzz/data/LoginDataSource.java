@@ -64,6 +64,7 @@ public class LoginDataSource {
                     LoginDataSource.resultFlag = 1;
                     UserInfo.INSTANCE.getUserName().setValue(response.body().getDisplayName());
                     Log.d(TAG, "After setting static variable");
+                    LoginDataSource.getTodayData();
                 } else {
                     Log.d(TAG, "Status Code : " + response.code());
                     Log.d(TAG, response.errorBody().toString());
@@ -102,6 +103,8 @@ public class LoginDataSource {
                     Log.d(TAG, "로그아웃 완료");
                     assert response.body() == null;
                     UserInfo.INSTANCE.getUserName().setValue("");
+                    RealtimeModel.INSTANCE.getRanking().setValue(null);
+                    LoginDataSource.resultFlag = 1;
                 } else {
                     Log.d(TAG, "Status Code : " + response.code());
                     Log.d(TAG, response.errorBody().toString());

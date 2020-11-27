@@ -16,8 +16,8 @@ object RealtimeModel {
     val water_count = MutableLiveData<Long>().also {
         it.value = 0
     }
-    val ranking = MutableLiveData<Long>().also {
-        it.value = 100
+    val ranking = MutableLiveData<Long?>().also {
+        it.value = null
     }
 }
 
