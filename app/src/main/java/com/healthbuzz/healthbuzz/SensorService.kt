@@ -100,6 +100,8 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
     inner class SensorBinder : Binder() {
         // Return this instance of LocalService so clients can call public methods
         fun getService(): SensorService = this@SensorService
+
+
     }
 
     override fun onBind(intent: Intent): IBinder {
@@ -186,7 +188,6 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
         return channelId
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onSensorChanged(event: SensorEvent?) {
         if (event?.sensor == accelerometer) {
             val sample: Instance = DenseInstance(attributes.size)
@@ -207,7 +208,6 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
 //        TODO("Not yet implemented")
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun handleInference(sample: Instance) {
         inferenceSegment.add(sample)
         if (inferenceSegment.size >= windowSize) {
@@ -242,22 +242,27 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
                     val leftSeconds = Integer.parseInt(timeIntervalStretch) * 60 - timeDiffSec
 
 //                    SingleObject.getInstance().stretching_time_left.value = left_minutes
-                    RealtimeModel.stretching_time_left.value = leftSeconds
+                    RealtimeModel.stretching_time_left.postValue(leftSeconds)
 
                     if (0 >= leftSeconds) {
                         if (!isNotifying) {
                             val prefs: SharedPreferences =
                                 PreferenceManager.getDefaultSharedPreferences(this)
-                            if (!prefs.getBoolean("n_bother",false)) {
+                            if (!prefs.getBoolean("n_bother", false)) {
                                 if (soundSetting.equals("Buzz")) {
                                     val vibrator: Vibrator =
                                         getSystemService(VIBRATOR_SERVICE) as Vibrator
-                                    vibrator.vibrate(
-                                        VibrationEffect.createOneShot(
-                                            200,
-                                            DEFAULT_AMPLITUDE
+                                    // 0.5초간 진동
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                        vibrator.vibrate(
+                                            VibrationEffect.createOneShot(
+                                                200,
+                                                DEFAULT_AMPLITUDE
+                                            )
                                         )
-                                    ) // 0.5초간 진동
+                                    } else {
+                                        vibrator.vibrate(500)
+                                    }
                                 } else if (soundSetting.equals("Sound")) {
                                     val toneGen1 = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
                                     toneGen1.startTone(ToneGenerator.TONE_CDMA_ABBR_ALERT, 300)
@@ -331,6 +336,10 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
 
     override fun onInit(status: Int) {
         ttsInit = true
+    }
+
+    fun resetStretchTime() {
+        lastTimeMoveSec = System.currentTimeMillis()
     }
 
 }
