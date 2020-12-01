@@ -49,6 +49,7 @@
 
     <string name="debug_drinking">debug_drinking</string>
     <string name="debug_movement">debug_movement</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string name="dashboard_community_title">Compare with Your Community!</string>
 </resources>

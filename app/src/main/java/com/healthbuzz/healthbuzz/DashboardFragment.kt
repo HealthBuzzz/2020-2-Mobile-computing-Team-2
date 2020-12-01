@@ -18,13 +18,6 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar
-import com.healthbuzz.healthbuzz.RealtimeModel.ranking
-
-
-import com.healthbuzz.healthbuzz.UserInfo.userName
-import com.healthbuzz.healthbuzz.data.LoginDataSource
-import com.healthbuzz.healthbuzz.data.model.LoggedInUser
-import com.healthbuzz.healthbuzz.ui.login.LoginActivity
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 import kotlinx.android.synthetic.main.fragment_dashboard.view.*
 
@@ -78,13 +71,10 @@ class DashboardFragment : Fragment() {
         if (timeIntervalWaterMin.isEmpty())
             timeIntervalWaterMin = "20"
 
-
-        val stretchIntervalSec = Integer.parseInt(timeIntervalStretchMin) * 60
-        val waterIntervalSec = Integer.parseInt(timeIntervalWaterMin) * 60
-
-
         RealtimeModel.stretching_time_left.value = stretchIntervalSec.toLong()
         RealtimeModel.water_time_left.value = waterIntervalSec.toLong()
+        val stretchIntervalSec = resetStretchTime(prefs)
+        val waterIntervalSec = resetWaterTime(prefs)
 
 
         RealtimeModel.stretching_time_left.observe(viewLifecycleOwner) { value ->
@@ -222,10 +212,17 @@ class DashboardFragment : Fragment() {
                     val intVal = it
                     formatTime(context, intVal)
                 }
+//            cardview_layout_running.findViewById<TextView>(R.id.tvCardContent).text =
+//                (RealtimeModel.run_time_left.value?.toInt() ?: runIntervalSec).let {
+//                    val intVal = it
+//                    formatTime(context, intVal)
+//                }
+
 
             cardview_layout_stretching.findViewById<ConstraintLayout>(R.id.cardview_root)
                 .setOnClickListener {
                     startActivity(Intent(context, StretchingDetailActivity::class.java))
+                    //startActivity((Intent(context, LoginActivity::class.java)))
                 }
             cardview_layout_water.findViewById<ConstraintLayout>(R.id.cardview_root)
                 .setOnClickListener {
@@ -243,6 +240,7 @@ class DashboardFragment : Fragment() {
                     editor.putBoolean("sync", checked)
                     editor.apply()
                 }
+
             cardview_layout_water.findViewById<SwitchCompat>(R.id.swCardEnable)
                 .apply {
                     isChecked = prefs.getBoolean("sync2", true)
@@ -283,6 +281,32 @@ class DashboardFragment : Fragment() {
         })
     }
 
+    private fun resetWaterTime(prefs: SharedPreferences): Int {
+        var timeIntervalWaterMin: String =
+            prefs.getString("time_interval_water", "20") ?: "20"
+        if (timeIntervalWaterMin.isEmpty())
+            timeIntervalWaterMin = "20"
+
+        val waterIntervalSec = Integer.parseInt(timeIntervalWaterMin) * 60
+        RealtimeModel.water_time_left.value = waterIntervalSec.toLong()
+        return waterIntervalSec
+    }
+
+    private fun resetStretchTime(prefs: SharedPreferences): Int {
+        var timeIntervalStretchMin: String =
+            prefs.getString("time_interval_stretch", "20") ?: "20"
+        if (timeIntervalStretchMin.isEmpty())
+            timeIntervalStretchMin = "20"
+
+        val stretchIntervalSec = Integer.parseInt(timeIntervalStretchMin) * 60
+        if (mBound) {
+            mService?.resetStretchTime()
+        }
+        RealtimeModel.stretching_time_left.value = stretchIntervalSec.toLong()
+
+        return stretchIntervalSec
+    }
+
     override fun onResume() {
         super.onResume()
         val prefs: SharedPreferences =
@@ -299,5 +323,20 @@ class DashboardFragment : Fragment() {
         if(!userName.getValue().equals("")) {
             LoginDataSource.getTodayData()
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (mBound)
+            context?.unbindService(connection)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        context?.bindService(
+            Intent(requireActivity(), SensorService::class.java),
+            connection,
+            Context.BIND_AUTO_CREATE
+        )
     }
 }
