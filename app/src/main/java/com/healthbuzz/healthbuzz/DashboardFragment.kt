@@ -1,9 +1,6 @@
 package com.healthbuzz.healthbuzz
 
-import android.content.ComponentName
-import android.content.Intent
-import android.content.ServiceConnection
-import android.content.SharedPreferences
+import android.content.*
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
@@ -18,7 +15,6 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar
-import com.healthbuzz.healthbuzz.ui.login.LoginActivity
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 import kotlinx.android.synthetic.main.fragment_dashboard.view.*
 
@@ -30,17 +26,19 @@ import kotlinx.android.synthetic.main.fragment_dashboard.view.*
  */
 class DashboardFragment : Fragment() {
     /** Defines callbacks for service binding, passed to bindService()  */
+    var mBound = false
+    var mService: SensorService? = null
     private val connection = object : ServiceConnection {
 
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
-            // We've bound to LocalService, cast the IBinder and get LocalService instance
-//            val binder = service as SensorService.SensorBinder
-//            mService = binder.getService()
-//            mBound = true
+            val binder = service as SensorService.SensorBinder
+            mService = binder.getService()
+            mBound = true
         }
 
         override fun onServiceDisconnected(arg0: ComponentName) {
-//            mBound = false
+            mBound = false
+            mService = null
         }
     }
 
@@ -61,22 +59,9 @@ class DashboardFragment : Fragment() {
 
         val prefs: SharedPreferences =
             PreferenceManager.getDefaultSharedPreferences(context)
-        var timeIntervalStretchMin: String =
-            prefs.getString("time_interval_stretch", "20") ?: "20"
-        if (timeIntervalStretchMin.isEmpty())
-            timeIntervalStretchMin = "20"
 
-        var timeIntervalWaterMin: String =
-            prefs.getString("time_interval_water", "20") ?: "20"
-        if (timeIntervalWaterMin.isEmpty())
-            timeIntervalWaterMin = "20"
-
-
-        val stretchIntervalSec = Integer.parseInt(timeIntervalStretchMin) * 60
-        val waterIntervalSec = Integer.parseInt(timeIntervalWaterMin) * 60
-
-        RealtimeModel.stretching_time_left.value = stretchIntervalSec.toLong()
-        RealtimeModel.water_time_left.value = waterIntervalSec.toLong()
+        val stretchIntervalSec = resetStretchTime(prefs)
+        val waterIntervalSec = resetWaterTime(prefs)
 
 
         RealtimeModel.stretching_time_left.observe(viewLifecycleOwner) { value ->
@@ -214,6 +199,7 @@ class DashboardFragment : Fragment() {
                     val editor = prefs.edit()
                     editor.putBoolean("sync", checked)
                     editor.apply()
+                    resetStretchTime(prefs)
                 }
             cardview_layout_water.findViewById<SwitchCompat>(R.id.swCardEnable)
                 .apply {
@@ -225,10 +211,37 @@ class DashboardFragment : Fragment() {
                     val editor = prefs.edit()
                     editor.putBoolean("sync2", checked)
                     editor.apply()
+                    resetWaterTime(prefs)
                 }
         }
 
         return rootView
+    }
+
+    private fun resetWaterTime(prefs: SharedPreferences): Int {
+        var timeIntervalWaterMin: String =
+            prefs.getString("time_interval_water", "20") ?: "20"
+        if (timeIntervalWaterMin.isEmpty())
+            timeIntervalWaterMin = "20"
+
+        val waterIntervalSec = Integer.parseInt(timeIntervalWaterMin) * 60
+        RealtimeModel.water_time_left.value = waterIntervalSec.toLong()
+        return waterIntervalSec
+    }
+
+    private fun resetStretchTime(prefs: SharedPreferences): Int {
+        var timeIntervalStretchMin: String =
+            prefs.getString("time_interval_stretch", "20") ?: "20"
+        if (timeIntervalStretchMin.isEmpty())
+            timeIntervalStretchMin = "20"
+
+        val stretchIntervalSec = Integer.parseInt(timeIntervalStretchMin) * 60
+        if (mBound) {
+            mService?.resetStretchTime()
+        }
+        RealtimeModel.stretching_time_left.value = stretchIntervalSec.toLong()
+
+        return stretchIntervalSec
     }
 
     override fun onResume() {
@@ -244,5 +257,20 @@ class DashboardFragment : Fragment() {
             .apply {
                 isChecked = prefs.getBoolean("sync", true)
             }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (mBound)
+            context?.unbindService(connection)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        context?.bindService(
+            Intent(requireActivity(), SensorService::class.java),
+            connection,
+            Context.BIND_AUTO_CREATE
+        )
     }
 }
