@@ -45,11 +45,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 import org.json.JSONObject;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link WeatherFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class WeatherFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
@@ -70,9 +65,11 @@ public class WeatherFragment extends Fragment {
     ArrayList<String> datetimes = new ArrayList<>();
     ArrayList<String> weather_icons = new ArrayList<>();
 
-    private String current_temp;
-    private String current_dt;
-    private String current_weather;
+    private String current_temp = "";
+    private String current_dt = "";
+    private String current_weather = "";
+    private String current_weather_icon = "";
+    private String current_city = "";
 
     public WeatherFragment() {
         // Required empty public constructor
@@ -118,7 +115,7 @@ public class WeatherFragment extends Fragment {
 
 
 
-    public void getWeather() {
+    public int getWeather() {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://api.openweathermap.org/data/2.5/")
                 .addConverterFactory(GsonConverterFactory.create())
@@ -133,8 +130,18 @@ public class WeatherFragment extends Fragment {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                 //JSONObject jsonObj = new JSONObject(response.body().toString());
-                String res = response.body().toString();
+                JsonObject response_body = response.body();
+                String res = response_body.toString();
                 Log.d("weather", res);
+                current_city = response_body.get("name").toString();
+                Log.d("weather_city", current_city);
+                JsonObject current_weather_obj = response.body().getAsJsonArray("weather").get(0).getAsJsonObject();
+                Log.d("curr_weather_obj", current_weather_obj.toString());
+                current_weather = current_weather_obj.get("main").toString();
+                current_weather_icon = current_weather_obj.get("icon").toString();
+                Log.d("curr_weahter_icon", current_weather_icon);
+                Log.d("curr_weahter", current_weather);
+                current_temp = response.body().getAsJsonObject("main").get("temp").toString();
             }
 
             @Override
@@ -161,6 +168,8 @@ public class WeatherFragment extends Fragment {
                     datetimes.add(weather_obj.get("dt").toString());
                     weather_icons.add(weather_obj.getAsJsonArray("weather").get(0).getAsJsonObject().get("icon").toString());
                 }
+                Log.d("weather_temps", temps.toString());
+                Log.d("weather_icons", weather_icons.toString());
 
             }
 
@@ -171,6 +180,8 @@ public class WeatherFragment extends Fragment {
 
             }
         });
+
+        return 1;
         /*
         if(resultFlag == 0) {
             return new Result.Success<>(myUser);
@@ -185,9 +196,17 @@ public class WeatherFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         ViewGroup weatherView = (ViewGroup) inflater.inflate(R.layout.fragment_weather, container, false);
-        getWeather();
+        int result = getWeather();
         ImageView imageView = (ImageView) weatherView.findViewById(R.id.imageView_weather);
-        Glide.with(this).load("https://openweathermap.org/img/wn/03d@2x.png").into(imageView);
+        TextView textView_city = (TextView) weatherView.findViewById(R.id.textView_city);
+        TextView textView_temp = (TextView) weatherView.findViewById(R.id.textView_temp);
+        TextView textView_weather = (TextView) weatherView.findViewById(R.id.textView_weather);
+        Log.d("curr_weahter_icon", current_weather_icon);
+        String weather_icon_string = "https://openweathermap.org/img/wn/" + current_weather_icon + "@2x.png";
+        Glide.with(this).load(weather_icon_string).into(imageView);
+        textView_city.setText(current_city);
+        textView_temp.setText(current_temp);
+        textView_weather.setText(current_weather);
         return weatherView;
     }
 }
