@@ -1,6 +1,7 @@
 package com.healthbuzz.healthbuzz
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Environment
@@ -13,8 +14,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 
 class MainActivity : AppCompatActivity() {
-
-    public var userName: LiveData<String> = MutableLiveData()
+    public var userName : LiveData<String> = MutableLiveData()
     private val requestPermissionLauncher =
         registerForActivityResult(
             ActivityResultContracts.RequestPermission()
@@ -40,8 +40,8 @@ class MainActivity : AppCompatActivity() {
         }
 
     //override fun onResume() {
-    //super.onResume()
-    //welcomeFragment.textView2.setText(LoginDataSource.name)
+        //super.onResume()
+        //welcomeFragment.textView2.setText(LoginDataSource.name)
     //}
 
 
@@ -50,7 +50,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.detail_toolbar))
 
-//        findViewById<FloatingActionButton>(R.id.fab) is not needed thanks to kotlin synthetic android extension
+        // start the sensor service
+
+        // start the sensor service
+        //startService(Intent(this, SensorService_bl::class.java))
+
+        //findViewById<FloatingActionButton>(R.id.fab) is not needed thanks to kotlin synthetic android extension
 
         // Show the Up button in the action bar.
 //        supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -67,6 +72,11 @@ class MainActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
+            val weatherFragment = WeatherFragment()
+            supportFragmentManager.beginTransaction()
+                .add(R.id.weather_container, weatherFragment)
+                .commit()
+
             val dashboardFragment = DashboardFragment()
             supportFragmentManager.beginTransaction()
                 .add(R.id.item_detail_container, dashboardFragment)
@@ -85,24 +95,16 @@ class MainActivity : AppCompatActivity() {
                 true
             }
 
-        val hasPermission =
-//            ContextCompat.checkSelfPermission(
-//            applicationContext,
-//            Manifest.permission.WRITE_EXTERNAL_STORAGE
-//        ) == PackageManager.PERMISSION_GRANTED &&
-            ContextCompat.checkSelfPermission(
-                applicationContext,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
+        val hasPermission = ContextCompat.checkSelfPermission(
+            applicationContext,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED
 
         if (!hasPermission) {
             // You can directly ask for the permission.
             // The registered ActivityResultCallback gets the result of this request.
-//            requestPermissionLauncher.launch(
-//                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-//            )
             requestPermissionLauncher.launch(
-                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
             )
         }
         if (hasPermission)

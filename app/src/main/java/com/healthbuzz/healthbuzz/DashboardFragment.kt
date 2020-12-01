@@ -24,9 +24,9 @@ import com.healthbuzz.healthbuzz.RealtimeModel.ranking
 import com.healthbuzz.healthbuzz.UserInfo.userName
 import com.healthbuzz.healthbuzz.data.LoginDataSource
 import com.healthbuzz.healthbuzz.data.model.LoggedInUser
+import com.healthbuzz.healthbuzz.ui.login.LoginActivity
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 import kotlinx.android.synthetic.main.fragment_dashboard.view.*
-import org.apache.commons.lang3.math.NumberUtils.toInt
 
 
 /**
@@ -65,6 +65,7 @@ class DashboardFragment : Fragment() {
         val waterDrawable = ResourcesCompat.getDrawable(resources, R.drawable.drink_water, null)
         val rankingDrawable = ResourcesCompat.getDrawable(resources, R.drawable.run, null)
 
+
         val prefs: SharedPreferences =
             PreferenceManager.getDefaultSharedPreferences(context)
         var timeIntervalStretchMin: String =
@@ -76,6 +77,7 @@ class DashboardFragment : Fragment() {
             prefs.getString("time_interval_water", "20") ?: "20"
         if (timeIntervalWaterMin.isEmpty())
             timeIntervalWaterMin = "20"
+
 
         val stretchIntervalSec = Integer.parseInt(timeIntervalStretchMin) * 60
         val waterIntervalSec = Integer.parseInt(timeIntervalWaterMin) * 60
@@ -241,7 +243,6 @@ class DashboardFragment : Fragment() {
                     editor.putBoolean("sync", checked)
                     editor.apply()
                 }
-
             cardview_layout_water.findViewById<SwitchCompat>(R.id.swCardEnable)
                 .apply {
                     isChecked = prefs.getBoolean("sync2", true)
@@ -253,6 +254,18 @@ class DashboardFragment : Fragment() {
                     editor.putBoolean("sync2", checked)
                     editor.apply()
                 }
+
+//            cardview_layout_running.findViewById<SwitchCompat>(R.id.swCardEnable)
+//                .apply {
+//                    isChecked = prefs.getBoolean("sync3", true)
+//                }
+//                .setOnCheckedChangeListener { buttonView, checked ->
+//                    disableEnableControls(checked, cardview_layout_running as ViewGroup)
+//                    buttonView.isEnabled = true
+//                    val editor = prefs.edit()
+//                    editor.putBoolean("sync3", checked)
+//                    editor.apply()
+//                }
         }
 
         return rootView
