@@ -192,20 +192,11 @@ public class BlService extends WearableListenerService implements SensorEventLis
             }
         }
         Log.e("CYT_LOG" , serviceList.size()+"");*/
-        sensor_data_count++;
-        if(sensor_data_count == 50)
-        {
-            sensor_data_count = 0;
-            String datapath = "/my_path";
-            new SendMessage(datapath, sensor_array.toString()).start();
-            Log.e("CYT_LOG" , sensor_array.toString());
-            return;
-        }
         if(sensor_data_count == 0)
         {
             sensor_array.clear();
         }
-
+        sensor_data_count++;
         if (event.sensor == accelerometer) {
             SensorData sample = new SensorData(event.values[0], event.values[1], event.values[2], SensorType.ACCELEROMETER, new Date().getTime(), currentMotion);
             sensor_array.add(sample);
@@ -218,6 +209,17 @@ public class BlService extends WearableListenerService implements SensorEventLis
             SensorData sample = new SensorData(event.values[0], event.values[1], event.values[2], SensorType.GYROSCOPE , new Date().getTime(), currentMotion);
             sensor_array.add(sample);
         }
+        if(sensor_data_count == 50)
+        {
+            sensor_data_count = 0;
+            String datapath = "/my_path";
+            new SendMessage(datapath, sensor_array.toString()).start();
+            Log.e("CYT_LOG" , sensor_array.toString());
+            return;
+        }
+
+
+
 
     }
 
