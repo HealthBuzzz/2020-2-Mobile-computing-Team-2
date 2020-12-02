@@ -33,19 +33,21 @@ class SensorData {
     public float[] data = new float[3];
     public SensorType sensorType;
     public long mydate;
+    public String motion;
 
-    SensorData(float x, float y, float z, SensorType sensorType, long date) {
+    SensorData(float x, float y, float z, SensorType sensorType, long date, String motion_string) {
         data[0] = x;
         data[1] = y;
         data[2] = z;
         this.sensorType = sensorType;
         mydate = date;
+        motion = motion_string;
     }
 
     @NonNull
     @Override
     public String toString() {
-        return "" + data[0] + "," + data[1] + "," + data[2] + "," + sensorType + "," + mydate;
+        return "" + data[0] + "," + data[1] + "," + data[2] + "," + sensorType + "," + mydate + "," + motion;
     }
 }
 
@@ -53,6 +55,8 @@ class SensorData {
 public class BlService extends WearableListenerService implements SensorEventListener {
 
     static List<BlService> serviceList = new ArrayList<BlService>();
+    private int sensor_data_count = 0;
+    private ArrayList<SensorData> sensor_array = new ArrayList<SensorData>();
 
     @Override
     public void onCreate() {
@@ -188,22 +192,31 @@ public class BlService extends WearableListenerService implements SensorEventLis
             }
         }
         Log.e("CYT_LOG" , serviceList.size()+"");*/
-        if (event.sensor == accelerometer) {
-            SensorData sample = new SensorData(event.values[0], event.values[1], event.values[2], SensorType.ACCELEROMETER, new Date().getTime());
+        sensor_data_count++;
+        if(sensor_data_count == 50)
+        {
+            sensor_data_count = 0;
             String datapath = "/my_path";
-            new SendMessage(datapath, sample.toString() + "," + currentMotion).start();
-            //Log.e("CYT_LOG" , sample.toString());
+            new SendMessage(datapath, sensor_array.toString()).start();
+            Log.e("CYT_LOG" , sensor_array.toString());
+            return;
+        }
+        if(sensor_data_count == 0)
+        {
+            sensor_array.clear();
+        }
+
+        if (event.sensor == accelerometer) {
+            SensorData sample = new SensorData(event.values[0], event.values[1], event.values[2], SensorType.ACCELEROMETER, new Date().getTime(), currentMotion);
+            sensor_array.add(sample);
         }
         if (event.sensor == HeartRate) {
-            SensorData sample = new SensorData(event.values[0], 0, 0, SensorType.HEARTRATE, new Date().getTime());
-            String datapath = "/my_path";
-            new SendMessage(datapath, sample.toString() + "," + currentMotion).start();
-            //Log.e("CYT_LOG" , sample.toString());
+            SensorData sample = new SensorData(event.values[0], 0, 0, SensorType.HEARTRATE, new Date().getTime(), currentMotion);
+            sensor_array.add(sample);
         }
         if (event.sensor == gyroscope) {
-            SensorData sample = new SensorData(event.values[0], event.values[1], event.values[2], SensorType.GYROSCOPE , new Date().getTime());
-            String datapath = "/my_path";
-            new SendMessage(datapath, sample.toString()+","+currentMotion).start();
+            SensorData sample = new SensorData(event.values[0], event.values[1], event.values[2], SensorType.GYROSCOPE , new Date().getTime(), currentMotion);
+            sensor_array.add(sample);
         }
 
     }
