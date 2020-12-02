@@ -92,7 +92,7 @@ public class DrinkingDataGettingActivity extends AppCompatActivity {
             String message = "I just received a message from the wearable " + receivedMessageNumber++;
             message = intent.getStringExtra("message");
 
-            textview.setText(message);
+            textview.setText(message.split(",")[3]);
 
         }
     }
