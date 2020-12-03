@@ -44,7 +44,7 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
 
     private lateinit var gyroscope: Sensor
     private lateinit var accelerometer: Sensor
-    private lateinit var sensorManager: SensorManager
+    private var sensorManager: SensorManager? = null
 
     private lateinit var runDetector: GpsRunDetector
 
@@ -163,14 +163,14 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
         }
 
         sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
-        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
-        gyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
+        accelerometer = sensorManager!!.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+        gyroscope = sensorManager!!.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
 
         loadModel("rf.model")
         Log.d(TAG, "Load model finished")
 
-        sensorManager.registerListener(this, accelerometer, samplingRate)
-        sensorManager.registerListener(this, gyroscope, samplingRate)
+        sensorManager!!.registerListener(this, accelerometer, samplingRate)
+        sensorManager!!.registerListener(this, gyroscope, samplingRate)
 
         runDetector = GpsRunDetector(this, this)
         runDetector.startDetection()
@@ -181,9 +181,8 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
     override fun onDestroy() {
         super.onDestroy()
 //        thread?.interrupt()
-        sensorManager.unregisterListener(this, accelerometer)
-        sensorManager.unregisterListener(this, gyroscope)
-
+        sensorManager?.unregisterListener(this, accelerometer)
+        sensorManager?.unregisterListener(this, gyroscope)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
