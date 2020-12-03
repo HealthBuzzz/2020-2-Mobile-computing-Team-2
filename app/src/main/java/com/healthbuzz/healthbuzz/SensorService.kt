@@ -257,52 +257,6 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
                     if (0 >= leftSeconds) {
                         if (!isNotifying) {
                             alarmToStretch()
-                            val prefs: SharedPreferences =
-                                PreferenceManager.getDefaultSharedPreferences(this)
-                            if (!prefs.getBoolean("n_bother", false)) {
-                                if (soundSetting.equals("Buzz")) {
-                                    val vibrator: Vibrator =
-                                        getSystemService(VIBRATOR_SERVICE) as Vibrator
-                                    // 0.5초간 진동
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                        vibrator.vibrate(
-                                            VibrationEffect.createOneShot(
-                                                200,
-                                                DEFAULT_AMPLITUDE
-                                            )
-                                        )
-                                    } else {
-                                        vibrator.vibrate(500)
-                                    }
-                                } else if (soundSetting.equals("Sound")) {
-                                    val toneGen1 = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
-                                    toneGen1.startTone(ToneGenerator.TONE_CDMA_ABBR_ALERT, 300)
-                                }
-                            }
-                            val stretchIntent =
-                                Intent(this, StretchBroadcastReceiver::class.java).apply {
-                                    action = "ACTION_STRETCH"
-                                    putExtra("stretched", true)
-//                                    putExtra(EXTRA_NOTIFICATION_ID, 0)
-                                }
-                            val snoozePendingIntent: PendingIntent =
-                                PendingIntent.getBroadcast(this, 0, stretchIntent, 0)
-                            val builder = NotificationCompat.Builder(this, CHANNEL_ID)
-                                .setSmallIcon(R.drawable.stretching)
-                                .setContentTitle("You need to stretch now!")
-                                .setContentText("Happy stretching")
-                                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                                .setContentIntent(snoozePendingIntent)
-                                .addAction(
-                                    R.drawable.stretching, "I stretched!",
-                                    snoozePendingIntent
-                                ).setAutoCancel(true)
-//                            notiBuilder.setContentText("You need to move $time_diff")
-                            notiManager.notify(1, builder.build())
-                            if (ttsInit) {
-
-                            }
-                            isNotifying = true
                         }
                         // https://developer.android.com/training/notify-user/build-notification
                         Log.d(TAG, "You need to move $timeDiffSec")
