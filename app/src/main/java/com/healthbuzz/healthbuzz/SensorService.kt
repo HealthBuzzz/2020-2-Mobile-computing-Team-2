@@ -110,8 +110,6 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
     inner class SensorBinder : Binder() {
         // Return this instance of LocalService so clients can call public methods
         fun getService(): SensorService = this@SensorService
-
-
     }
 
     override fun onBind(intent: Intent): IBinder {
