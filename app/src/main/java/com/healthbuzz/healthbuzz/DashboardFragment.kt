@@ -1,9 +1,6 @@
 package com.healthbuzz.healthbuzz
 
-import android.content.ComponentName
-import android.content.Intent
-import android.content.ServiceConnection
-import android.content.SharedPreferences
+import android.content.*
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
@@ -40,9 +37,14 @@ import org.apache.commons.lang3.math.NumberUtils.toInt
  */
 class DashboardFragment : Fragment() {
     /** Defines callbacks for service binding, passed to bindService()  */
+    var mBound = false
+    var mService: SensorService? = null
     private val connection = object : ServiceConnection {
 
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
+            val binder = service as SensorService.SensorBinder
+            mService = binder.getService()
+            mBound = true
             // We've bound to LocalService, cast the IBinder and get LocalService instance
 //            val binder = service as SensorService.SensorBinder
 //            mService = binder.getService()
@@ -50,6 +52,8 @@ class DashboardFragment : Fragment() {
         }
 
         override fun onServiceDisconnected(arg0: ComponentName) {
+            mBound = false
+            mService = null
 //            mBound = false
         }
     }
@@ -81,9 +85,8 @@ class DashboardFragment : Fragment() {
         if (timeIntervalWaterMin.isEmpty())
             timeIntervalWaterMin = "20"
 
-        val stretchIntervalSec = Integer.parseInt(timeIntervalStretchMin) * 60
-        val waterIntervalSec = Integer.parseInt(timeIntervalWaterMin) * 60
-
+        val stretchIntervalSec = resetStretchTime(prefs)
+        val waterIntervalSec = resetWaterTime(prefs)
 
         RealtimeModel.stretching_time_left.value = stretchIntervalSec.toLong()
         RealtimeModel.water_time_left.value = waterIntervalSec.toLong()
@@ -251,6 +254,7 @@ class DashboardFragment : Fragment() {
                     val editor = prefs.edit()
                     editor.putBoolean("sync", checked)
                     editor.apply()
+                    resetStretchTime(prefs)
                 }
 
             cardview_layout_water.findViewById<SwitchCompat>(R.id.swCardEnable)
@@ -263,12 +267,38 @@ class DashboardFragment : Fragment() {
                     val editor = prefs.edit()
                     editor.putBoolean("sync2", checked)
                     editor.apply()
+                    resetWaterTime(prefs)
                 }
         }
 
         return rootView
     }
 
+    private fun resetWaterTime(prefs: SharedPreferences): Int {
+        var timeIntervalWaterMin: String =
+            prefs.getString("time_interval_water", "20") ?: "20"
+        if (timeIntervalWaterMin.isEmpty())
+            timeIntervalWaterMin = "20"
+
+        val waterIntervalSec = Integer.parseInt(timeIntervalWaterMin) * 60
+        RealtimeModel.water_time_left.value = waterIntervalSec.toLong()
+        return waterIntervalSec
+    }
+
+    private fun resetStretchTime(prefs: SharedPreferences): Int {
+        var timeIntervalStretchMin: String =
+            prefs.getString("time_interval_stretch", "20") ?: "20"
+        if (timeIntervalStretchMin.isEmpty())
+            timeIntervalStretchMin = "20"
+
+        val stretchIntervalSec = Integer.parseInt(timeIntervalStretchMin) * 60
+        if (mBound) {
+            mService?.resetStretchTime()
+        }
+        RealtimeModel.stretching_time_left.value = stretchIntervalSec.toLong()
+
+        return stretchIntervalSec
+    }
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -306,5 +336,20 @@ class DashboardFragment : Fragment() {
         if(!userName.getValue().equals("")) {
             LoginDataSource.getTodayData()
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (mBound)
+            context?.unbindService(connection)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        context?.bindService(
+            Intent(requireActivity(), SensorService::class.java),
+            connection,
+            Context.BIND_AUTO_CREATE
+        )
     }
 }
