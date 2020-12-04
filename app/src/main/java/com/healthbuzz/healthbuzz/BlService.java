@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -75,14 +76,22 @@ public class BlService extends WearableListenerService {
             messageIntent.putExtra("message", message);
 
             Log.e("CYT_LOG" , message);
-            if(output.size()>windowSize){
-
-                saveToFile(output , SettingsActivity.filename);
-                output.clear();
-
+            Log.d("print_message", message.split(",")[3]);
+            String[] split_message = message.split(",");
+            for(int i=0; i<50; i++)
+            {
+                output.add(Arrays.copyOfRange(split_message, 6*i, 6*i + 6));
                 String datapath = "/my_path";
                 new SendMessage(datapath, "_startrealtime").start();
             }
+//            if(output.size()>windowSize){
+//
+//                saveToFile(output , SettingsActivity.filename);
+//                output.clear();
+//
+//                String datapath = "/my_path";
+//                new SendMessage(datapath, "_startrealtime").start();
+//            }
             //Broadcast the received Data Layer messages locally//
             output.add(message.split(","));
             LocalBroadcastManager.getInstance(this).sendBroadcast(messageIntent);
