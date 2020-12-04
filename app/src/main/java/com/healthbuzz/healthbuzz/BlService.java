@@ -81,8 +81,6 @@ public class BlService extends WearableListenerService {
             for(int i=0; i<50; i++)
             {
                 output.add(Arrays.copyOfRange(split_message, 6*i, 6*i + 6));
-                String datapath = "/my_path";
-                new SendMessage(datapath, "_startrealtime").start();
             }
 //            if(output.size()>windowSize){
 //
