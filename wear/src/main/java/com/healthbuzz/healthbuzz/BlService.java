@@ -183,6 +183,10 @@ public class BlService extends WearableListenerService implements SensorEventLis
 
             String inputMotion = "stop";
             currentMotion = null;
+        }else if(command.equals("_hellowatch")){
+            Log.e("CYT_LOG" , "hellowatch");
+            String datapath = "/my_path";
+            new SendMessage(datapath, "_watchready").start();
         }
     }
 
@@ -210,11 +214,6 @@ public class BlService extends WearableListenerService implements SensorEventLis
             String datapath = "/my_path";
             new SendMessage(datapath, sample.toString()+","+currentMotion).start();
             //Log.e("CYT_LOG" , sample.toString());
-        }
-        if (event.sensor == gyroscope) {
-            SensorData sample = new SensorData(event.values[0], event.values[1], event.values[2], SensorType.GYROSCOPE , new Date().getTime());
-            String datapath = "/my_path";
-            new SendMessage(datapath, sample.toString()+","+currentMotion).start();
         }
 
     }

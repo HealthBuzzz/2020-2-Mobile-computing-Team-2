@@ -1,7 +1,7 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory app:title="General">
+    <!--<PreferenceCategory app:title="General">
 
         <SwitchPreferenceCompat
             app:key="noBother"
@@ -25,6 +25,14 @@
             app:key="smartwatch_realtime_sensor_reading"
             app:title="Enable realtime watch sensor reading"
             app:useSimpleSummaryProvider="true" />
+
+        <ListPreference
+            app:dependency="noBother"
+            app:defaultValue="1"
+            app:entries="@array/sound_entries"
+            app:entryValues="@array/sound_values"
+            app:key="sound"
+            app:title="Notifications" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="Stretch setting">
@@ -53,6 +61,45 @@
             app:title="time interval"
             app:summary="(minute)" />
 
+    </PreferenceCategory>-->
+
+    <PreferenceCategory app:title="Notifications">
+
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:key="notif_buzz"
+            app:title="Buzz" />
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:key="notif_sound"
+            app:title="Sound" />
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:key="notif_popup"
+            app:title="Pop up" />
+
     </PreferenceCategory>
+
+    <PreferenceCategory app:title="Stretch">
+
+        <SwitchPreferenceCompat
+            app:key="recommend_stretch"
+            app:title="Recommend Stretch" />
+        <SwitchPreferenceCompat
+            app:key="activate_stretch"
+            app:title="Activate Stretch Buzz" />
+
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Water">
+
+        <SwitchPreferenceCompat
+            app:key="activate_drinking"
+            app:title="Activate Drinking Buzz" />
+
+
+    </PreferenceCategory>
+
 
 </PreferenceScreen>

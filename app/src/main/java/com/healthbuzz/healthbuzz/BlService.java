@@ -1,11 +1,15 @@
 package com.healthbuzz.healthbuzz;
 
+
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
+
+import androidx.appcompat.app.AlertDialog;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.PreferenceManager;
 
@@ -41,7 +45,7 @@ public class BlService extends WearableListenerService {
         Log.e("CYT_LOG" , "destroyed...");
 
         SharedPreferences sharedPrefs =  PreferenceManager.getDefaultSharedPreferences(this);
-        boolean continueService = sharedPrefs.getBoolean("smartwatch_realtime_sensor_reading", false);
+        boolean continueService = sharedPrefs.getBoolean("activate_drinking", false);
         if(continueService) {
             String datapath = "/my_path";
             new SendMessage(datapath, "_startrealtime").start();
@@ -58,10 +62,18 @@ public class BlService extends WearableListenerService {
             //...retrieve the message//
             final String message = new String(messageEvent.getData());
 
+            if(message.equals("_watchready")){
+                Intent messageIntent = new Intent();
+                messageIntent.setAction(Intent.ACTION_SEND);
+                messageIntent.putExtra("message", message);
+                LocalBroadcastManager.getInstance(this).sendBroadcast(messageIntent);
+                return;
+            }
+
             Intent messageIntent = new Intent();
             messageIntent.setAction(Intent.ACTION_SEND);
             messageIntent.putExtra("message", message);
-            //...do anything here  //
+
             Log.e("CYT_LOG" , message);
             if(output.size()>windowSize){
 

@@ -1,12 +1,21 @@
 package com.healthbuzz.healthbuzz;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.EditTextPreference;
 import androidx.preference.ListPreference;
@@ -14,6 +23,7 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 import androidx.preference.SwitchPreference;
+import androidx.preference.SwitchPreferenceCompat;
 
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
@@ -51,6 +61,12 @@ public class SettingsActivity extends AppCompatActivity {
 
         mainContext=getApplicationContext();
         actContext=SettingsActivity.this;
+
+        IntentFilter messageFilter = new IntentFilter(Intent.ACTION_SEND);
+        SettingsActivity.Receiver messageReceiver = new SettingsActivity.Receiver();
+        LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, messageFilter);
+
+
     }
 
     @Override
@@ -67,10 +83,10 @@ public class SettingsActivity extends AppCompatActivity {
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
 
-            bindSummaryValue(findPreference("time_interval_water"));
+            /*bindSummaryValue(findPreference("time_interval_water"));
             bindSummaryValue(findPreference("time_interval_stretch"));
-            bindSummaryValue(findPreference("sound"));
-            findPreference("smartwatch_realtime_sensor_reading").setOnPreferenceChangeListener(listener);
+            bindSummaryValue(findPreference("sound"));*/
+            findPreference("activate_drinking").setOnPreferenceChangeListener(listener);
         }
     }
 
@@ -125,9 +141,18 @@ public class SettingsActivity extends AppCompatActivity {
                 preference
                         .setSummary(index >= 0 ? listPreference.getEntries()[index]
                                 : null);
-            }else if (preference instanceof CheckBoxPreference) {
-                if(preference.getKey().equals("smartwatch_realtime_sensor_reading")){
+            }else if (preference instanceof SwitchPreferenceCompat) {
+                if(preference.getKey().equals("activate_drinking")){
                     if((boolean)newValue){
+
+                        /*SendMessage t1=new SendMessage("/my_path" , "_stop");
+                        SendMessage t2 = new SendMessage("/my_path" , "_hellowatch");
+                        t2.setPredecessor(t1);
+                        t1.start();
+                        t2.start();*/
+
+
+
                         filename = new SimpleDateFormat("'SensorData'yyyyMMddHHmm'_W_realtime.csv'", Locale.KOREA).format(new Date());
                         SendMessage t1=new SendMessage("/my_path" , "_stop");
                         SendMessage t2 = new SendMessage("/my_path" , "_startrealtime");
@@ -204,5 +229,37 @@ public class SettingsActivity extends AppCompatActivity {
     };
 
 
+    public class Receiver extends BroadcastReceiver {
+        @Override
+
+        public void onReceive(Context context, Intent intent) {
+
+            //String message = "I just received a message from the wearable " + receivedMessageNumber++;
+            String message=intent.getStringExtra("message" );
+
+            DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    switch (which){
+                        case DialogInterface.BUTTON_POSITIVE:
+                            //Yes
+                            // button clicked
+                            Log.e("CYT_LOG" , "yes clicked....");
+                            break;
+
+                        case DialogInterface.BUTTON_NEGATIVE:
+                            //No button clicked
+                            Log.e("CYT_LOG" , "no clicked....");
+                            break;
+                    }
+                }
+            };
+
+           /* AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
+                    .setNegativeButton("No", dialogClickListener).show();*/
+
+        }
+    }
 
 }

@@ -1,23 +1,25 @@
 package com.healthbuzz.healthbuzz
 
 import android.Manifest
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Environment
 import android.view.MenuItem
+import android.view.View
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.preference.PreferenceManager
 
 class MainActivity : AppCompatActivity() {
     public var userName : LiveData<String> = MutableLiveData()
     private val requestPermissionLauncher =
         registerForActivityResult(
-            ActivityResultContracts.RequestPermission()
+                ActivityResultContracts.RequestPermission()
         ) { isGranted: Boolean ->
             if (isGranted) {
                 // Permission is granted. Continue the action or workflow in your
@@ -26,9 +28,9 @@ class MainActivity : AppCompatActivity() {
                 startSensorService(this)
             } else {
                 Toast.makeText(
-                    this,
-                    getString(R.string.require_storage_permission),
-                    Toast.LENGTH_LONG
+                        this,
+                        getString(R.string.require_storage_permission),
+                        Toast.LENGTH_LONG
                 ).show()
                 finish()
                 // Explain to the user that the feature is unavailable because the
@@ -91,20 +93,36 @@ class MainActivity : AppCompatActivity() {
             }
 
         val hasPermission = ContextCompat.checkSelfPermission(
-            applicationContext,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
+                applicationContext,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
         ) == PackageManager.PERMISSION_GRANTED
 
         if (!hasPermission) {
             // You can directly ask for the permission.
             // The registered ActivityResultCallback gets the result of this request.
             requestPermissionLauncher.launch(
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
             )
         }
         if (hasPermission)
             startSensorService(this)
 
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+
+        val sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this)
+        val continueService = sharedPrefs.getBoolean("activate_drinking", false)
+
+        val img = findViewById<View>(R.id.img_watch_icon) as ImageView
+
+        if (continueService) {
+            img.visibility = View.VISIBLE
+        } else {
+            img.visibility = View.INVISIBLE
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem) =
