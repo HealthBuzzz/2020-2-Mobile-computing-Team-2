@@ -90,6 +90,7 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
             soundSetting = setting
         }
 
+        // Notification ID cannot be 0.
         private const val ONGOING_NOTIFICATION_ID = 1
     }
 
@@ -137,7 +138,6 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
                 notiBuilder.build()
             }
 
-        // Notification ID cannot be 0.
         startForeground(ONGOING_NOTIFICATION_ID, notification)
         RealtimeModel.stretching_count.observeForever {
             isNotifying = false
@@ -161,7 +161,6 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
 
     override fun onDestroy() {
         super.onDestroy()
-//        thread?.interrupt()
         sensorManager?.unregisterListener(this, accelerometer)
         sensorManager?.unregisterListener(this, gyroscope)
     }
@@ -193,9 +192,7 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
             val feature = features[0]
             try {
                 val prediction = assetClassifier.classifyInstance(feature).toInt()
-                //inferenceResultView.setText(labelList.get(prediction));
                 Log.d("stop_count", stop_count.toString())
-                Log.d("prediction", prediction.toString())
                 if (prediction == 0) {
                     stop_count += 1
                     not_stop_count = 0
@@ -407,7 +404,6 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
                     R.drawable.stretching, "I stretched!",
                     snoozePendingIntent
                 ).setAutoCancel(true)
-//                            notiBuilder.setContentText("You need to move $time_diff")
             notiManager.notify(1, builder.build())
             isNotifying = true
         }
