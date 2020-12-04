@@ -30,6 +30,20 @@ fun startSensorServiceSub(context: Context) {
     }
 }
 
+fun startBlService(context: Context) {
+    if (!isServiceRunning(context, "com.healthbuzz.healthbuzz.BlService"))
+        startBlServiceSub(context)
+}
+
+fun startBlServiceSub(context: Context) {
+    val intent = Intent(context, BlService::class.java)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        context.startForegroundService(intent)
+    } else {
+        context.startService(intent)
+    }
+}
+
 // Though deprecated but will work as expected
 fun isServiceRunning(context: Context, className: String): Boolean {
     val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager?

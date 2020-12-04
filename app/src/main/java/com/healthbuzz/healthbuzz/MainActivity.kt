@@ -24,6 +24,7 @@ class MainActivity : AppCompatActivity() {
                 // app.
 
                 startSensorService(this)
+//                startBlService(this)
             } else {
                 Toast.makeText(
                     this,
