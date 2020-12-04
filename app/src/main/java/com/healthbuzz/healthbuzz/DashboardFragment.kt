@@ -4,6 +4,7 @@ import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
 import android.content.SharedPreferences
+import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
@@ -12,14 +13,24 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.SwitchCompat
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar
+import com.healthbuzz.healthbuzz.RealtimeModel.ranking_stretch
+import com.healthbuzz.healthbuzz.RealtimeModel.ranking_water
+
+
+import com.healthbuzz.healthbuzz.UserInfo.userName
+import com.healthbuzz.healthbuzz.data.CommunityActivity
+import com.healthbuzz.healthbuzz.data.LoginDataSource
+import com.healthbuzz.healthbuzz.data.model.LoggedInUser
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 import kotlinx.android.synthetic.main.fragment_dashboard.view.*
+import org.apache.commons.lang3.math.NumberUtils.toInt
 
 
 /**
@@ -58,7 +69,6 @@ class DashboardFragment : Fragment() {
         val waterDrawable = ResourcesCompat.getDrawable(resources, R.drawable.drink_water, null)
         val rankingDrawable = ResourcesCompat.getDrawable(resources, R.drawable.run, null)
 
-
         val prefs: SharedPreferences =
             PreferenceManager.getDefaultSharedPreferences(context)
         var timeIntervalStretchMin: String =
@@ -71,10 +81,12 @@ class DashboardFragment : Fragment() {
         if (timeIntervalWaterMin.isEmpty())
             timeIntervalWaterMin = "20"
 
+        val stretchIntervalSec = Integer.parseInt(timeIntervalStretchMin) * 60
+        val waterIntervalSec = Integer.parseInt(timeIntervalWaterMin) * 60
+
+
         RealtimeModel.stretching_time_left.value = stretchIntervalSec.toLong()
         RealtimeModel.water_time_left.value = waterIntervalSec.toLong()
-        val stretchIntervalSec = resetStretchTime(prefs)
-        val waterIntervalSec = resetWaterTime(prefs)
 
 
         RealtimeModel.stretching_time_left.observe(viewLifecycleOwner) { value ->
@@ -212,22 +224,22 @@ class DashboardFragment : Fragment() {
                     val intVal = it
                     formatTime(context, intVal)
                 }
-//            cardview_layout_running.findViewById<TextView>(R.id.tvCardContent).text =
-//                (RealtimeModel.run_time_left.value?.toInt() ?: runIntervalSec).let {
-//                    val intVal = it
-//                    formatTime(context, intVal)
-//                }
-
 
             cardview_layout_stretching.findViewById<ConstraintLayout>(R.id.cardview_root)
                 .setOnClickListener {
                     startActivity(Intent(context, StretchingDetailActivity::class.java))
-                    //startActivity((Intent(context, LoginActivity::class.java)))
                 }
             cardview_layout_water.findViewById<ConstraintLayout>(R.id.cardview_root)
                 .setOnClickListener {
                     startActivity(Intent(context, WaterDetailActivity::class.java))
                 }
+            cardview_layout_community.findViewById<ConstraintLayout>(R.id.cardview_root)
+                .setOnClickListener {
+                    if (!userName.value.equals("")) {
+                        startActivity(Intent(context, CommunityActivity::class.java))
+                    }
+                }
+
 
             cardview_layout_stretching.findViewById<SwitchCompat>(R.id.swCardEnable)
                 .apply {
@@ -252,59 +264,30 @@ class DashboardFragment : Fragment() {
                     editor.putBoolean("sync2", checked)
                     editor.apply()
                 }
-
-//            cardview_layout_running.findViewById<SwitchCompat>(R.id.swCardEnable)
-//                .apply {
-//                    isChecked = prefs.getBoolean("sync3", true)
-//                }
-//                .setOnCheckedChangeListener { buttonView, checked ->
-//                    disableEnableControls(checked, cardview_layout_running as ViewGroup)
-//                    buttonView.isEnabled = true
-//                    val editor = prefs.edit()
-//                    editor.putBoolean("sync3", checked)
-//                    editor.apply()
-//                }
         }
 
         return rootView
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        ranking.observe(viewLifecycleOwner, { aLong: Long? ->
+        ranking_stretch.observe(viewLifecycleOwner, { aLong: Long? ->
             val rankingView = requireView().findViewById<TextView>(R.id.ranking)
             if(aLong == null || aLong.toInt() == (-1)){
                 rankingView.setText("Login First!")
             }else {
-                rankingView.setText("TOP $aLong% Healther")
+                rankingView.setText("TOP $aLong% Stretcher")
             }
         })
-    }
-
-    private fun resetWaterTime(prefs: SharedPreferences): Int {
-        var timeIntervalWaterMin: String =
-            prefs.getString("time_interval_water", "20") ?: "20"
-        if (timeIntervalWaterMin.isEmpty())
-            timeIntervalWaterMin = "20"
-
-        val waterIntervalSec = Integer.parseInt(timeIntervalWaterMin) * 60
-        RealtimeModel.water_time_left.value = waterIntervalSec.toLong()
-        return waterIntervalSec
-    }
-
-    private fun resetStretchTime(prefs: SharedPreferences): Int {
-        var timeIntervalStretchMin: String =
-            prefs.getString("time_interval_stretch", "20") ?: "20"
-        if (timeIntervalStretchMin.isEmpty())
-            timeIntervalStretchMin = "20"
-
-        val stretchIntervalSec = Integer.parseInt(timeIntervalStretchMin) * 60
-        if (mBound) {
-            mService?.resetStretchTime()
-        }
-        RealtimeModel.stretching_time_left.value = stretchIntervalSec.toLong()
-
-        return stretchIntervalSec
+        ranking_water.observe(viewLifecycleOwner, { aLong: Long? ->
+            val rankingView = requireView().findViewById<TextView>(R.id.ranking2)
+            if(aLong == null || aLong.toInt() == (-1)){
+                rankingView.setText("")
+            }else {
+                rankingView.setText("TOP $aLong% WaterDrinker")
+            }
+        })
     }
 
     override fun onResume() {
@@ -323,20 +306,5 @@ class DashboardFragment : Fragment() {
         if(!userName.getValue().equals("")) {
             LoginDataSource.getTodayData()
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        if (mBound)
-            context?.unbindService(connection)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        context?.bindService(
-            Intent(requireActivity(), SensorService::class.java),
-            connection,
-            Context.BIND_AUTO_CREATE
-        )
     }
 }

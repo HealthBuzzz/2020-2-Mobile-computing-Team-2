@@ -7,13 +7,15 @@ public class TodayData {
 
     private int today_stretching_count;
     private int today_water_count;
-    private int today_ranking;
+    private int today_ranking_stretch;
+    private int today_ranking_water;
 
 
-    public TodayData(int today_stretching_count, int today_water_count, int today_ranking) {
+    public TodayData(int today_stretching_count, int today_water_count, int today_ranking_stretch, int today_ranking_water) {
         this.today_stretching_count = today_stretching_count;
         this.today_water_count = today_water_count;
-        this.today_ranking = today_ranking;
+        this.today_ranking_stretch = today_ranking_stretch;
+        this.today_ranking_water = today_ranking_water;
     }
 
     public int getToday_stretching_count() {
@@ -24,7 +26,11 @@ public class TodayData {
         return today_water_count;
     }
 
-    public int getToday_ranking(){
-        return today_ranking;
+    public int getToday_ranking_stretch(){
+        return today_ranking_stretch;
     }
+    public int getToday_ranking_water(){
+        return today_ranking_water;
+    }
+
 }

@@ -20,6 +20,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.getSystemService
 import androidx.preference.PreferenceManager
+import com.healthbuzz.healthbuzz.data.LoginDataSource
 import com.healthbuzz.healthbuzz.rundetector.GpsRunDetector
 import com.healthbuzz.healthbuzz.rundetector.RunningStateListener
 import weka.classifiers.Classifier
@@ -87,6 +88,8 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
     private lateinit var myTTS: TextToSpeech
 
     private var isNotifying = false
+
+    private var refreshFlage = false
 
 
     companion object {
@@ -222,6 +225,21 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
     private fun handleInference(sample: Instance) {
         inferenceSegment.add(sample)
         if (inferenceSegment.size >= windowSize) {
+            val cal: Calendar = Calendar.getInstance()
+            //Daily Backend Refresh
+            val hour = cal[Calendar.HOUR_OF_DAY]
+            val min = cal[Calendar.MINUTE]
+            if (hour == 23 && min == 59 && refreshFlage == false){
+                refreshFlage = true
+                if (UserInfo.userName != null) {
+                    LoginDataSource.getTodayRefresh()
+                }
+            }
+            if (hour == 0 && min == 1){
+                refreshFlage = false
+            }
+            //
+
             val features: Instances = processor.extractFeaturesAndAddLabels(inferenceSegment, -1)
             inferenceSegment.clear()
             val feature = features[0]
@@ -254,56 +272,12 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
 
 //                    SingleObject.getInstance().stretching_time_left.value = left_minutes
                     RealtimeModel.stretching_time_left.value = leftSeconds
+                    Log.d("SUG", timeIntervalStretch)  // Error
+                    Log.d("SUG2",timeDiffSec.toString())
 
                     if (0 >= leftSeconds) {
                         if (!isNotifying) {
                             alarmToStretch()
-                            val prefs: SharedPreferences =
-                                PreferenceManager.getDefaultSharedPreferences(this)
-                            if (!prefs.getBoolean("n_bother", false)) {
-                                if (soundSetting.equals("Buzz")) {
-                                    val vibrator: Vibrator =
-                                        getSystemService(VIBRATOR_SERVICE) as Vibrator
-                                    // 0.5초간 진동
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                        vibrator.vibrate(
-                                            VibrationEffect.createOneShot(
-                                                200,
-                                                DEFAULT_AMPLITUDE
-                                            )
-                                        )
-                                    } else {
-                                        vibrator.vibrate(500)
-                                    }
-                                } else if (soundSetting.equals("Sound")) {
-                                    val toneGen1 = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
-                                    toneGen1.startTone(ToneGenerator.TONE_CDMA_ABBR_ALERT, 300)
-                                }
-                            }
-                            val stretchIntent =
-                                Intent(this, StretchBroadcastReceiver::class.java).apply {
-                                    action = "ACTION_STRETCH"
-                                    putExtra("stretched", true)
-//                                    putExtra(EXTRA_NOTIFICATION_ID, 0)
-                                }
-                            val snoozePendingIntent: PendingIntent =
-                                PendingIntent.getBroadcast(this, 0, stretchIntent, 0)
-                            val builder = NotificationCompat.Builder(this, CHANNEL_ID)
-                                .setSmallIcon(R.drawable.stretching)
-                                .setContentTitle("You need to stretch now!")
-                                .setContentText("Happy stretching")
-                                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                                .setContentIntent(snoozePendingIntent)
-                                .addAction(
-                                    R.drawable.stretching, "I stretched!",
-                                    snoozePendingIntent
-                                ).setAutoCancel(true)
-//                            notiBuilder.setContentText("You need to move $time_diff")
-                            notiManager.notify(1, builder.build())
-                            if (ttsInit) {
-
-                            }
-                            isNotifying = true
                         }
                         // https://developer.android.com/training/notify-user/build-notification
                         Log.d(TAG, "You need to move $timeDiffSec")
@@ -453,6 +427,12 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
         if (runningTime >= 1800) {
             // recommend stretching after running
             recommendStretching(StretchingType.AFTER_RUN)
+            RealtimeModel.stretching_count.postValue(
+                (RealtimeModel.stretching_count.value?.toLong() ?: 0) + 1
+            ) // add 1
+            if (UserInfo.userName != null){
+                LoginDataSource.postTodayStretching()
+            }
         }
     }
 
@@ -505,9 +485,4 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
         }
 
     }
-
-    fun resetStretchTime() {
-        lastTimeMoveSec = System.currentTimeMillis()
-    }
-
 }

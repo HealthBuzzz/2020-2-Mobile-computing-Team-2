@@ -20,11 +20,6 @@
             app:key="smartwatch"
             app:title="Smartwatch"
             app:useSimpleSummaryProvider="true" />
-
-        <CheckBoxPreference
-            app:key="smartwatch_realtime_sensor_reading"
-            app:title="Enable realtime watch sensor reading"
-            app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="Stretch setting">

@@ -1,6 +1,5 @@
 package com.healthbuzz.healthbuzz;
 
-import android.content.ClipData;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -118,7 +117,7 @@ public class WelcomeFragment extends Fragment {
         inflater.inflate(R.menu.settings_menu, menu);
         UserInfo.INSTANCE.getUserName().observe(this, aString -> {
             MenuItem item = menu.findItem(R.id.login);
-            if(aString.equals("")) {
+            if (aString.equals("")) {
                 item.setTitle("Login");
             } else {
                 item.setTitle("Logout");
@@ -149,7 +148,7 @@ public class WelcomeFragment extends Fragment {
 //            Toast.makeText(getActivity(), "Go to help page", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(requireActivity(), MovementDataGettingActivity.class));
             return true;
-        }else if (itemId == R.id.login) {
+        } else if (itemId == R.id.login) {
 //            Toast.makeText(getActivity(), "Go to help page", Toast.LENGTH_SHORT).show();
             // If user wants login
             if (UserInfo.INSTANCE.getUserName().getValue().equals("")) {
