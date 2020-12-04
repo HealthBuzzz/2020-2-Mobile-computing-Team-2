@@ -38,44 +38,33 @@
             app:layout_constraintTop_toBottomOf="@id/tvCardTitle"
             tools:src="@tools:sample/avatars" />
 
-        <com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar
-            android:id="@+id/pbCardProgress"
+        <TextView
+            android:id="@+id/ranking"
             android:layout_width="0dp"
-            android:layout_height="20dp"
+            android:layout_height="40dp"
             android:layout_marginStart="@dimen/text_margin"
-            android:layout_marginTop="@dimen/text_margin"
-            app:layout_constraintEnd_toStartOf="@id/swCardEnable"
-            app:layout_constraintStart_toEndOf="@id/ivCardImage"
-            app:layout_constraintTop_toBottomOf="@id/tvCardTitle"
-            app:rcAnimationEnable="true"
-            app:rcAnimationSpeedScale="0.2"
-            app:rcBackgroundColor="#A4FFA4"
-            app:rcBackgroundPadding="0dp"
-            app:rcMax="100"
-            app:rcProgress="50"
-            app:rcProgressColor="#00FF00"
-            app:rcRadius="20dp"
-            app:rcSecondaryProgress="30"
-            app:rcSecondaryProgressColor="#FFFF00FF" />
+            android:layout_marginBottom="84dp"
+            android:text="TOP 1%"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@id/ivCardImage" />
 
         <TextView
-            android:id="@+id/tvCardContent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Yeah"
-            app:layout_constraintEnd_toStartOf="@id/swCardEnable"
-            app:layout_constraintStart_toEndOf="@id/ivCardImage"
-            app:layout_constraintTop_toBottomOf="@id/pbCardProgress" />
-
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/swCardEnable"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Enable"
-            android:theme="@style/BuzzSwitch"
+            android:id="@+id/ranking2"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="@dimen/text_margin"
+            android:layout_marginBottom="24dp"
+            android:text="TOP 1%"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
-
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@id/ivCardImage" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

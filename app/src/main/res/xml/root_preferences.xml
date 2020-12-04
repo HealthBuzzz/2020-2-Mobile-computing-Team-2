@@ -21,6 +21,7 @@
             app:title="Smartwatch"
             app:useSimpleSummaryProvider="true" />
 
+
         <CheckBoxPreference
             app:key="smartwatch_realtime_sensor_reading"
             app:title="Enable realtime watch sensor reading"
@@ -33,6 +34,7 @@
             app:entryValues="@array/sound_values"
             app:key="sound"
             app:title="Notifications" />
+
     </PreferenceCategory>
 
     <PreferenceCategory app:title="Stretch setting">

@@ -1,15 +1,15 @@
 package com.healthbuzz.healthbuzz.ui.login;
 
+import android.util.Patterns;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import android.util.Patterns;
-
+import com.healthbuzz.healthbuzz.R;
 import com.healthbuzz.healthbuzz.data.LoginRepository;
 import com.healthbuzz.healthbuzz.data.Result;
 import com.healthbuzz.healthbuzz.data.model.LoggedInUser;
-import com.healthbuzz.healthbuzz.R;
 
 public class LoginViewModel extends ViewModel {
 

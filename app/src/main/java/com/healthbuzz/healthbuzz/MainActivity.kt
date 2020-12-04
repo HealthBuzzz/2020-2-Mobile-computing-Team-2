@@ -16,7 +16,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.preference.PreferenceManager
 
 class MainActivity : AppCompatActivity() {
-    public var userName : LiveData<String> = MutableLiveData()
+
+    public var userName: LiveData<String> = MutableLiveData()
     private val requestPermissionLauncher =
         registerForActivityResult(
                 ActivityResultContracts.RequestPermission()
@@ -42,8 +43,8 @@ class MainActivity : AppCompatActivity() {
         }
 
     //override fun onResume() {
-        //super.onResume()
-        //welcomeFragment.textView2.setText(LoginDataSource.name)
+    //super.onResume()
+    //welcomeFragment.textView2.setText(LoginDataSource.name)
     //}
 
 
@@ -52,12 +53,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.detail_toolbar))
 
-        // start the sensor service
-
-        // start the sensor service
-        //startService(Intent(this, SensorService_bl::class.java))
-
-        //findViewById<FloatingActionButton>(R.id.fab) is not needed thanks to kotlin synthetic android extension
+//        findViewById<FloatingActionButton>(R.id.fab) is not needed thanks to kotlin synthetic android extension
 
         // Show the Up button in the action bar.
 //        supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -92,16 +88,28 @@ class MainActivity : AppCompatActivity() {
                 true
             }
 
-        val hasPermission = ContextCompat.checkSelfPermission(
+
+        val hasPermission =
+//            ContextCompat.checkSelfPermission(
+//            applicationContext,
+//            Manifest.permission.WRITE_EXTERNAL_STORAGE
+//        ) == PackageManager.PERMISSION_GRANTED &&
+            ContextCompat.checkSelfPermission(
                 applicationContext,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-        ) == PackageManager.PERMISSION_GRANTED
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+
 
         if (!hasPermission) {
             // You can directly ask for the permission.
             // The registered ActivityResultCallback gets the result of this request.
+//            requestPermissionLauncher.launch(
+//                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+//            )
             requestPermissionLauncher.launch(
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+
+                Manifest.permission.ACCESS_FINE_LOCATION,
+
             )
         }
         if (hasPermission)

@@ -1,3 +1,4 @@
+
 package com.healthbuzz.healthbuzz;
 
 import android.content.Context;
@@ -298,4 +299,5 @@ public class BlService extends WearableListenerService implements SensorEventLis
             }
         }
     }
+
 }

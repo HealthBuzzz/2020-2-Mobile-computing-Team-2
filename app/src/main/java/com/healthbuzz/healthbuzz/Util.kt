@@ -60,3 +60,11 @@ fun formatTime(context: Context, seconds: Int): String {
         context.getString(R.string.dashboard_seconds_left, seconds)
     }
 }
+
+fun showYoutubeSearch(context: Context, query: String) {
+    val intent = Intent(Intent.ACTION_SEARCH)
+    intent.setPackage("com.google.android.youtube")
+    intent.putExtra("query", query)
+    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+    context.startActivity(intent)
+}
