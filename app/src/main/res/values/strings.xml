@@ -1,29 +1,20 @@
 <resources>
     <string name="app_name">HealthBuzz</string>
     <string name="title_item_detail">Item Detail</string>
-    <string name="dashboard_stretching_title_default"> You should stretch!!!</string>
-    <string name="dashboard_water_title_default"> You should drink water!!!</string>
-    <string name="dashboard_run_title_default"> You should run!!!</string>
+    <string name="dashboard_stretching_title_default"> You shoud stretch!!!</string>
+    <string name="dashboard_water_title_default"> You shoud drink water!!!</string>
     <string name="dashboard_minutes_left"> %d minutes left</string>
     <string name="menu_item1">Settings</string>
     <string name="menu_item2">Debug</string>
     <string name="menu_item3">Help</string>
-    <string name="menu_item4">Debug_Drinking</string>
-    <string name="menu_item5">Debug_Movement</string>
     <string name="ticker_text">HealthBuzz is guarding your health :)</string>
     <string name="title_activity_water_detail">Water Detail</string>
     <string name="title_activity_stretching_detail">Stretching Detail</string>
-    <string name="title_activity_run_detail">Stretching Detail</string>
 
     <string name="ondesk">ondesk</string>
     <string name="standing">standing</string>
     <string name="walking">walking</string>
-    <string name="running">running</string>
     <string name="reset">reset</string>
-    <string name="normal">Normal</string>
-    <string name="up">Up</string>
-    <string name="drinking">Drinking</string>
-    <string name="down">Down</string>
     <string name="stop_collecting">stop collecting</string>
     <string name="save">save</string>
 
@@ -33,18 +24,37 @@
     <string name="dashboard_seconds_left">%d seconds left</string>
     <string name="you_need_stretch">You need to stretch now</string>
     <string name="you_need_drink">You need to drink water now</string>
-    <string name="you_need_run">You need to run now</string>
     <string name="require_storage_permission">This app requires permission to work properly.</string>
 
     <string name="title_activity_login">LoginActivity</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in">Sign in</string>
+    <string name="action_register">Register</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="welcome">"Welcome !"</string>
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="normal">Normal</string>
+    <string name="up">Up</string>
+    <string name="drinking">Drinking</string>
+    <string name="down">Down</string>
+
+    <string name="debug_drinking">debug_drinking</string>
+    <string name="debug_movement">debug_movement</string>
+
+    <string name="running">running</string>
+
+    <string name="dashboard_community_title">Compare with Your Community!</string>
+    <string name="title_activity_community">CommunityActivity</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
 </resources>

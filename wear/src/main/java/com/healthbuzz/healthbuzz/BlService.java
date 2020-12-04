@@ -52,6 +52,7 @@ class SensorData {
 }
 
 
+
 public class BlService extends WearableListenerService implements SensorEventListener {
 
     static List<BlService> serviceList = new ArrayList<BlService>();
@@ -63,24 +64,24 @@ public class BlService extends WearableListenerService implements SensorEventLis
         super.onCreate();
 
         serviceList.add(this);
-        if (sm == null) {
+        if(sm==null) {
 
             sm = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         }
         accelerometer = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         gyroscope = sm.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-        HeartRate = sm.getDefaultSensor(Sensor.TYPE_HEART_RATE);
+        HeartRate=sm.getDefaultSensor(Sensor.TYPE_HEART_RATE);
 
     }
 
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
 
-//If the message’s path equals "/my_path"...//
+        //If the message’s path equals "/my_path"...//
 
         if (messageEvent.getPath().equals("/my_path")) {
 
-//...retrieve the command//
+            //...retrieve the command//
 
             final String command = new String(messageEvent.getData());
             Intent messageIntent = new Intent();
@@ -92,7 +93,8 @@ public class BlService extends WearableListenerService implements SensorEventLis
 
             //Broadcast the received Data Layer messages locally//
             LocalBroadcastManager.getInstance(this).sendBroadcast(messageIntent);
-        } else {
+        }
+        else {
             super.onMessageReceived(messageEvent);
         }
     }
@@ -103,9 +105,9 @@ public class BlService extends WearableListenerService implements SensorEventLis
     private static Sensor accelerometer, gyroscope, HeartRate;
     private final int samplingRate = SensorManager.SENSOR_DELAY_GAME;
 
-    public void processTheCommand(String command) {
-        if (command.equals("_normal")) {
-            Log.e("CYT_LOG", "normal");
+    public void processTheCommand(String command){
+        if(command.equals("_normal")){
+            Log.e("CYT_LOG" , "normal");
             if (currentMotion == null) {
                 sm.registerListener(this, accelerometer, samplingRate);
                 sm.registerListener(this, gyroscope, samplingRate);
@@ -113,8 +115,8 @@ public class BlService extends WearableListenerService implements SensorEventLis
             }
             String inputMotion = "normal";
             currentMotion = inputMotion;
-        } else if (command.equals("_up")) {
-            Log.e("CYT_LOG", "up");
+        }else if(command.equals("_up")){
+            Log.e("CYT_LOG" , "up");
             if (currentMotion == null) {
                 sm.registerListener(this, accelerometer, samplingRate);
                 sm.registerListener(this, gyroscope, samplingRate);
@@ -122,8 +124,8 @@ public class BlService extends WearableListenerService implements SensorEventLis
             }
             String inputMotion = "up";
             currentMotion = inputMotion;
-        } else if (command.equals("_drinking")) {
-            Log.e("CYT_LOG", "drinking");
+        }else if(command.equals("_drinking")){
+            Log.e("CYT_LOG" , "drinking");
             if (currentMotion == null) {
                 sm.registerListener(this, accelerometer, samplingRate);
                 sm.registerListener(this, gyroscope, samplingRate);
@@ -131,8 +133,8 @@ public class BlService extends WearableListenerService implements SensorEventLis
             }
             String inputMotion = "drinking";
             currentMotion = inputMotion;
-        } else if (command.equals("_down")) {
-            Log.e("CYT_LOG", "down");
+        }else if(command.equals("_down")){
+            Log.e("CYT_LOG" , "down");
             if (currentMotion == null) {
                 sm.registerListener(this, accelerometer, samplingRate);
                 sm.registerListener(this, gyroscope, samplingRate);
@@ -140,8 +142,8 @@ public class BlService extends WearableListenerService implements SensorEventLis
             }
             String inputMotion = "down";
             currentMotion = inputMotion;
-        } else if (command.equals("_ondesk")) {
-            Log.e("CYT_LOG", "ondesk");
+        }else if(command.equals("_ondesk")){
+            Log.e("CYT_LOG" , "ondesk");
             if (currentMotion == null) {
                 sm.registerListener(this, accelerometer, samplingRate);
                 sm.registerListener(this, gyroscope, samplingRate);
@@ -149,8 +151,8 @@ public class BlService extends WearableListenerService implements SensorEventLis
             }
             String inputMotion = "ondesk";
             currentMotion = inputMotion;
-        } else if (command.equals("_walking")) {
-            Log.e("CYT_LOG", "walking");
+        }else if(command.equals("_walking")){
+            Log.e("CYT_LOG" , "walking");
             if (currentMotion == null) {
                 sm.registerListener(this, accelerometer, samplingRate);
                 sm.registerListener(this, gyroscope, samplingRate);
@@ -158,8 +160,8 @@ public class BlService extends WearableListenerService implements SensorEventLis
             }
             String inputMotion = "walking";
             currentMotion = inputMotion;
-        } else if (command.equals("_running")) {
-            Log.e("CYT_LOG", "running");
+        }else if(command.equals("_running")){
+            Log.e("CYT_LOG" , "running");
             if (currentMotion == null) {
                 sm.registerListener(this, accelerometer, samplingRate);
                 sm.registerListener(this, gyroscope, samplingRate);
@@ -167,10 +169,19 @@ public class BlService extends WearableListenerService implements SensorEventLis
             }
             String inputMotion = "running";
             currentMotion = inputMotion;
-        } else if (command.equals("_stop")) {
-            Log.e("CYT_LOG", "stop");
+        }else if(command.equals("_startrealtime")){
+            Log.e("CYT_LOG" , "_startrealtime");
+            if (currentMotion == null) {
+                sm.registerListener(this, accelerometer, samplingRate);
+                sm.registerListener(this, gyroscope, samplingRate);
+                sm.registerListener(this, HeartRate, samplingRate);
+            }
+            String inputMotion = "null";
+            currentMotion = inputMotion;
+        }else if(command.equals("_stop")){
+            Log.e("CYT_LOG" , "stop");
 
-            for (BlService bls : serviceList) {
+            for(BlService bls : serviceList){
                 sm.unregisterListener(bls);
             }
 
