@@ -103,7 +103,7 @@ public class BlService extends WearableListenerService {
             messageIntent.setAction(Intent.ACTION_SEND);
             messageIntent.putExtra("message", message);
 
-            Log.e("CYT_LOG" , message);
+            //Log.e("CYT_LOG" , message);
             Log.d("print_message", message.split(",")[3]);
             String[] split_message = message.split(",");
             for(int i=0; i<50; i++)
@@ -117,7 +117,7 @@ public class BlService extends WearableListenerService {
                 //output.add(Arrays.copyOfRange(split_message, 6*i, 6*i + 6));
             }
 
-            Log.d("output_size", String.valueOf(output.size()));
+            //Log.d("output_size", String.valueOf(output.size()));
             Log.d("output_segment", output_segment.get(0).toString());
 
             Instances features = extractFeatures(output_segment, "normal");
@@ -129,7 +129,7 @@ public class BlService extends WearableListenerService {
             try{
                 double pred = asset_classifier.classifyInstance(feature);
                 String pred_result = features.classAttribute().value((int)pred);
-                Log.d("prediction", String.valueOf(pred));
+                //Log.d("prediction", String.valueOf(pred));
                 Log.d("prediction", pred_result);
 
                 if(drink_state == 1)
@@ -310,9 +310,9 @@ public class BlService extends WearableListenerService {
         labelInstance.setValue(0, label);
         labels.add(labelInstance);
 
-        Log.d("mean", mean(data).toString());
-        Log.d("var", var(data).toString());
-        Log.d("diffsum", diffsum(data).toString());
+        //Log.d("mean", mean(data).toString());
+        //Log.d("var", var(data).toString());
+        //Log.d("diffsum", diffsum(data).toString());
 
         Instances featureData = Instances.mergeInstances(varFeatures, meanFeatures);
         featureData = Instances.mergeInstances(featureData, diffFeatures);
