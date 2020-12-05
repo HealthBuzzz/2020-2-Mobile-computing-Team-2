@@ -113,11 +113,11 @@ public class WeatherFragment extends Fragment {
                 JsonObject response_body = response.body();
                 String res = response_body.toString();
                 Log.d("weather", res);
-                current_city = response_body.get("name").toString();
+                current_city = response_body.get("name").getAsString();
                 Log.d("weather_city", current_city);
                 JsonObject current_weather_obj = response.body().getAsJsonArray("weather").get(0).getAsJsonObject();
                 Log.d("curr_weather_obj", current_weather_obj.toString());
-                current_weather = current_weather_obj.get("main").toString();
+                current_weather = current_weather_obj.get("main").getAsString();
                 current_weather_icon = current_weather_obj.get("icon").getAsString();
                 Log.d("curr_weather_icon", current_weather_icon);
                 Log.d("curr_weather", current_weather);
@@ -147,7 +147,7 @@ public class WeatherFragment extends Fragment {
                     JsonObject weather_obj = weather.getAsJsonObject();
                     Log.d("weather_parse", weather.toString());
                     temps.add("" + (weather_obj.get("temp").getAsFloat() - 273f));
-                    datetimes.add(weather_obj.get("dt").toString());
+                    datetimes.add(weather_obj.get("dt").getAsString());
                     weather_icons.add(weather_obj.getAsJsonArray("weather").get(0).getAsJsonObject().get("icon").getAsString());
                 }
                 Log.d("weather_temps", temps.toString());
