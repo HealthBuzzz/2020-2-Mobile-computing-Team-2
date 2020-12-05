@@ -16,6 +16,7 @@ import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.content.getSystemService
 import androidx.preference.PreferenceManager
+import com.healthbuzz.healthbuzz.data.LoginDataSource
 import com.healthbuzz.healthbuzz.rundetector.GpsRunDetector
 import com.healthbuzz.healthbuzz.rundetector.RunningStateListener
 import weka.classifiers.Classifier
@@ -79,6 +80,7 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
     private lateinit var notiManager: NotificationManager
 
     private var isNotifying = false
+    private var refreshFlage = false
 
     companion object {
         // We need to make this false when user not allow vibrate initially
@@ -187,6 +189,21 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
     private fun handleInference(sample: Instance) {
         inferenceSegment.add(sample)
         if (inferenceSegment.size >= windowSize) {
+            val cal: Calendar = Calendar.getInstance()
+            //Daily Backend Refresh
+            val hour = cal[Calendar.HOUR_OF_DAY]
+            val min = cal[Calendar.MINUTE]
+            if (hour == 23 && min == 59 && refreshFlage == false){
+                refreshFlage = true
+                if (UserInfo.userName != null) {
+                    LoginDataSource.getTodayRefresh()
+                }
+            }
+            if (hour == 0 && min == 1){
+                refreshFlage = false
+            }
+            //
+
             val features: Instances = processor.extractFeaturesAndAddLabels(inferenceSegment, -1)
             inferenceSegment.clear()
             val feature = features[0]
@@ -200,6 +217,7 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
                     val timeDiffSec = (currentTimeSec - lastTimeMoveSec) / 1000
                     Log.d(TAG, "time_diff$timeDiffSec")
                     val leftSeconds = getLeftSeconds(timeDiffSec)
+
 
                     RealtimeModel.stretching_time_left.postValue(leftSeconds)
                     if (leftSeconds <= 0) {
@@ -358,6 +376,12 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
         if (runningTime >= 1800) {
             // recommend stretching after running
             recommendStretching(StretchingType.AFTER_RUN)
+            RealtimeModel.stretching_count.postValue(
+                (RealtimeModel.stretching_count.value?.toLong() ?: 0) + 1
+            ) // add 1
+            if (UserInfo.userName != null){
+                LoginDataSource.postTodayStretching()
+            }
         }
     }
 
@@ -409,7 +433,6 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
         }
 
     }
-
     fun resetStretchTime() {
         lastTimeMoveSec = System.currentTimeMillis()
     }

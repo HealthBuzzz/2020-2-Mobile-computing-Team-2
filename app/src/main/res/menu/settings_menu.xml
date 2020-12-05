@@ -11,12 +11,12 @@
         app:showAsAction="never" />
     <item
         android:id="@+id/debug_drinking"
-        android:title="@string/menu_item4"
+        android:title="@string/debug_drinking"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/debug_movement"
-        android:title="@string/menu_item5"
+        android:title="@string/debug_movement"
         app:showAsAction="never" />
     <item
         android:id="@+id/help"

@@ -22,7 +22,11 @@ import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.ValueFormatter;
+import com.healthbuzz.healthbuzz.data.LoginDataSource;
+import com.healthbuzz.healthbuzz.data.model.TodayData;
+import com.healthbuzz.healthbuzz.data.model.YearData;
 
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedList;
@@ -61,7 +65,12 @@ public class WaterDetailActivity extends AppCompatActivity {
     // This is from file or backend
     long todayDrink = 1100;
     long dayNeedDrink = 2000;
+    ArrayList<PieEntry> pieEntries;
+    PieDataSet pieDataSet;
+    PieData pieData;
     DrinkMonth[] drinkMonths;
+
+    List<YearData> total_data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,12 +82,14 @@ public class WaterDetailActivity extends AppCompatActivity {
 //        toolBarLayout.setTitle(getTitle());
 
         // This is mock data
+        if (UserInfo.INSTANCE.getUserName().getValue() != "")
+            LoginDataSource.getYearWater();
         int[] dayArr1 = new int[]{1, 5, 23, 30};
         int[] dayArr2 = new int[]{1, 5, 13, 24, 30};
         int[] quantityArr1 = new int[]{1100, 2200, 2300, 1100};
         int[] quantityArr2 = new int[]{300, 1200, 2300, 2100, 400};
-        drinkMonths = new DrinkMonth[]{new DrinkMonth(2020, 11, dayArr1, quantityArr1),
-                new DrinkMonth(2020, 10, dayArr2, quantityArr2)};
+        drinkMonths = new DrinkMonth[]{new DrinkMonth(2020, 12, dayArr1, quantityArr1),
+                new DrinkMonth(2020, 11, dayArr2, quantityArr2)};
 
         // Get current year&month for initial showing
         Calendar cal = Calendar.getInstance();
@@ -87,9 +98,9 @@ public class WaterDetailActivity extends AppCompatActivity {
 
         pieChart = findViewById(R.id.piechart);
         int[] colorArray = new int[]{Color.CYAN, Color.GRAY};
-        ArrayList<PieEntry> pieEntries = new ArrayList();
+        pieEntries = new ArrayList();
 
-        pieEntries.add(new PieEntry(todayDrink, ""));
+
         //todayDrink = SingleObject.getInstance().water_count.getValue();
 
         todayDrink = RealtimeModel.INSTANCE.getWater_count().getValue();
@@ -97,11 +108,12 @@ public class WaterDetailActivity extends AppCompatActivity {
         if (marginToday < 0) {
             marginToday = 0;
         }
+        pieEntries.add(new PieEntry(todayDrink, ""));
         pieEntries.add(new PieEntry(marginToday, ""));
-        PieDataSet pieDataSet = new PieDataSet(pieEntries, "");
+        pieDataSet = new PieDataSet(pieEntries, "");
         pieDataSet.setColors(colorArray);
 
-        PieData pieData = new PieData(pieDataSet);
+        pieData = new PieData(pieDataSet);
         pieData.setValueTextSize(15f); // <- here
         pieChart.setData(pieData);
         pieChart.getDescription().setEnabled(false);
@@ -110,55 +122,30 @@ public class WaterDetailActivity extends AppCompatActivity {
         pieChart.setCenterTextSize(10f);
         pieChart.animate();
         pieChart.invalidate();
-/*
-        SingleObject.getInstance().water_count.registerObserver(new Observer() {
-            @Override
-            public void update(long todayDrink) {
-                ArrayList<PieEntry> pieEntries = new ArrayList();
 
-                pieEntries.add(new PieEntry(todayDrink, ""));
-                long marginToday = dayNeedDrink - todayDrink;
-                if (marginToday < 0) {
-                    marginToday = 0;
-                }
-                pieEntries.add(new PieEntry(marginToday, ""));
-                PieDataSet pieDataSet = new PieDataSet(pieEntries, "");
-                pieDataSet.setColors(colorArray);
-
-                PieData pieData = new PieData(pieDataSet);
-                pieData.setValueTextSize(15f); // <- here
-                pieChart.setData(pieData);
-                pieChart.getDescription().setEnabled(false);
-                pieChart.getLegend().setEnabled(false);
-                pieChart.setCenterText("You drinked\n" + Math.round((float) todayDrink / dayNeedDrink * 100) + "%");
-                pieChart.setCenterTextSize(15f);
-                pieChart.animate();
-                pieChart.invalidate();
-
-        RealtimeModel.INSTANCE.getWater_count().observe(this, todayDrink -> {
-            ArrayList<PieEntry> pieEntries1 = new ArrayList();
-            
-            pieEntries1.add(new PieEntry(todayDrink, ""));
-            long marginToday1 = dayNeedDrink - todayDrink;
-            if (marginToday1 < 0) {
-                marginToday1 = 0;
+        RealtimeModel.INSTANCE.getWater_count().observe(this, aLong -> {
+            todayDrink = aLong;
+            long new_marginToday = dayNeedDrink - todayDrink;
+            if (new_marginToday < 0) {
+                new_marginToday = 0;
             }
-            pieEntries1.add(new PieEntry(marginToday1, ""));
-            PieDataSet pieDataSet1 = new PieDataSet(pieEntries1, "");
-            pieDataSet1.setColors(colorArray);
+            pieEntries = new ArrayList();
+            pieEntries.add(new PieEntry(todayDrink, ""));
+            pieEntries.add(new PieEntry(new_marginToday, ""));
+            pieDataSet = new PieDataSet(pieEntries, "");
+            pieDataSet.setColors(colorArray);
 
-            PieData pieData1 = new PieData(pieDataSet1);
-            pieData1.setValueTextSize(15f); // <- here
-            pieChart.setData(pieData1);
+            pieData = new PieData(pieDataSet);
+            pieData.setValueTextSize(15f); // <- here
+            pieChart.setData(pieData);
             pieChart.getDescription().setEnabled(false);
             pieChart.getLegend().setEnabled(false);
             pieChart.setCenterText("You drinked\n" + Math.round((float) todayDrink / dayNeedDrink * 100) + "%");
-            pieChart.setCenterTextSize(15f);
+            pieChart.setCenterTextSize(10f);
             pieChart.animate();
             pieChart.invalidate();
-
         });
-*/
+
         ////// LINE CHART BELOW
         lineChart = (LineChart) findViewById(R.id.chart);
 
@@ -198,6 +185,51 @@ public class WaterDetailActivity extends AppCompatActivity {
         lineChartDataUpdate();
         lineChart.invalidate();
         historyTextUpdate();
+
+        RealtimeModel.INSTANCE.getYear_data().observe(this, year_data -> {
+            lineChart = (LineChart) findViewById(R.id.chart);
+            total_data = year_data;
+            lineChartDataUpdateForYear();
+            lineChart.invalidate();
+            historyTextUpdate();
+
+        });
+    }
+
+    private void lineChartDataUpdateForYear() {
+        List<YearData> year_data = total_data;
+        if(total_data == null)
+            return;
+        List<Entry> entries = new ArrayList<>();
+
+        DrinkMonth target = null;
+        for (DrinkMonth drinkMonth : drinkMonths) {
+            if (drinkMonth.year == showYear && drinkMonth.month == showMonth) {
+                target = drinkMonth;
+            }
+        }
+        for (YearData data : year_data ) {
+            if(data.getYear() == showYear && data.getMonth() == showMonth) {
+                entries.add(new Entry(data.getDay(), data.getAmount()));
+            }
+        }
+
+        LineDataSet lineDataSet = new LineDataSet(entries, "");
+        lineDataSet.setLineWidth(2);
+        lineDataSet.setCircleRadius(6);
+        lineDataSet.setCircleColor(Color.parseColor("#FFA1B4DC"));
+        lineDataSet.setCircleHoleColor(Color.WHITE);
+        lineDataSet.setColor(Color.parseColor("#FFA1B4DC"));
+        lineDataSet.setDrawCircleHole(true);
+        lineDataSet.setDrawCircles(true);
+        lineDataSet.setDrawHorizontalHighlightIndicator(false);
+        lineDataSet.setDrawHighlightIndicators(false);
+        lineDataSet.setDrawValues(false);
+        lineDataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+        lineDataSet.setDrawFilled(true);
+
+        LineData lineData = new LineData(lineDataSet);
+        lineChart.setData(lineData);
     }
 
     private void lineChartDataUpdate() {
@@ -247,6 +279,8 @@ public class WaterDetailActivity extends AppCompatActivity {
             showMonth -= 1;
         }
         lineChartDataUpdate();
+        if (UserInfo.INSTANCE.getUserName().getValue() != "" && total_data!= null)
+            lineChartDataUpdateForYear();
         historyTextUpdate();
         lineChart.invalidate();
     }
@@ -259,7 +293,16 @@ public class WaterDetailActivity extends AppCompatActivity {
             showMonth += 1;
         }
         lineChartDataUpdate();
+        if (UserInfo.INSTANCE.getUserName().getValue() != "" && total_data!= null)
+            lineChartDataUpdateForYear();
         historyTextUpdate();
         lineChart.invalidate();
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        if (UserInfo.INSTANCE.getUserName().getValue() != "")
+            LoginDataSource.getYearWater();
     }
 }
