@@ -211,24 +211,26 @@ public class BlService extends WearableListenerService implements SensorEventLis
         {
             sensor_array.clear();
         }
-        sensor_data_count++;
+
         if (event.sensor == accelerometer) {
             SensorData sample = new SensorData(event.values[0], event.values[1], event.values[2], SensorType.ACCELEROMETER, new Date().getTime(), currentMotion);
             sensor_array.add(sample);
+            sensor_data_count++;
         }
-        if (event.sensor == HeartRate) {
-            SensorData sample = new SensorData(event.values[0], 0, 0, SensorType.HEARTRATE, new Date().getTime(), currentMotion);
-            sensor_array.add(sample);
-        }
-        if (event.sensor == gyroscope) {
-            SensorData sample = new SensorData(event.values[0], event.values[1], event.values[2], SensorType.GYROSCOPE , new Date().getTime(), currentMotion);
-            sensor_array.add(sample);
-        }
+//        if (event.sensor == HeartRate) {
+//            SensorData sample = new SensorData(event.values[0], 0, 0, SensorType.HEARTRATE, new Date().getTime(), currentMotion);
+//            sensor_array.add(sample);
+//        }
+//        if (event.sensor == gyroscope) {
+//            SensorData sample = new SensorData(event.values[0], event.values[1], event.values[2], SensorType.GYROSCOPE , new Date().getTime(), currentMotion);
+//            sensor_array.add(sample);
+//        }
         if(sensor_data_count == 50)
         {
             sensor_data_count = 0;
             String datapath = "/my_path";
-            new SendMessage(datapath, sensor_array.toString()).start();
+            String sensor_string = sensor_array.toString();
+            new SendMessage(datapath, sensor_string.substring(1, sensor_string.length()-1)).start();
             Log.e("CYT_LOG" , sensor_array.toString());
             return;
         }
