@@ -1,12 +1,17 @@
 package com.healthbuzz.healthbuzz
 
 import android.app.ActivityManager
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Build
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 
 
 // Generates log TAG constant automatically
@@ -59,4 +64,25 @@ fun formatTime(context: Context, seconds: Int): String {
     } else {
         context.getString(R.string.dashboard_seconds_left, seconds)
     }
+}
+
+fun showYoutubeSearch(context: Context, query: String) {
+    val intent = Intent(Intent.ACTION_SEARCH)
+    intent.setPackage("com.google.android.youtube")
+    intent.putExtra("query", query)
+    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+    context.startActivity(intent)
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+fun Context.createNotificationChannel(channelId: String, channelName: String): String {
+    val chan = NotificationChannel(
+        channelId,
+        channelName, NotificationManager.IMPORTANCE_HIGH
+    )
+    chan.lightColor = Color.BLUE
+    chan.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
+    val service = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    service.createNotificationChannel(chan)
+    return channelId
 }

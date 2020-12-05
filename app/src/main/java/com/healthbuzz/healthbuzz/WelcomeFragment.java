@@ -1,6 +1,5 @@
 package com.healthbuzz.healthbuzz;
 
-import android.content.ClipData;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,8 +9,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.healthbuzz.healthbuzz.data.LoginDataSource;
@@ -50,20 +52,72 @@ public class WelcomeFragment extends Fragment {
             TextView userView = (TextView) getView().findViewById(R.id.textView2);
             userView.setText(aString);
         });
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
         return inflater.inflate(R.layout.fragment_welcome, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        ImageView manView = getView().findViewById(R.id.man);
+        ImageView treeView = getView().findViewById(R.id.tree);
+        RealtimeModel.INSTANCE.getStretching_count().observe(getViewLifecycleOwner(), stretching_count -> {
+            int int_count = stretching_count.intValue();
+            if (int_count >= 6) {
+                int_count = 5;
+            }
+            switch (int_count) {
+                case 0:
+                case 1:
+                    manView.setImageResource(R.drawable.man1);
+                    break;
+                case 2:
+                case 3:
+                    manView.setImageResource(R.drawable.man2);
+                    break;
+                case 4:
+                case 5:
+                    manView.setImageResource(R.drawable.man3);
+                    break;
+                default:
+                    //throw new IllegalStateException();
+            }
+        });
+        RealtimeModel.INSTANCE.getWater_count().observe(getViewLifecycleOwner(), water_count -> {
+            int int_count = water_count.intValue();
+            int_count /= 1000;
+            if (int_count >= 3) {
+                int_count = 2;
+            }
+            switch (int_count) {
+                case 0:
+                    treeView.setImageResource(R.drawable.tree1);
+                    break;
+                case 1:
+                    treeView.setImageResource(R.drawable.tree2);
+                    break;
+                case 2:
+                    treeView.setImageResource(R.drawable.tree3);
+                    break;
+                default:
+                    //throw new IllegalStateException();
+            }
+        });
     }
 
     public void onCreateOptionsMenu(@NotNull Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.settings_menu, menu);
         UserInfo.INSTANCE.getUserName().observe(this, aString -> {
             MenuItem item = menu.findItem(R.id.login);
-            if(aString.equals("")) {
+            if (aString.equals("")) {
                 item.setTitle("Login");
             } else {
                 item.setTitle("Logout");
@@ -94,7 +148,7 @@ public class WelcomeFragment extends Fragment {
 //            Toast.makeText(getActivity(), "Go to help page", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(requireActivity(), MovementDataGettingActivity.class));
             return true;
-        }else if (itemId == R.id.login) {
+        } else if (itemId == R.id.login) {
 //            Toast.makeText(getActivity(), "Go to help page", Toast.LENGTH_SHORT).show();
             // If user wants login
             if (UserInfo.INSTANCE.getUserName().getValue().equals("")) {

@@ -1,7 +1,9 @@
 package com.healthbuzz.healthbuzz
 
 import androidx.lifecycle.MutableLiveData
-import com.healthbuzz.healthbuzz.data.model.LoggedInUser
+import com.healthbuzz.healthbuzz.data.model.Community
+import com.healthbuzz.healthbuzz.data.model.YearData
+import java.time.Year
 
 // unit: seconds
 object RealtimeModel {
@@ -16,6 +18,18 @@ object RealtimeModel {
     }
     val water_count = MutableLiveData<Long>().also {
         it.value = 0
+    }
+    val ranking_stretch = MutableLiveData<Long?>().also {
+        it.value = null
+    }
+    val ranking_water = MutableLiveData<Long?>().also {
+        it.value = null
+    }
+    val year_data = MutableLiveData<List<YearData>?>().also {
+        it.value = null
+    }
+    val community = MutableLiveData<Community?>().also {
+        it.value = null
     }
 }
 
