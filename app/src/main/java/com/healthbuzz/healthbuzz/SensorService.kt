@@ -193,13 +193,13 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
             //Daily Backend Refresh
             val hour = cal[Calendar.HOUR_OF_DAY]
             val min = cal[Calendar.MINUTE]
-            if (hour == 23 && min == 59 && refreshFlage == false) {
+            if (hour == 23 && min == 59 && refreshFlage == false){
                 refreshFlage = true
                 if (UserInfo.userName != null) {
                     LoginDataSource.getTodayRefresh()
                 }
             }
-            if (hour == 0 && min == 1) {
+            if (hour == 0 && min == 1){
                 refreshFlage = false
             }
             //
@@ -379,7 +379,7 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
             RealtimeModel.stretching_count.postValue(
                 (RealtimeModel.stretching_count.value?.toLong() ?: 0) + 1
             ) // add 1
-            if (UserInfo.userName != null) {
+            if (UserInfo.userName != null){
                 LoginDataSource.postTodayStretching()
             }
         }
@@ -422,7 +422,7 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
                 .setSmallIcon(R.drawable.stretching)
                 .setContentTitle("You need to stretch now!")
                 .setContentText(url)
-                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentIntent(snoozePendingIntent)
                 .addAction(
                     R.drawable.stretching, "I stretched!",
@@ -433,7 +433,6 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
         }
 
     }
-
     fun resetStretchTime() {
         lastTimeMoveSec = System.currentTimeMillis()
     }
