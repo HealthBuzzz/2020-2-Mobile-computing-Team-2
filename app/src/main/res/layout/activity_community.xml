@@ -26,7 +26,7 @@
         android:id="@+id/textView7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="50dp"
+        android:layout_marginLeft="20dp"
         android:layout_marginTop="80dp"
         android:text="Stretching"
         android:textSize="30dp"
@@ -46,16 +46,16 @@
         android:id="@+id/stretching"
         android:layout_width="121dp"
         android:layout_height="521dp"
-        android:layout_marginLeft="50dp"
+        android:layout_marginLeft="20dp"
         android:layout_marginTop="150dp"
         android:text="TextView"
         android:textSize="20dp" />
 
     <TextView
         android:id="@+id/stretching2"
-        android:layout_width="26dp"
+        android:layout_width="50dp"
         android:layout_height="521dp"
-        android:layout_marginLeft="150dp"
+        android:layout_marginLeft="160dp"
         android:layout_marginTop="150dp"
         android:text="TextView"
         android:textSize="20dp"
@@ -72,9 +72,9 @@
 
     <TextView
         android:id="@+id/water2"
-        android:layout_width="25dp"
+        android:layout_width="50dp"
         android:layout_height="521dp"
-        android:layout_marginLeft="320dp"
+        android:layout_marginLeft="350dp"
         android:layout_marginTop="150dp"
         android:text="TextView"
         android:textSize="20dp"
