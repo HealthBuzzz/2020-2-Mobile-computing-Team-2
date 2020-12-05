@@ -6,12 +6,14 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Build
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
 
 
 // Generates log TAG constant automatically
@@ -99,4 +101,8 @@ fun Context.createNotificationChannel(channelId: String, channelName: String): S
     val service = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     service.createNotificationChannel(chan)
     return channelId
+}
+
+fun hasPermissions(context: Context, vararg permissions: String): Boolean = permissions.all {
+    ActivityCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
 }
