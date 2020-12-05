@@ -94,7 +94,7 @@ class DashboardFragment : Fragment() {
 
         RealtimeModel.stretching_time_left.observe(viewLifecycleOwner) { value ->
             val intValue = value?.toInt() ?: stretchIntervalSec
-            Log.e(TAG, "update value $value")
+            Log.v(TAG, "update value $value")
             rootView.cardview_layout_stretching.findViewById<TextView>(R.id.tvCardContent).text =
                 if (intValue > 0) {
                     formatTime(requireContext(), intValue)
