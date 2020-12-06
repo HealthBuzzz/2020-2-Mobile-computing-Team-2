@@ -70,6 +70,9 @@ public class SettingsActivity extends AppCompatActivity {
             bindSummaryValue(findPreference("time_interval_stretch"));
 
             findPreference("sync2").setOnPreferenceChangeListener(listener);
+            findPreference("sync").setOnPreferenceChangeListener(listener);
+            ((SwitchPreferenceCompat) findPreference("sync")).setChecked(PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("sync", false));
+            ((SwitchPreferenceCompat) findPreference("sync2")).setChecked(PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("sync2", false));
         }
     }
 

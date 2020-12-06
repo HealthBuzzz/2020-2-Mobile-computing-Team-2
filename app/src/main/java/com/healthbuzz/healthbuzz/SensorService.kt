@@ -417,7 +417,7 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
 
     private fun showDebugToNoti(prediction: Int) {
         notiBuilder.setContentText("Current status: ${labelList[prediction]}, gps: $currentRunState")
-        notiManager.notify(ONGOING_NOTIFICATION_ID, notiBuilder.build())
+//        notiManager.notify(ONGOING_NOTIFICATION_ID, notiBuilder.build())
     }
 
     private fun alarmToStretch() {

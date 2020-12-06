@@ -146,13 +146,13 @@ public class WeatherFragment extends Fragment {
                 Address address = addresses.get(0);
                 current_city = address.getSubLocality();
                 //current_city = address.getAddressLine(0);
-                Log.d("weather_city", current_city);
+                Log.d(TAG, "weather_city" + current_city);
                 JsonObject current_weather_obj = response.body().getAsJsonArray("weather").get(0).getAsJsonObject();
-                Log.d("curr_weather_obj", current_weather_obj.toString());
+                Log.d(TAG, "curr_weather_obj" + current_weather_obj.toString());
                 current_weather = current_weather_obj.get("main").toString();
                 current_weather_icon = current_weather_obj.get("icon").getAsString();
-                Log.d("curr_weather_icon", current_weather_icon);
-                Log.d("curr_weather", current_weather);
+                Log.d(TAG, "curr_weather_icon" + current_weather_icon);
+                Log.d(TAG, "curr_weather" + current_weather);
                 current_temp = "" + String.format("%.1f", (response.body().getAsJsonObject("main").get("temp").getAsFloat() - 273f)) + "°C";
                 updateViews();
             }
@@ -207,10 +207,9 @@ public class WeatherFragment extends Fragment {
 
     private void updateViews() {
         String day_weather_icon = "";
-        if(current_weather_icon != "")
-        {
+        if (current_weather_icon != "") {
             Log.d("weather", current_weather_icon);
-            day_weather_icon = current_weather_icon.substring(0,2) + "d";
+            day_weather_icon = current_weather_icon.substring(0, 2) + "d";
         }
         //String weather_icon_string = "https://openweathermap.org/img/wn/" + current_weather_icon + "@2x.png";
         String weather_icon_string = "https://openweathermap.org/img/wn/" + day_weather_icon + "@2x.png";
