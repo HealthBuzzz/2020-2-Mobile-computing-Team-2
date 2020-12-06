@@ -248,7 +248,7 @@ class DashboardFragment : Fragment() {
 
             cardview_layout_stretching.findViewById<SwitchCompat>(R.id.swCardEnable)
                 .apply {
-                    isChecked = prefs.getBoolean("sync", true)
+                    isChecked = prefs.getBoolean("sync", false)
                 }
                 .setOnCheckedChangeListener { buttonView, checked ->
                     disableEnableControls(checked, cardview_layout_stretching as ViewGroup)
@@ -261,7 +261,7 @@ class DashboardFragment : Fragment() {
 
             cardview_layout_water.findViewById<SwitchCompat>(R.id.swCardEnable)
                 .apply {
-                    isChecked = prefs.getBoolean("sync2", true)
+                    isChecked = prefs.getBoolean("sync2", false)
                 }
                 .setOnCheckedChangeListener { buttonView, checked ->
                     disableEnableControls(checked, cardview_layout_water as ViewGroup)
@@ -329,11 +329,11 @@ class DashboardFragment : Fragment() {
 
         cardview_layout_water.findViewById<SwitchCompat>(R.id.swCardEnable)
             .apply {
-                isChecked = prefs.getBoolean("sync2", true)
+                isChecked = prefs.getBoolean("sync2", false)
             }
         cardview_layout_stretching.findViewById<SwitchCompat>(R.id.swCardEnable)
             .apply {
-                isChecked = prefs.getBoolean("sync", true)
+                isChecked = prefs.getBoolean("sync", false)
             }
         if(!userName.getValue().equals("")) {
             LoginDataSource.getTodayData()

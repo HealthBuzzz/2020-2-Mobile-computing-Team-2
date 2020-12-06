@@ -26,7 +26,7 @@
     <string name="you_need_drink">You need to drink water now</string>
     <string name="require_storage_permission">This app requires permission to work properly.</string>
 
-    <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_login">Login Page</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Sign in</string>

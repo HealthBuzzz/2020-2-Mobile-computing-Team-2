@@ -47,4 +47,9 @@ class MainActivity3 : AppIntro() {
         startActivity(Intent(this@MainActivity3, MainActivity::class.java))
         finish()
     }
+
+    override fun onBackPressed() {
+        startActivity(Intent(this@MainActivity3, MainActivity::class.java))
+        finish()
+    }
 }

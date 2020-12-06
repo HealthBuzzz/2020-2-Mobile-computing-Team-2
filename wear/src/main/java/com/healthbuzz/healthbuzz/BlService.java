@@ -40,7 +40,7 @@ class SensorData {
         data[1] = y;
         data[2] = z;
         this.sensorType = sensorType;
-        mydate = date;
+        mydate=date;
         motion = motion_string;
     }
 
@@ -52,9 +52,10 @@ class SensorData {
 }
 
 
+
 public class BlService extends WearableListenerService implements SensorEventListener {
 
-    static List<BlService> serviceList = new ArrayList<BlService>();
+    static List<BlService> serviceList= new ArrayList<BlService>();
     private int sensor_data_count = 0;
     private ArrayList<SensorData> sensor_array = new ArrayList<SensorData>();
 
@@ -63,24 +64,24 @@ public class BlService extends WearableListenerService implements SensorEventLis
         super.onCreate();
 
         serviceList.add(this);
-        if (sm == null) {
+        if(sm==null) {
 
             sm = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         }
         accelerometer = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         gyroscope = sm.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-        HeartRate = sm.getDefaultSensor(Sensor.TYPE_HEART_RATE);
+        HeartRate=sm.getDefaultSensor(Sensor.TYPE_HEART_RATE);
 
     }
 
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
 
-//If the message’s path equals "/my_path"...//
+        //If the message’s path equals "/my_path"...//
 
         if (messageEvent.getPath().equals("/my_path")) {
 
-//...retrieve the command//
+            //...retrieve the command//
 
             final String command = new String(messageEvent.getData());
             Intent messageIntent = new Intent();
@@ -92,7 +93,8 @@ public class BlService extends WearableListenerService implements SensorEventLis
 
             //Broadcast the received Data Layer messages locally//
             LocalBroadcastManager.getInstance(this).sendBroadcast(messageIntent);
-        } else {
+        }
+        else {
             super.onMessageReceived(messageEvent);
         }
     }
@@ -103,9 +105,9 @@ public class BlService extends WearableListenerService implements SensorEventLis
     private static Sensor accelerometer, gyroscope, HeartRate;
     private final int samplingRate = SensorManager.SENSOR_DELAY_GAME;
 
-    public void processTheCommand(String command) {
-        if (command.equals("_normal")) {
-            Log.e("CYT_LOG", "normal");
+    public void processTheCommand(String command){
+        if(command.equals("_normal")){
+            Log.e("CYT_LOG" , "normal");
             if (currentMotion == null) {
                 sm.registerListener(this, accelerometer, samplingRate);
                 sm.registerListener(this, gyroscope, samplingRate);
@@ -113,8 +115,8 @@ public class BlService extends WearableListenerService implements SensorEventLis
             }
             String inputMotion = "normal";
             currentMotion = inputMotion;
-        } else if (command.equals("_up")) {
-            Log.e("CYT_LOG", "up");
+        }else if(command.equals("_up")){
+            Log.e("CYT_LOG" , "up");
             if (currentMotion == null) {
                 sm.registerListener(this, accelerometer, samplingRate);
                 sm.registerListener(this, gyroscope, samplingRate);
@@ -122,8 +124,8 @@ public class BlService extends WearableListenerService implements SensorEventLis
             }
             String inputMotion = "up";
             currentMotion = inputMotion;
-        } else if (command.equals("_drinking")) {
-            Log.e("CYT_LOG", "drinking");
+        }else if(command.equals("_drinking")){
+            Log.e("CYT_LOG" , "drinking");
             if (currentMotion == null) {
                 sm.registerListener(this, accelerometer, samplingRate);
                 sm.registerListener(this, gyroscope, samplingRate);
@@ -131,8 +133,8 @@ public class BlService extends WearableListenerService implements SensorEventLis
             }
             String inputMotion = "drinking";
             currentMotion = inputMotion;
-        } else if (command.equals("_down")) {
-            Log.e("CYT_LOG", "down");
+        }else if(command.equals("_down")){
+            Log.e("CYT_LOG" , "down");
             if (currentMotion == null) {
                 sm.registerListener(this, accelerometer, samplingRate);
                 sm.registerListener(this, gyroscope, samplingRate);
@@ -140,8 +142,8 @@ public class BlService extends WearableListenerService implements SensorEventLis
             }
             String inputMotion = "down";
             currentMotion = inputMotion;
-        } else if (command.equals("_ondesk")) {
-            Log.e("CYT_LOG", "ondesk");
+        }else if(command.equals("_ondesk")){
+            Log.e("CYT_LOG" , "ondesk");
             if (currentMotion == null) {
                 sm.registerListener(this, accelerometer, samplingRate);
                 sm.registerListener(this, gyroscope, samplingRate);
@@ -149,8 +151,8 @@ public class BlService extends WearableListenerService implements SensorEventLis
             }
             String inputMotion = "ondesk";
             currentMotion = inputMotion;
-        } else if (command.equals("_walking")) {
-            Log.e("CYT_LOG", "walking");
+        }else if(command.equals("_walking")){
+            Log.e("CYT_LOG" , "walking");
             if (currentMotion == null) {
                 sm.registerListener(this, accelerometer, samplingRate);
                 sm.registerListener(this, gyroscope, samplingRate);
@@ -158,8 +160,8 @@ public class BlService extends WearableListenerService implements SensorEventLis
             }
             String inputMotion = "walking";
             currentMotion = inputMotion;
-        } else if (command.equals("_running")) {
-            Log.e("CYT_LOG", "running");
+        }else if(command.equals("_running")){
+            Log.e("CYT_LOG" , "running");
             if (currentMotion == null) {
                 sm.registerListener(this, accelerometer, samplingRate);
                 sm.registerListener(this, gyroscope, samplingRate);
@@ -167,32 +169,28 @@ public class BlService extends WearableListenerService implements SensorEventLis
             }
             String inputMotion = "running";
             currentMotion = inputMotion;
-        } else if (command.equals("_stop")) {
-            Log.e("CYT_LOG", "stop");
+        }else if(command.equals("_startrealtime")){
+            Log.e("CYT_LOG" , "_startrealtime");
+            if (currentMotion == null) {
+                sm.registerListener(this, accelerometer, samplingRate);
+                sm.registerListener(this, gyroscope, samplingRate);
+                sm.registerListener(this, HeartRate, samplingRate);
+            }
+            String inputMotion = "null";
+            currentMotion = inputMotion;
+        }else if(command.equals("_stop")){
+            Log.e("CYT_LOG" , "stop");
 
-            for (BlService bls : serviceList) {
+            for(BlService bls : serviceList){
                 sm.unregisterListener(bls);
             }
 
             String inputMotion = "stop";
             currentMotion = null;
-        }else if (command.equals("_hellowatch")) {
-            Log.e("CYT_LOG", "hellowatch");
-
+        }else if(command.equals("_hellowatch")){
+            Log.e("CYT_LOG" , "hellowatch");
             String datapath = "/my_path";
-            new SendMessage(datapath, "_WR").start();
-
-            String inputMotion = "stop";
-            currentMotion = null;
-        }else if (command.equals("_startrealtime")) {
-            Log.e("CYT_LOG", "startrealtime");
-            if (currentMotion == null) {
-                sm.registerListener(this, accelerometer, samplingRate);
-                sm.registerListener(this, gyroscope, samplingRate);
-                sm.registerListener(this, HeartRate, samplingRate);
-            }
-            String inputMotion = "running";
-            currentMotion = inputMotion;
+            new SendMessage(datapath, "_watchready").start();
         }
     }
 
@@ -213,30 +211,29 @@ public class BlService extends WearableListenerService implements SensorEventLis
         {
             sensor_array.clear();
         }
-        sensor_data_count++;
+
         if (event.sensor == accelerometer) {
             SensorData sample = new SensorData(event.values[0], event.values[1], event.values[2], SensorType.ACCELEROMETER, new Date().getTime(), currentMotion);
             sensor_array.add(sample);
+            sensor_data_count++;
         }
-        if (event.sensor == HeartRate) {
-            SensorData sample = new SensorData(event.values[0], 0, 0, SensorType.HEARTRATE, new Date().getTime(), currentMotion);
-            sensor_array.add(sample);
-        }
-        if (event.sensor == gyroscope) {
-            SensorData sample = new SensorData(event.values[0], event.values[1], event.values[2], SensorType.GYROSCOPE , new Date().getTime(), currentMotion);
-            sensor_array.add(sample);
-        }
+//        if (event.sensor == HeartRate) {
+//            SensorData sample = new SensorData(event.values[0], 0, 0, SensorType.HEARTRATE, new Date().getTime(), currentMotion);
+//            sensor_array.add(sample);
+//        }
+//        if (event.sensor == gyroscope) {
+//            SensorData sample = new SensorData(event.values[0], event.values[1], event.values[2], SensorType.GYROSCOPE , new Date().getTime(), currentMotion);
+//            sensor_array.add(sample);
+//        }
         if(sensor_data_count == 50)
         {
             sensor_data_count = 0;
             String datapath = "/my_path";
-            new SendMessage(datapath, sensor_array.toString()).start();
+            String sensor_string = sensor_array.toString();
+            new SendMessage(datapath, sensor_string.substring(1, sensor_string.length()-1)).start();
             Log.e("CYT_LOG" , sensor_array.toString());
             return;
         }
-
-
-
 
     }
 
@@ -249,35 +246,57 @@ public class BlService extends WearableListenerService implements SensorEventLis
         String path;
         String message;
 
-        //Constructor for sending information to the Data Layer//
+//Constructor for sending information to the Data Layer//
+
         SendMessage(String p, String m) {
             path = p;
             message = m;
         }
+
         public void run() {
-            //Retrieve the connected devices//
+
+//Retrieve the connected devices//
+
             Task<List<Node>> nodeListTask =
                     Wearable.getNodeClient(getApplicationContext()).getConnectedNodes();
             try {
-            //Block on a task and get the result synchronously//
+
+//Block on a task and get the result synchronously//
+
                 List<Node> nodes = Tasks.await(nodeListTask);
                 for (Node node : nodes) {
-                    //Send the message///
+
+//Send the message///
+
                     Task<Integer> sendMessageTask =
                             Wearable.getMessageClient(BlService.this).sendMessage(node.getId(), path, message.getBytes());
+
                     try {
+
                         Integer result = Tasks.await(sendMessageTask);
-                    //Handle the errors//
+
+//Handle the errors//
+
                     } catch (ExecutionException exception) {
-                    //TO DO//
+
+//TO DO//
+
                     } catch (InterruptedException exception) {
-                    //TO DO//
+
+//TO DO//
+
                     }
+
                 }
+
             } catch (ExecutionException exception) {
-            //TO DO//
+
+//TO DO//
+
             } catch (InterruptedException exception) {
-            //TO DO//
+
+//TO DO//
+
             }
         }
     }
