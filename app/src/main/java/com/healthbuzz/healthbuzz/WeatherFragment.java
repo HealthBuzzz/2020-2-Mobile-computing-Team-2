@@ -202,7 +202,14 @@ public class WeatherFragment extends Fragment {
     }
 
     private void updateViews() {
-        String weather_icon_string = "https://openweathermap.org/img/wn/" + current_weather_icon + "@2x.png";
+        String day_weather_icon = "";
+        if(current_weather_icon != "")
+        {
+            Log.d("weather", current_weather_icon);
+            day_weather_icon = current_weather_icon.substring(0,2) + "d";
+        }
+        //String weather_icon_string = "https://openweathermap.org/img/wn/" + current_weather_icon + "@2x.png";
+        String weather_icon_string = "https://openweathermap.org/img/wn/" + day_weather_icon + "@2x.png";
         Glide.with(this).load(weather_icon_string).into(imageView);
         textView_city.setText(current_city);
         textView_temp.setText(current_temp);
