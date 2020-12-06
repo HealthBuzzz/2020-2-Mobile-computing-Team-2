@@ -39,7 +39,7 @@ public class LoginDataSource {
     public static String name = null;
     static private Context context;
 
-    public LoginDataSource(Context context){
+    public LoginDataSource(Context context) {
         this.context = context;
     }
 
@@ -73,7 +73,7 @@ public class LoginDataSource {
                     LoginDataSource.resultFlag = 1;
                     UserInfo.INSTANCE.getUserName().setValue(response.body().getDisplayName());
                     Log.d(TAG, "After setting static variable");
-                    Toast.makeText(context, "Welcome to Health Buzz.",Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "Welcome to Health Buzz.", Toast.LENGTH_LONG).show();
                     getTodayData();
                 } else {
                     Log.d(TAG, "Status Code : " + response.code());
@@ -100,6 +100,7 @@ public class LoginDataSource {
             return new Result.Error(new IOException("Error in login"));
         }
     }
+
     static public void signup(String email, String password) {
         String username = email.split("@")[0];
         User user = new User(username, email, password, 0);
@@ -113,13 +114,14 @@ public class LoginDataSource {
                     Log.d(TAG, "회원가입 완료");
                     LoggedInUser postResponse = response.body();
                     assert response.body() != null;
-                    Toast.makeText(context, "Sign Up Success.",Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "Sign Up Success.", Toast.LENGTH_LONG).show();
                 } else {
                     Log.d(TAG, "Status Code : " + response.code());
                     Log.d(TAG, response.errorBody().toString());
                     Log.d(TAG, call.request().body().toString());
                 }
             }
+
             @Override
             public void onFailure(Call<LoggedInUser> call, Throwable t) {
                 Log.d(TAG, "Fail msg : " + t.getMessage());
@@ -159,6 +161,7 @@ public class LoginDataSource {
             }
         });
     }
+
     public static void getTodayData() {
         Log.d(TAG, "get TodayData Trial");
         Call<TodayData> postCall = mMyAPI.getTodayData();
@@ -190,6 +193,7 @@ public class LoginDataSource {
             }
         });
     }
+
     public static void getTodayRefresh() {
         Log.d(TAG, "get TodayRefresh Trial");
         Call<TodayData> postCall = mMyAPI.getTodayRefresh();
@@ -221,6 +225,7 @@ public class LoginDataSource {
             }
         });
     }
+
     public static void postTodayStretching() {
         Log.d(TAG, "post TodayStretching Trial");
         Date date = new Date();   // given date
@@ -229,7 +234,7 @@ public class LoginDataSource {
         int hour = calendar.get(Calendar.HOUR_OF_DAY); // gets hour in 24h format
         int minute = calendar.get(Calendar.MINUTE);
 
-        TodayStretching todayStretching = new TodayStretching(hour,minute);
+        TodayStretching todayStretching = new TodayStretching(hour, minute);
         Call<TodayData> postCall = mMyAPI.postTodayStretching(todayStretching);
 
         postCall.enqueue(new Callback<TodayData>() {

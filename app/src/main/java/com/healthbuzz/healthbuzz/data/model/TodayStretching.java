@@ -3,7 +3,7 @@ package com.healthbuzz.healthbuzz.data.model;
 public class TodayStretching {
     private int hour, minute;
 
-    public TodayStretching(int hour, int minute){
+    public TodayStretching(int hour, int minute) {
         this.hour = hour;
         this.minute = minute;
     }

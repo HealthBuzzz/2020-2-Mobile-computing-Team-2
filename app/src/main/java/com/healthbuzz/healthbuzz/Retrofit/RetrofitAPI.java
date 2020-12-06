@@ -9,7 +9,6 @@ import com.healthbuzz.healthbuzz.data.model.TodayWater;
 import com.healthbuzz.healthbuzz.data.model.User;
 import com.healthbuzz.healthbuzz.data.model.YearData;
 
-import java.util.HashMap;
 import java.util.List;
 
 import retrofit2.Call;

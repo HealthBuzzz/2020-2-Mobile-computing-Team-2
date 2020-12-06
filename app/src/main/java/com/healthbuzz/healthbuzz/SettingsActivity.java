@@ -23,10 +23,7 @@ import com.google.android.gms.tasks.Tasks;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.Wearable;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -50,8 +47,8 @@ public class SettingsActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        mainContext=getApplicationContext();
-        actContext=SettingsActivity.this;
+        mainContext = getApplicationContext();
+        actContext = SettingsActivity.this;
 
     }
 
@@ -71,7 +68,7 @@ public class SettingsActivity extends AppCompatActivity {
 
             bindSummaryValue(findPreference("time_interval_water"));
             bindSummaryValue(findPreference("time_interval_stretch"));
-            bindSummaryValue(findPreference("sound"));
+            //bindSummaryValue(findPreference("sound"));
             findPreference("sync2").setOnPreferenceChangeListener(listener);
         }
     }
@@ -83,7 +80,7 @@ public class SettingsActivity extends AppCompatActivity {
                         .getString(preference.getKey(), ""));
     }
 
-    public static String filename ;
+    public static String filename;
     private static final Preference.OnPreferenceChangeListener listener = new Preference.OnPreferenceChangeListener() {
         @Override
         public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -121,14 +118,14 @@ public class SettingsActivity extends AppCompatActivity {
                 preference
                         .setSummary(index >= 0 ? listPreference.getEntries()[index]
                                 : null);
-            }else if (preference instanceof SwitchPreferenceCompat) {
-                if(preference.getKey().equals("sync2")){
-                    SharedPreferences sharedPrefs =  PreferenceManager.getDefaultSharedPreferences(preference.getContext());
+            } else if (preference instanceof SwitchPreferenceCompat) {
+                if (preference.getKey().equals("sync2")) {
+                    SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(preference.getContext());
 
-                    if((boolean)newValue){
-                        sharedPrefs.edit().putBoolean("watchDetected" , false).apply();
-                        SendMessage t1=new SendMessage("/my_path" , "_stop");
-                        SendMessage t2 = new SendMessage("/my_path" , "_hellowatch");
+                    if ((boolean) newValue) {
+                        sharedPrefs.edit().putBoolean("watchDetected", false).apply();
+                        SendMessage t1 = new SendMessage("/my_path", "_stop");
+                        SendMessage t2 = new SendMessage("/my_path", "_hellowatch");
                         t2.setPredecessor(t1);
                         t1.start();
                         t2.start();
@@ -145,23 +142,24 @@ public class SettingsActivity extends AppCompatActivity {
                            /* startActivity(new Intent(WelcomeActivity.this, MainActivity3.class));
                             finish();*/
                             boolean watchDetected = sharedPrefs.getBoolean("watchDetected", false);
-                            if(!watchDetected){
-                                Toast.makeText(preference.getContext(),"watch not detected....",Toast.LENGTH_LONG).show();
-                                sharedPrefs.edit().putBoolean("sync2" , false).apply();
-                            }else{
-                                Toast.makeText(preference.getContext(),"watch detected....",Toast.LENGTH_LONG).show();
-                                new SendMessage("/my_path" , "_startrealtime").start();
+                            if (!watchDetected) {
+                                Toast.makeText(preference.getContext(), "watch not detected....", Toast.LENGTH_LONG).show();
+                                sharedPrefs.edit().putBoolean("sync2", false).apply();
+                            } else {
+                                Toast.makeText(preference.getContext(), "watch detected....", Toast.LENGTH_LONG).show();
+                                new SendMessage("/my_path", "_startrealtime").start();
                             }
                         }, 3000);
 
-                    }else{
-                        sharedPrefs.edit().putBoolean("watchDetected" , false).apply();
-                        new SendMessage("/my_path" , "_stop").start();
+                    } else {
+                        sharedPrefs.edit().putBoolean("watchDetected", false).apply();
+                        new SendMessage("/my_path", "_stop").start();
                     }
                 }
             }
             return true;
         }
+
         class SendMessage extends Thread {
             String path;
             String message;
@@ -212,6 +210,7 @@ public class SettingsActivity extends AppCompatActivity {
                     //TO DO//
                 }
             }
+
             public void setPredecessor(Thread t) {
                 this.predecessor = t;
             }

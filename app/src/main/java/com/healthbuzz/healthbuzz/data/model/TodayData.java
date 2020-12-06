@@ -26,10 +26,11 @@ public class TodayData {
         return today_water_count;
     }
 
-    public int getToday_ranking_stretch(){
+    public int getToday_ranking_stretch() {
         return today_ranking_stretch;
     }
-    public int getToday_ranking_water(){
+
+    public int getToday_ranking_water() {
         return today_ranking_water;
     }
 
