@@ -1,9 +1,7 @@
 package com.healthbuzz.healthbuzz
 
 import android.app.*
-import android.content.Context
-import android.content.Intent
-import android.content.SharedPreferences
+import android.content.*
 import android.graphics.Color
 import android.hardware.Sensor
 import android.hardware.SensorEvent
@@ -107,6 +105,9 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
         }
 
         private const val ONGOING_NOTIFICATION_ID = 1
+        private const val STRETCHING_NOTIFICATION_ID = 2
+        private const val WATER_NOTIFICATION_ID = 3
+
     }
 
     /**
@@ -117,7 +118,6 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
         // Return this instance of LocalService so clients can call public methods
         fun getService(): SensorService = this@SensorService
     }
-
 
 
     private val receiver: BroadcastReceiver = object : BroadcastReceiver() {
@@ -174,15 +174,12 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
     }
 
 
-
     override fun onBind(intent: Intent): IBinder {
         return binder
     }
 
     // https://stackoverflow.com/a/47533338/8614565
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-
-
         val filter = IntentFilter()
         filter.addAction(ACTION_WATER_DRINK)
         registerReceiver(receiver, filter)
@@ -299,13 +296,13 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
             //Daily Backend Refresh
             val hour = cal[Calendar.HOUR_OF_DAY]
             val min = cal[Calendar.MINUTE]
-            if (hour == 23 && min == 59 && refreshFlage == false){
+            if (hour == 23 && min == 59 && refreshFlage == false) {
                 refreshFlage = true
                 if (UserInfo.userName != null) {
                     LoginDataSource.getTodayRefresh()
                 }
             }
-            if (hour == 0 && min == 1){
+            if (hour == 0 && min == 1) {
                 refreshFlage = false
             }
             //
@@ -343,7 +340,7 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
 //                    SingleObject.getInstance().stretching_time_left.value = left_minutes
                     RealtimeModel.stretching_time_left.value = leftSeconds
                     Log.d("SUG", timeIntervalStretch)  // Error
-                    Log.d("SUG2",timeDiffSec.toString())
+                    Log.d("SUG2", timeDiffSec.toString())
 
                     if (0 >= leftSeconds) {
                         if (!isNotifying) {
@@ -389,7 +386,7 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
                                     snoozePendingIntent
                                 ).setAutoCancel(true)
 //                            notiBuilder.setContentText("You need to move $time_diff")
-                            notiManager.notify(1, builder.build())
+                            notiManager.notify(ONGOING_NOTIFICATION_ID, builder.build())
                             if (ttsInit) {
 
                             }
@@ -423,7 +420,7 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
 
     private fun showDebugToNoti(prediction: Int) {
         notiBuilder.setContentText("Current status: ${labelList[prediction]}, gps: $currentRunState")
-        notiManager.notify(1, notiBuilder.build())
+        notiManager.notify(ONGOING_NOTIFICATION_ID, notiBuilder.build())
     }
 
     private fun alarmToStretch() {
@@ -479,7 +476,7 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
             )
             .setAutoCancel(true)
         //                            notiBuilder.setContentText("You need to move $time_diff")
-        notiManager.notify(1, builder.build())
+        notiManager.notify(ONGOING_NOTIFICATION_ID, builder.build())
         if (ttsInit) {
 
         }
@@ -546,7 +543,7 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
             RealtimeModel.stretching_count.postValue(
                 (RealtimeModel.stretching_count.value?.toLong() ?: 0) + 1
             ) // add 1
-            if (UserInfo.userName != null){
+            if (UserInfo.userName != null) {
                 LoginDataSource.postTodayStretching()
             }
         }
@@ -563,7 +560,7 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
         Log.v(TAG, "onStateContinued")
         // notify!
 //        notiBuilder.setContentText("Current status: ${labelList[prediction]}")
-//        notiManager.notify(1, notiBuilder.build())
+//        notiManager.notify(ONGOINT_NOTIFICATN_ID, notiBuilder.build())
     }
 
     fun recommendStretching(type: StretchingType? = null) {
@@ -596,11 +593,12 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
                     snoozePendingIntent
                 ).setAutoCancel(true)
 //                            notiBuilder.setContentText("You need to move $time_diff")
-            notiManager.notify(1, builder.build())
+            notiManager.notify(ONGOING_NOTIFICATION_ID, builder.build())
             isNotifying = true
         }
 
     }
+
     fun resetStretchTime() {
         lastTimeMoveSec = System.currentTimeMillis()
     }
