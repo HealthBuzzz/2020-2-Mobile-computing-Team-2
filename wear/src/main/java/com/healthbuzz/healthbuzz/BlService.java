@@ -171,7 +171,7 @@ public class BlService extends WearableListenerService implements SensorEventLis
             currentMotion = inputMotion;
         }else if(command.equals("_startrealtime")){
             Log.e("CYT_LOG" , "_startrealtime");
-            if (currentMotion == null) {
+            if (true) {
                 sm.registerListener(this, accelerometer, samplingRate);
                 sm.registerListener(this, gyroscope, samplingRate);
                 sm.registerListener(this, HeartRate, samplingRate);

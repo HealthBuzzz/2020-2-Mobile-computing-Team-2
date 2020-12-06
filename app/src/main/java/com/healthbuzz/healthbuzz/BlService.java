@@ -64,13 +64,19 @@ public class BlService extends WearableListenerService {
     public void onDestroy() {
         Log.e("CYT_LOG", "destroyed...");
 
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean continueService = sharedPrefs.getBoolean("activate_drinking", false);
-        if (continueService) {
+
+        SharedPreferences sharedPrefs =  PreferenceManager.getDefaultSharedPreferences(this);
+        //boolean continueService = sharedPrefs.getBoolean("activate_drinking", false);
+        boolean continueService = sharedPrefs.getBoolean("sync2", false);
+        Log.e("Continue", String.valueOf(continueService));
+        if(continueService) {
+            Log.e("Continue", "Continue service");
             String datapath = "/my_path";
             new SendMessage(datapath, "_startrealtime").start();
+            Log.e("Continue", "Continue service");
         }
         super.onDestroy();
+        Log.e("destory", "destoryed?");
     }
 
     @Override
