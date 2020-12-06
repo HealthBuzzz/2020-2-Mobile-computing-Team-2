@@ -86,8 +86,8 @@ public class WaterDetailActivity extends AppCompatActivity {
         int[] dayArr2 = new int[]{1, 5, 13, 24, 30};
         int[] quantityArr1 = new int[]{1100, 2200, 2300, 1100};
         int[] quantityArr2 = new int[]{300, 1200, 2300, 2100, 400};
-        drinkMonths = new DrinkMonth[]{new DrinkMonth(2020, 12, dayArr1, quantityArr1),
-                new DrinkMonth(2020, 11, dayArr2, quantityArr2)};
+        drinkMonths = new DrinkMonth[]{new DrinkMonth(2000, 12, dayArr1, quantityArr1),
+                new DrinkMonth(2001, 11, dayArr2, quantityArr2)};
 
         // Get current year&month for initial showing
         Calendar cal = Calendar.getInstance();

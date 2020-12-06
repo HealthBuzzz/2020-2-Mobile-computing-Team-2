@@ -97,8 +97,8 @@ public class StretchingDetailActivity extends AppCompatActivity {
         int[] dayArr2 = new int[]{1, 2, 3, 14, 30};
         int[] quantityArr1 = new int[]{1, 2, 5, 6, 1};
         int[] quantityArr2 = new int[]{3, 2, 6, 1, 4};
-        stretchingMonths = new StretchingMonth[]{new StretchingMonth(2020, 12, dayArr1, quantityArr1),
-                new StretchingMonth(2020, 11, dayArr2, quantityArr2)};
+        stretchingMonths = new StretchingMonth[]{new StretchingMonth(1999, 12, dayArr1, quantityArr1),
+                new StretchingMonth(2000, 11, dayArr2, quantityArr2)};
 
         if (UserInfo.INSTANCE.getUserName().getValue() != "")
             LoginDataSource.getYearStretching();
