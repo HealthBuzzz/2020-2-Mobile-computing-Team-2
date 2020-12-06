@@ -163,6 +163,7 @@ public class BlService extends WearableListenerService {
                     // Broadcast
                     Intent drinkIntent = new Intent(SensorService.ACTION_WATER_DRINK);
                     sendBroadcast(drinkIntent);
+                    RealtimeModel.INSTANCE.getWaterDummy().postValue("yeah");
                 }
 
                 //state count update

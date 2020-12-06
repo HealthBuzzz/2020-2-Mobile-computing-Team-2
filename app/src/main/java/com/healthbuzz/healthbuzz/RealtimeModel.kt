@@ -30,5 +30,9 @@ object RealtimeModel {
     val community = MutableLiveData<Community?>().also {
         it.value = null
     }
+
+    val waterDummy = MutableLiveData<String>().also {
+        it.value = ""
+    }
 }
 
