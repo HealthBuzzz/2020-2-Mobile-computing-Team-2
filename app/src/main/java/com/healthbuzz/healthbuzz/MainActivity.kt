@@ -1,56 +1,86 @@
 package com.healthbuzz.healthbuzz
 
 import android.Manifest
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
-import android.provider.Settings
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.healthbuzz.healthbuzz.Retrofit.RetrofitAPI
+import com.healthbuzz.healthbuzz.data.LoginDataSource
+import com.healthbuzz.healthbuzz.ui.login.LoginActivity
 
 class MainActivity : AppCompatActivity() {
 
-    val PERMISSION_ALL = 1
-
     public var userName: LiveData<String> = MutableLiveData()
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == PERMISSION_ALL) {
-            if (grantResults.any {
-                    it != PackageManager.PERMISSION_GRANTED
-                }) {
+    private val requestPermissionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                // Permission is granted. Continue the action or workflow in your
+                // app.
+
+                startSensorService(this)
+            } else {
                 Toast.makeText(
                     this,
                     getString(R.string.require_storage_permission),
                     Toast.LENGTH_LONG
                 ).show()
                 finish()
-            } else {
-                if (ensureExternalManager())
-                    startSensorService(this)
+                // Explain to the user that the feature is unavailable because the
+                // features requires a permission that the user has denied. At the
+                // same time, respect the user's decision. Don't link to system
+                // settings in an effort to convince the user to change their
+                // decision.
             }
         }
-    }
+
+    //override fun onResume() {
+    //super.onResume()
+    //welcomeFragment.textView2.setText(LoginDataSource.name)
+    //}
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.detail_toolbar))
 
+
+//        findViewById<FloatingActionButton>(R.id.fab) is not needed thanks to kotlin synthetic android extension
+
+        // Show the Up button in the action bar.
+//        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        // savedInstanceState is non-null when there is fragment state
+        // saved from previous configurations of this activity
+        // (e.g. when rotating the screen from portrait to landscape).
+        // In this case, the fragment will automatically be re-added
+        // to its container so we don"t need to manually add it.
+        // For more information, see the Fragments API guide at:
+        //
+        // http://developer.android.com/guide/components/fragments.html
+        //
+
+        /*
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(baseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+           */
+
         if (savedInstanceState == null) {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
-            val weatherFragment = WeatherFragment()
+           val weatherFragment = WeatherFragment()
             supportFragmentManager.beginTransaction()
                 .add(R.id.weather_container, weatherFragment)
                 .commit()
@@ -66,41 +96,36 @@ class MainActivity : AppCompatActivity() {
                 .commit()
         }
 
-        val permissions = arrayOf(
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.ACCESS_FINE_LOCATION,
-        )
-        val hasPermission = hasPermissions(
-            this,
-            *permissions
-        )
-
-        if (hasPermission) {
-            if (ensureExternalManager())
-                startSensorService(this)
-        } else {
-            ActivityCompat.requestPermissions(this, permissions, PERMISSION_ALL)
-            //            requestPermissionLauncher.launch(
-            //                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            //            )
-        }
-    }
-
-    private fun ensureExternalManager(): Boolean {
         val isExternalStorageManager =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 Environment.isExternalStorageManager()
             } else {
                 true
             }
-        if (!isExternalStorageManager) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                val theIntent = Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
-                startActivity(theIntent)
-                finish()
-            }
+
+        val hasPermission =
+//            ContextCompat.checkSelfPermission(
+//            applicationContext,
+//            Manifest.permission.WRITE_EXTERNAL_STORAGE
+//        ) == PackageManager.PERMISSION_GRANTED &&
+            ContextCompat.checkSelfPermission(
+                applicationContext,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+
+        if (!hasPermission) {
+            // You can directly ask for the permission.
+            // The registered ActivityResultCallback gets the result of this request.
+//            requestPermissionLauncher.launch(
+//                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+//            )
+            requestPermissionLauncher.launch(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+            )
         }
-        return isExternalStorageManager
+        if (hasPermission)
+            startSensorService(this)
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem) =
@@ -118,20 +143,4 @@ class MainActivity : AppCompatActivity() {
             }
             else -> super.onOptionsItemSelected(item)
         }
-
-//    override fun onResume() {
-//        super.onResume()
-//
-//        val sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this)
-//        val continueService = sharedPrefs.getBoolean("activate_drinking", false)
-//
-//        val img = findViewById<View>(R.id.image) as ImageView
-//
-//        if (continueService) {
-//            img.visibility = View.VISIBLE
-//        } else {
-//            img.visibility = View.INVISIBLE
-//        }
-//    }
-
 }

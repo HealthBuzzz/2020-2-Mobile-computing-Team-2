@@ -23,6 +23,7 @@ import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.healthbuzz.healthbuzz.Retrofit.RetrofitAPI;
 import com.healthbuzz.healthbuzz.data.LoginDataSource;
@@ -124,6 +125,7 @@ public class WeatherFragment extends Fragment {
                 String res = response_body.toString();
                 Log.d("weather", res);
 
+
                 //Geocoder geocoder = new Geocoder(getActivity(), Locale.getDefault());
                 Geocoder geocoder = new Geocoder(getActivity(), Locale.US);
                 // Address found using the Geocoder.
@@ -140,12 +142,10 @@ public class WeatherFragment extends Fragment {
                 Address address = addresses.get(0);
                 current_city = address.getSubLocality();
                 //current_city = address.getAddressLine(0);
-
-                //current_city = response_body.get("name").getAsString();
                 Log.d("weather_city", current_city);
                 JsonObject current_weather_obj = response.body().getAsJsonArray("weather").get(0).getAsJsonObject();
                 Log.d("curr_weather_obj", current_weather_obj.toString());
-                current_weather = current_weather_obj.get("main").getAsString();
+                current_weather = current_weather_obj.get("main").toString();
                 current_weather_icon = current_weather_obj.get("icon").getAsString();
                 Log.d("curr_weather_icon", current_weather_icon);
                 Log.d("curr_weather", current_weather);

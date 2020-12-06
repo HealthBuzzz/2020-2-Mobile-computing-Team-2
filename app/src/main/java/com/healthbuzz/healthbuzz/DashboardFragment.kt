@@ -256,7 +256,6 @@ class DashboardFragment : Fragment() {
                     editor.apply()
                     resetStretchTime(prefs)
                 }
-
             cardview_layout_water.findViewById<SwitchCompat>(R.id.swCardEnable)
                 .apply {
                     isChecked = prefs.getBoolean("sync2", false)
