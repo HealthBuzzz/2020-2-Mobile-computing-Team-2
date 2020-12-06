@@ -86,7 +86,7 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
     companion object {
         // We need to make this false when user not allow vibrate initially
         var soundSetting = "Buzz"
-        val ACTION_WATER_DRINK = "com.healthbuzz.healthbuzz.drink_water"
+        const val ACTION_WATER_DRINK = "com.healthbuzz.healthbuzz.drink_water"
 
         @JvmStatic
         fun setSound(setting: String) {
