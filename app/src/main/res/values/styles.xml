@@ -35,6 +35,7 @@
 
     <style name="PreferenceScreen" parent="AppTheme">
         <item name="android:textColor">#C3C3C3</item>
+        <item name="android:textColorSecondary">#C3C3C3</item>
     </style>
 
 
