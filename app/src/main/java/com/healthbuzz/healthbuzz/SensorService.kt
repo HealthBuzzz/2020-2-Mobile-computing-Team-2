@@ -153,9 +153,6 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
 
     override fun onCreate() {
         super.onCreate()
-        val filter = IntentFilter()
-        filter.addAction(ACTION_WATER_DRINK)
-        registerReceiver(receiver, filter)
     }
 
 
@@ -165,7 +162,9 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
 
     // https://stackoverflow.com/a/47533338/8614565
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-
+        val filter = IntentFilter()
+        filter.addAction(ACTION_WATER_DRINK)
+        registerReceiver(receiver, filter)
         notiManager = getSystemService()!!
         val pendingIntent: PendingIntent =
             Intent(this, MainActivity::class.java).let { notificationIntent ->
