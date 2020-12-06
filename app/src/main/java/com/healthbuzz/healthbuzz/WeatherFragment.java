@@ -16,7 +16,6 @@ import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.healthbuzz.healthbuzz.Retrofit.RetrofitAPI;
 import com.healthbuzz.healthbuzz.data.LoginDataSource;
@@ -142,14 +141,14 @@ public class WeatherFragment extends Fragment {
                 String res_hourly = response_hourly.body().toString();
                 Log.d("weather_Hour", res_hourly);
                 JsonArray weather_array = response_hourly.body().getAsJsonArray("hourly");
-                for (int i = 0; i < weather_array.size(); i++) {
+               /* for (int i = 0; i < weather_array.size(); i++) {
                     JsonElement weather = weather_array.get(i);
                     JsonObject weather_obj = weather.getAsJsonObject();
                     Log.d("weather_parse", weather.toString());
                     temps.add("" + (weather_obj.get("temp").getAsFloat() - 273f));
-                    datetimes.add(weather_obj.get("dt").getAsString());
+                    datetimes.add(weather_obj.get("dt").toString());
                     weather_icons.add(weather_obj.getAsJsonArray("weather").get(0).getAsJsonObject().get("icon").getAsString());
-                }
+                }*/
                 Log.d("weather_temps", temps.toString());
                 Log.d("weather_icons", weather_icons.toString());
                 updateViews();

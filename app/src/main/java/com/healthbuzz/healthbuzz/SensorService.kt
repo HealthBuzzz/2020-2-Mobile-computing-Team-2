@@ -28,6 +28,7 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
     private val CHANNEL_ID = "HealthBuzzSensorService1"
     private val CHANNEL_NAME = "HealthBuzz sensor service1"
 
+
     private val binder = SensorBinder()
 
     private val samplingRate = SensorManager.SENSOR_DELAY_GAME
@@ -38,7 +39,7 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
 
     private lateinit var gyroscope: Sensor
     private lateinit var accelerometer: Sensor
-    private var sensorManager: SensorManager? = null
+    private lateinit var sensorManager: SensorManager
 
     private lateinit var runDetector: GpsRunDetector
 
@@ -48,7 +49,6 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
     private var stop_count = 0
     private var not_stop_count = 0
     private var lastTimeMoveSec = System.currentTimeMillis()
-    private var lastTimeWaterSec = System.currentTimeMillis()
 
     private var lastTimeWalkSec = System.currentTimeMillis()
     private var lastTimeRunSec = System.currentTimeMillis()
@@ -80,21 +80,20 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
     private lateinit var notiManager: NotificationManager
 
     private var isNotifying = false
+
     private var refreshFlage = false
 
     companion object {
         // We need to make this false when user not allow vibrate initially
-
         var soundSetting = "Buzz"
+        val ACTION_WATER_DRINK = "com.healthbuzz.healthbuzz.drink_water"
 
         @JvmStatic
         fun setSound(setting: String) {
             soundSetting = setting
         }
 
-        // Notification ID cannot be 0.
         private const val ONGOING_NOTIFICATION_ID = 1
-        const val ACTION_WATER_DRINK = "com.healthbuzz.healthbuzz.WATER_DRINK"
     }
 
     /**
@@ -109,7 +108,7 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
 
     private val receiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent) {
-            Log.d(TAG,"OnReceive water drink")
+            Log.d(TAG, "OnReceive water drink")
             val theAction = intent.action
             if (theAction == ACTION_WATER_DRINK) {
                 if (!isNotifying) {
@@ -166,11 +165,13 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
 
     // https://stackoverflow.com/a/47533338/8614565
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+
         notiManager = getSystemService()!!
         val pendingIntent: PendingIntent =
             Intent(this, MainActivity::class.java).let { notificationIntent ->
                 PendingIntent.getActivity(this, 0, notificationIntent, 0)
             }
+
 
         val channelId =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -186,7 +187,7 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
                 notiBuilder = Notification.Builder(this, channelId)
                     .setContentTitle(getText(R.string.ticker_text))
                     .setContentText(getText(R.string.ticker_text))
-                    .setSmallIcon(R.drawable.icon)
+                    .setSmallIcon(R.drawable.ic_launcher_foreground)
                     .setContentIntent(pendingIntent)
                     .setTicker(getText(R.string.ticker_text))
                 notiBuilder.build()
@@ -195,7 +196,12 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
                 notiBuilder.build()
             }
 
+        // Notification ID cannot be 0.
         startForeground(ONGOING_NOTIFICATION_ID, notification)
+//        thread = Thread {
+//            SensorThread.run(this)
+//        }
+//        thread?.start()
 
         RealtimeModel.stretching_count.observeForever {
             isNotifying = false
@@ -203,13 +209,14 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
         }
 
         sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
-        accelerometer = sensorManager!!.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
-        gyroscope = sensorManager!!.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
+        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+        gyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
 
         loadModel("rf.model")
+        Log.d(TAG, "Load model finished")
 
-        sensorManager!!.registerListener(this, accelerometer, samplingRate)
-        sensorManager!!.registerListener(this, gyroscope, samplingRate)
+        sensorManager.registerListener(this, accelerometer, samplingRate)
+        sensorManager.registerListener(this, gyroscope, samplingRate)
 
         runDetector = GpsRunDetector(this, this)
         runDetector.startDetection()
@@ -219,8 +226,9 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
 
     override fun onDestroy() {
         super.onDestroy()
-        sensorManager?.unregisterListener(this, accelerometer)
-        sensorManager?.unregisterListener(this, gyroscope)
+//        thread?.interrupt()
+        sensorManager.unregisterListener(this, accelerometer)
+        sensorManager.unregisterListener(this, gyroscope)
         unregisterReceiver(receiver)
     }
 
@@ -241,6 +249,7 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+//        TODO("Not yet implemented")
     }
 
     private fun handleInference(sample: Instance) {
@@ -264,19 +273,22 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
             val features: Instances = processor.extractFeaturesAndAddLabels(inferenceSegment, -1)
             inferenceSegment.clear()
             val feature = features[0]
+
             try {
                 val prediction = assetClassifier.classifyInstance(feature).toInt()
                 Log.d("stop_count", stop_count.toString())
+                Log.d("prediction", prediction.toString())
                 if (prediction == 0) {
                     stop_count += 1
                     not_stop_count = 0
                     val currentTimeSec = System.currentTimeMillis()
                     val timeDiffSec = (currentTimeSec - lastTimeMoveSec) / 1000
+
                     Log.d(TAG, "time_diff$timeDiffSec")
                     val leftSeconds = getLeftSecondsStretch(timeDiffSec)
-
-
                     RealtimeModel.stretching_time_left.postValue(leftSeconds)
+
+
                     if (leftSeconds <= 0) {
                         if (!isNotifying) {
                             alarmToStretch()
@@ -300,7 +312,6 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
                 Log.d(TAG, e.toString(), e)
                 Toast.makeText(applicationContext, "Inference failed!", Toast.LENGTH_SHORT).show()
             }
-
             val currentTimeSec = System.currentTimeMillis()
             val timeDiffSec = (currentTimeSec - lastTimeMoveSec) / 1000
             Log.d(TAG, "time_diff$timeDiffSec")
@@ -341,10 +352,10 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
     }
 
     private fun showDebugToNoti(prediction: Int) {
-//        notiManager.cancel(ONGOING_NOTIFICATION_ID)
         notiBuilder.setContentText("Current status: ${labelList[prediction]}, gps: $currentRunState")
         notiManager.notify(ONGOING_NOTIFICATION_ID, notiBuilder.build())
     }
+
 
     private fun alarmToStretch() {
         val prefs: SharedPreferences =
@@ -381,14 +392,37 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
             )
             .setAutoCancel(true)
         //                            notiBuilder.setContentText("You need to move $time_diff")
+
         notiManager.notify(ONGOING_NOTIFICATION_ID, builder.build())
         isNotifying = true
+    }
+
+    private fun buzzBasedOnSettings(prefs: SharedPreferences) {
+        if (!prefs.getBoolean("n_bother", false)) {
+            if (soundSetting == "Buzz") {
+                val vibrator: Vibrator =
+                    getSystemService(VIBRATOR_SERVICE) as Vibrator
+                if (Build.VERSION.SDK_INT >= 26) {
+                    vibrator.vibrate(
+                        VibrationEffect.createOneShot(
+                            500,
+                            DEFAULT_AMPLITUDE
+                        )
+                    ) // 0.5초간 진동
+                } else {
+                    vibrator.vibrate(500);
+                }
+            } else if (soundSetting == "Sound") {
+                val toneGen1 = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
+                toneGen1.startTone(ToneGenerator.TONE_CDMA_ABBR_ALERT, 300)
+            }
+        }
     }
 
     private fun alarmToWater() {
         val prefs: SharedPreferences =
             PreferenceManager.getDefaultSharedPreferences(this)
-//        buzzBasedOnSettings(prefs)
+        buzzBasedOnSettings(prefs)
         val waterIntent =
             Intent(this, WaterBroadcastReceiver::class.java).apply {
                 action = "ACTION_WATER"
@@ -424,28 +458,6 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
         isNotifying = true
     }
 
-    private fun buzzBasedOnSettings(prefs: SharedPreferences) {
-        if (!prefs.getBoolean("n_bother", false)) {
-            if (soundSetting == "Buzz") {
-                val vibrator: Vibrator =
-                    getSystemService(VIBRATOR_SERVICE) as Vibrator
-                if (Build.VERSION.SDK_INT >= 26) {
-                    vibrator.vibrate(
-                        VibrationEffect.createOneShot(
-                            500,
-                            DEFAULT_AMPLITUDE
-                        )
-                    ) // 0.5초간 진동
-                } else {
-                    vibrator.vibrate(500);
-                }
-            } else if (soundSetting == "Sound") {
-                val toneGen1 = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
-                toneGen1.startTone(ToneGenerator.TONE_CDMA_ABBR_ALERT, 300)
-            }
-        }
-    }
-
     private fun loadModel(model_name: String) {
         Log.d("load_asset_model", "loading the model from asset folder")
         val assetManager = assets
@@ -457,7 +469,6 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
             Log.e(TAG, "Failed to load ", e)
         }
         Toast.makeText(this, "Model loaded", Toast.LENGTH_SHORT).show()
-        Log.d(TAG, "Load model finished")
     }
 
     override fun onStartWalking() {
@@ -552,6 +563,7 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
                     R.drawable.stretching, "I stretched!",
                     snoozePendingIntent
                 ).setAutoCancel(true)
+
             notiManager.notify(ONGOING_NOTIFICATION_ID, builder.build())
             isNotifying = true
         }

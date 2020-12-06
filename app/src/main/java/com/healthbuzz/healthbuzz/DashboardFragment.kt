@@ -65,13 +65,15 @@ class DashboardFragment : Fragment() {
 //    }
 
     override fun onCreateView(
+
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val rootView = inflater.inflate(R.layout.fragment_dashboard, container, false)
-        val stretchingDrawable = ResourcesCompat.getDrawable(resources, R.drawable.stretching, null)
-        val waterDrawable = ResourcesCompat.getDrawable(resources, R.drawable.drink_water, null)
-        val rankingDrawable = ResourcesCompat.getDrawable(resources, R.drawable.run, null)
+        val stretchingDrawable = ResourcesCompat.getDrawable(resources, R.drawable.stretchicon, null)
+        val waterDrawable = ResourcesCompat.getDrawable(resources, R.drawable.drinkicon, null)
+        val rankingDrawable = ResourcesCompat.getDrawable(resources, R.drawable.users, null)
+
 
         val prefs: SharedPreferences =
             PreferenceManager.getDefaultSharedPreferences(context)
@@ -94,7 +96,7 @@ class DashboardFragment : Fragment() {
 
         RealtimeModel.stretching_time_left.observe(viewLifecycleOwner) { value ->
             val intValue = value?.toInt() ?: stretchIntervalSec
-            Log.v(TAG, "update value $value")
+            Log.e(TAG, "update value $value")
             rootView.cardview_layout_stretching.findViewById<TextView>(R.id.tvCardContent).text =
                 if (intValue > 0) {
                     formatTime(requireContext(), intValue)
@@ -144,45 +146,45 @@ class DashboardFragment : Fragment() {
         }*/
 
         with(rootView) {
-            cardview_layout_stretching.findViewById<ConstraintLayout>(R.id.cardview_root)
+            /*cardview_layout_stretching.findViewById<ConstraintLayout>(R.id.cardview_root)
                 .setBackgroundColor(
                     ResourcesCompat.getColor(
                         resources,
                         R.color.colorStretchingLight,
                         null
                     )
-                )
+                )*/
 
-            cardview_layout_water.findViewById<ConstraintLayout>(R.id.cardview_root)
+            /*cardview_layout_water.findViewById<ConstraintLayout>(R.id.cardview_root)
                 .setBackgroundColor(
                     ResourcesCompat.getColor(
                         resources,
                         R.color.colorWaterLight,
                         null
                     )
-                )
+                )*/
 
-            cardview_layout_community.findViewById<ConstraintLayout>(R.id.cardview_root)
+            /*cardview_layout_community.findViewById<ConstraintLayout>(R.id.cardview_root)
                 .setBackgroundColor(
                     ResourcesCompat.getColor(
                         resources,
                         R.color.colorRunLight,
                         null
                     )
-                )
+                )*/
 
             cardview_layout_stretching.findViewById<RoundCornerProgressBar>(R.id.pbCardProgress)
                 .apply {
                     progressBackgroundColor =
                         ResourcesCompat.getColor(
                             resources,
-                            R.color.colorStretching,
+                            R.color.progressBarBack,
                             null
                         )
                     progressColor =
                         ResourcesCompat.getColor(
                             resources,
-                            R.color.colorStretchingDark,
+                            R.color.progressBarFront,
                             null
                         )
                 }
@@ -192,12 +194,12 @@ class DashboardFragment : Fragment() {
                     progressBackgroundColor =
                         ResourcesCompat.getColor(
                             resources,
-                            R.color.colorWater,
+                            R.color.progressBarBack,
                             null
                         )
                     progressColor = ResourcesCompat.getColor(
                         resources,
-                        R.color.colorWaterDark,
+                        R.color.progressBarFront,
                         null
                     )
                 }

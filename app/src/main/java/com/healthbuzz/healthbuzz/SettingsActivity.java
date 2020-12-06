@@ -1,22 +1,15 @@
 package com.healthbuzz.healthbuzz;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Handler;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.preference.CheckBoxPreference;
 import androidx.preference.EditTextPreference;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
@@ -43,8 +36,6 @@ public class SettingsActivity extends AppCompatActivity {
     public static Context mainContext;
     public static Context actContext;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -62,11 +53,6 @@ public class SettingsActivity extends AppCompatActivity {
         mainContext=getApplicationContext();
         actContext=SettingsActivity.this;
 
-        IntentFilter messageFilter = new IntentFilter(Intent.ACTION_SEND);
-        SettingsActivity.Receiver messageReceiver = new SettingsActivity.Receiver();
-        LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, messageFilter);
-
-
     }
 
     @Override
@@ -83,14 +69,12 @@ public class SettingsActivity extends AppCompatActivity {
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
 
-            /*bindSummaryValue(findPreference("time_interval_water"));
+            bindSummaryValue(findPreference("time_interval_water"));
             bindSummaryValue(findPreference("time_interval_stretch"));
-            bindSummaryValue(findPreference("sound"));*/
-            findPreference("activate_drinking").setOnPreferenceChangeListener(listener);
+            bindSummaryValue(findPreference("sound"));
+            findPreference("sync2").setOnPreferenceChangeListener(listener);
         }
     }
-
-
 
     private static void bindSummaryValue(Preference preference) {
         preference.setOnPreferenceChangeListener(listener);
@@ -99,10 +83,6 @@ public class SettingsActivity extends AppCompatActivity {
                         .getString(preference.getKey(), ""));
     }
 
-    public Context getContx(){
-        return getApplicationContext();
-
-    }
     public static String filename ;
     private static final Preference.OnPreferenceChangeListener listener = new Preference.OnPreferenceChangeListener() {
         @Override
@@ -123,7 +103,7 @@ public class SettingsActivity extends AppCompatActivity {
                         RealtimeModel.INSTANCE.getStretching_time_left().postValue((long) intValue * 60);
                         break;
                 }
-            } else if (preference instanceof ListPreference){
+            } else if (preference instanceof ListPreference) {
                 ListPreference listPreference = (ListPreference) preference;
                 int index = listPreference.findIndexOfValue(stringValue);
 
@@ -142,25 +122,40 @@ public class SettingsActivity extends AppCompatActivity {
                         .setSummary(index >= 0 ? listPreference.getEntries()[index]
                                 : null);
             }else if (preference instanceof SwitchPreferenceCompat) {
-                if(preference.getKey().equals("activate_drinking")){
+                if(preference.getKey().equals("sync2")){
+                    SharedPreferences sharedPrefs =  PreferenceManager.getDefaultSharedPreferences(preference.getContext());
+
                     if((boolean)newValue){
-
-                        /*SendMessage t1=new SendMessage("/my_path" , "_stop");
-                        SendMessage t2 = new SendMessage("/my_path" , "_hellowatch");
-                        t2.setPredecessor(t1);
-                        t1.start();
-                        t2.start();*/
-
-
-
-                        filename = new SimpleDateFormat("'SensorData'yyyyMMddHHmm'_W_realtime.csv'", Locale.KOREA).format(new Date());
+                        sharedPrefs.edit().putBoolean("watchDetected" , false).apply();
                         SendMessage t1=new SendMessage("/my_path" , "_stop");
-                        SendMessage t2 = new SendMessage("/my_path" , "_startrealtime");
+                        SendMessage t2 = new SendMessage("/my_path" , "_hellowatch");
                         t2.setPredecessor(t1);
                         t1.start();
                         t2.start();
 
+
+                       /* filename = new SimpleDateFormat("'SensorData'yyyyMMddHHmm'_W_realtime.csv'", Locale.KOREA).format(new Date());
+                        SendMessage t1=new SendMessage("/my_path" , "_stop");
+                        SendMessage t2 = new SendMessage("/my_path" , "_startrealtime");
+                        t2.setPredecessor(t1);
+                        t1.start();
+                        t2.start();*/
+
+                        new Handler().postDelayed(() -> {
+                           /* startActivity(new Intent(WelcomeActivity.this, MainActivity3.class));
+                            finish();*/
+                            boolean watchDetected = sharedPrefs.getBoolean("watchDetected", false);
+                            if(!watchDetected){
+                                Toast.makeText(preference.getContext(),"watch not detected....",Toast.LENGTH_LONG).show();
+                                sharedPrefs.edit().putBoolean("sync2" , false).apply();
+                            }else{
+                                Toast.makeText(preference.getContext(),"watch detected....",Toast.LENGTH_LONG).show();
+                                new SendMessage("/my_path" , "_startrealtime").start();
+                            }
+                        }, 3000);
+
                     }else{
+                        sharedPrefs.edit().putBoolean("watchDetected" , false).apply();
                         new SendMessage("/my_path" , "_stop").start();
                     }
                 }
@@ -217,49 +212,10 @@ public class SettingsActivity extends AppCompatActivity {
                     //TO DO//
                 }
             }
-
             public void setPredecessor(Thread t) {
                 this.predecessor = t;
             }
 
-
-
-
         }
     };
-
-
-    public class Receiver extends BroadcastReceiver {
-        @Override
-
-        public void onReceive(Context context, Intent intent) {
-
-            //String message = "I just received a message from the wearable " + receivedMessageNumber++;
-            String message=intent.getStringExtra("message" );
-
-            DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    switch (which){
-                        case DialogInterface.BUTTON_POSITIVE:
-                            //Yes
-                            // button clicked
-                            Log.e("CYT_LOG" , "yes clicked....");
-                            break;
-
-                        case DialogInterface.BUTTON_NEGATIVE:
-                            //No button clicked
-                            Log.e("CYT_LOG" , "no clicked....");
-                            break;
-                    }
-                }
-            };
-
-           /* AlertDialog.Builder builder = new AlertDialog.Builder(context);
-            builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
-                    .setNegativeButton("No", dialogClickListener).show();*/
-
-        }
-    }
-
 }

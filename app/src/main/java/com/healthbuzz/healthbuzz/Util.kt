@@ -37,20 +37,6 @@ fun startSensorServiceSub(context: Context) {
     }
 }
 
-fun startBlService(context: Context) {
-    if (!isServiceRunning(context, "com.healthbuzz.healthbuzz.BlService"))
-        startBlServiceSub(context)
-}
-
-fun startBlServiceSub(context: Context) {
-    val intent = Intent(context, BlService::class.java)
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        context.startForegroundService(intent)
-    } else {
-        context.startService(intent)
-    }
-}
-
 // Though deprecated but will work as expected
 fun isServiceRunning(context: Context, className: String): Boolean {
     val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager?
@@ -94,7 +80,7 @@ fun showYoutubeSearch(context: Context, query: String) {
 fun Context.createNotificationChannel(channelId: String, channelName: String): String {
     val chan = NotificationChannel(
         channelId,
-        channelName, NotificationManager.IMPORTANCE_LOW
+        channelName, NotificationManager.IMPORTANCE_DEFAULT
     )
     chan.lightColor = Color.BLUE
     chan.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
@@ -105,4 +91,18 @@ fun Context.createNotificationChannel(channelId: String, channelName: String): S
 
 fun hasPermissions(context: Context, vararg permissions: String): Boolean = permissions.all {
     ActivityCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
+}
+
+fun startBlService(context: Context) {
+    if (!isServiceRunning(context, "com.healthbuzz.healthbuzz.BlService"))
+        startBlServiceSub(context)
+}
+
+fun startBlServiceSub(context: Context) {
+    val intent = Intent(context, BlService::class.java)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        context.startForegroundService(intent)
+    } else {
+        context.startService(intent)
+    }
 }

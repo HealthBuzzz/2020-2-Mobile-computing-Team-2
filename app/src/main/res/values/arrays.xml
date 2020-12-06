@@ -12,16 +12,4 @@
         <item>1</item>
         <item>2</item>
     </string-array>
-
-    <string-array name="notif_entries">
-        <item>Pop up</item>
-        <item>Sound</item>
-        <item>Buzz</item>
-    </string-array>
-
-    <string-array name="notif_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-    </string-array>
 </resources>

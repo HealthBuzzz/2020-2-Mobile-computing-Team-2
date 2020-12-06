@@ -5,8 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
-    app:cardCornerRadius="5dp"
+    app:cardCornerRadius="10dp"
     app:cardElevation="3dp"
+    android:padding="10dp"
+    android:background="#C3C3C3"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
@@ -23,30 +25,31 @@
             android:id="@+id/tvCardTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
             android:fontFamily="sans-serif-black"
             android:includeFontPadding="false"
             android:text="Moving the"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/ivCardImage"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/ivCardImage"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_margin="5dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvCardTitle"
+            app:layout_constraintTop_toBottomOf="@+id/tvCardTitle"
             tools:src="@tools:sample/avatars" />
 
         <com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar
             android:id="@+id/pbCardProgress"
-            android:layout_width="0dp"
-            android:layout_height="20dp"
-            android:layout_marginStart="@dimen/text_margin"
-            android:layout_marginTop="@dimen/text_margin"
-            app:layout_constraintEnd_toStartOf="@id/swCardEnable"
-            app:layout_constraintStart_toEndOf="@id/ivCardImage"
-            app:layout_constraintTop_toBottomOf="@id/tvCardTitle"
+            android:layout_width="120dp"
+            android:layout_height="7dp"
+            android:layout_marginRight="15dp"
+            app:layout_constraintBottom_toTopOf="@+id/swCardEnable"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:rcAnimationEnable="true"
             app:rcAnimationSpeedScale="0.2"
             app:rcBackgroundColor="#A4FFA4"
@@ -62,19 +65,21 @@
             android:id="@+id/tvCardContent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="5dp"
             android:text="Yeah"
-            app:layout_constraintEnd_toStartOf="@id/swCardEnable"
-            app:layout_constraintStart_toEndOf="@id/ivCardImage"
+            app:layout_constraintEnd_toEndOf="@+id/pbCardProgress"
+            app:layout_constraintStart_toStartOf="@+id/pbCardProgress"
             app:layout_constraintTop_toBottomOf="@id/pbCardProgress" />
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/swCardEnable"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="15dp"
             android:text="Enable"
+
             android:theme="@style/BuzzSwitch"
             app:layout_constraintBottom_toBottomOf="parent"
-
             app:layout_constraintEnd_toEndOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
