@@ -561,24 +561,30 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
     }
 
     private fun buzzBasedOnSettings(prefs: SharedPreferences) {
-        if (!prefs.getBoolean("n_bother", false)) {
-            if (soundSetting == "Buzz") {
-                val vibrator: Vibrator =
-                    getSystemService(VIBRATOR_SERVICE) as Vibrator
-                if (Build.VERSION.SDK_INT >= 26) {
-                    vibrator.vibrate(
-                        VibrationEffect.createOneShot(
-                            500,
-                            DEFAULT_AMPLITUDE
-                        )
-                    ) // 0.5초간 진동
-                } else {
-                    vibrator.vibrate(500);
-                }
-            } else if (soundSetting == "Sound") {
-                val toneGen1 = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
-                toneGen1.startTone(ToneGenerator.TONE_CDMA_ABBR_ALERT, 300)
+        val shouldBuzz = prefs.getBoolean("notif_buzz", false)
+        val shouldSound = prefs.getBoolean("notif_sound", false)
+        val shouldPopup = prefs.getBoolean("notif_popup", false)
+
+        if (shouldBuzz) {
+            val vibrator: Vibrator =
+                getSystemService(VIBRATOR_SERVICE) as Vibrator
+            if (Build.VERSION.SDK_INT >= 26) {
+                vibrator.vibrate(
+                    VibrationEffect.createOneShot(
+                        500,
+                        DEFAULT_AMPLITUDE
+                    )
+                ) // 0.5초간 진동
+            } else {
+                vibrator.vibrate(500);
             }
         }
+        if (shouldSound) {
+            val toneGen1 = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
+            toneGen1.startTone(ToneGenerator.TONE_CDMA_ABBR_ALERT, 300)
+        }
+
+        // TODO: show popup head up bomb but it wont work without more noti channel
+
     }
 }
