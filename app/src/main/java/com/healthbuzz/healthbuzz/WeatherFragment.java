@@ -113,11 +113,11 @@ public class WeatherFragment extends Fragment {
                 JsonObject response_body = response.body();
                 String res = response_body.toString();
                 Log.d("weather", res);
-                current_city = response_body.get("name").getAsString();
+                current_city = response_body.get("name").toString();
                 Log.d("weather_city", current_city);
                 JsonObject current_weather_obj = response.body().getAsJsonArray("weather").get(0).getAsJsonObject();
                 Log.d("curr_weather_obj", current_weather_obj.toString());
-                current_weather = current_weather_obj.get("main").getAsString();
+                current_weather = current_weather_obj.get("main").toString();
                 current_weather_icon = current_weather_obj.get("icon").getAsString();
                 Log.d("curr_weather_icon", current_weather_icon);
                 Log.d("curr_weather", current_weather);
@@ -142,14 +142,14 @@ public class WeatherFragment extends Fragment {
                 String res_hourly = response_hourly.body().toString();
                 Log.d("weather_Hour", res_hourly);
                 JsonArray weather_array = response_hourly.body().getAsJsonArray("hourly");
-                for (int i = 0; i < weather_array.size(); i++) {
+               /* for (int i = 0; i < weather_array.size(); i++) {
                     JsonElement weather = weather_array.get(i);
                     JsonObject weather_obj = weather.getAsJsonObject();
                     Log.d("weather_parse", weather.toString());
                     temps.add("" + (weather_obj.get("temp").getAsFloat() - 273f));
-                    datetimes.add(weather_obj.get("dt").getAsString());
+                    datetimes.add(weather_obj.get("dt").toString());
                     weather_icons.add(weather_obj.getAsJsonArray("weather").get(0).getAsJsonObject().get("icon").getAsString());
-                }
+                }*/
                 Log.d("weather_temps", temps.toString());
                 Log.d("weather_icons", weather_icons.toString());
                 updateViews();

@@ -45,7 +45,7 @@
         app:layout_constraintHorizontal_bias="0.538"
         app:layout_constraintStart_toEndOf="@+id/linearlayout"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.029" />
+        app:layout_constraintVertical_bias="0.040" />
 
     <ImageView
         android:id="@+id/tree"
@@ -58,13 +58,5 @@
         app:layout_constraintHorizontal_bias="0.686"
         app:layout_constraintStart_toEndOf="@+id/linearlayout"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.029" />
-
-    <ImageView
-        android:id="@+id/img_watch_icon"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:src="@drawable/whatch_icon"
-        app:layout_constraintEnd_toStartOf="@+id/man"
-        app:layout_constraintTop_toTopOf="@+id/man" />
+        app:layout_constraintVertical_bias="0.040" />
 </androidx.constraintlayout.widget.ConstraintLayout>

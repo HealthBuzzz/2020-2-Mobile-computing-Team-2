@@ -4,6 +4,16 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+
+
+    <LinearLayout
+        android:id="@+id/weather_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/cardview_layout_stretching"
+        app:layout_constraintTop_toBottomOf="parent" />
     <include
         android:id="@+id/cardview_layout_stretching"
         layout="@layout/dashboard_cardview"
@@ -12,9 +22,9 @@
         android:layout_margin="5dp"
         app:layout_constraintBottom_toTopOf="@id/cardview_layout_water"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.555"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/weather_container" />
 
     <include
         android:id="@+id/cardview_layout_water"

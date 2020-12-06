@@ -39,7 +39,7 @@ public class CommunityActivity extends AppCompatActivity {
                 int i = 1;
                 for (UserCount nameWithCount : community.getStretching()) {
                     textStretching += String.format("%d. %-10s\n", i, nameWithCount.getUsername());
-                    textStretching2 += ""+nameWithCount.getCount()+"회\n";
+                    textStretching2 += ""+nameWithCount.getCount()+"\n";
                     i++;
                 }
                 stretch.setText(textStretching);
@@ -51,7 +51,7 @@ public class CommunityActivity extends AppCompatActivity {
                 int i = 1;
                 for (UserCount nameWithCount : community.getWater()) {
                     textWater += String.format("%d. %-10s\n", i, nameWithCount.getUsername());
-                    textWater2 += ""+String.format("%.1f",((float)nameWithCount.getCount())/1000)+"L\n";
+                    textWater2 += ""+nameWithCount.getCount()+"\n";
                     i++;
                 }
                 water.setText(textWater);

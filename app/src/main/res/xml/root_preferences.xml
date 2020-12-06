@@ -1,55 +1,5 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <!--<PreferenceCategory app:title="General">
-        <SwitchPreferenceCompat
-            app:key="noBother"
-            android:disableDependentsState="true"
-            app:title="Don't bother" />
-        <ListPreference
-            app:dependency="noBother"
-            app:defaultValue="1"
-            app:entries="@array/sound_entries"
-            app:entryValues="@array/sound_values"
-            app:key="sound"
-            app:title="Sound setting" />
-        <CheckBoxPreference
-            app:key="smartwatch"
-            app:title="Smartwatch"
-            app:useSimpleSummaryProvider="true" />
-        <CheckBoxPreference
-            app:key="smartwatch_realtime_sensor_reading"
-            app:title="Enable realtime watch sensor reading"
-            app:useSimpleSummaryProvider="true" />
-        <ListPreference
-            app:dependency="noBother"
-            app:defaultValue="1"
-            app:entries="@array/sound_entries"
-            app:entryValues="@array/sound_values"
-            app:key="sound"
-            app:title="Notifications" />
-    </PreferenceCategory>
-    <PreferenceCategory app:title="Stretch setting">
-        <SwitchPreferenceCompat
-            app:key="sync"
-            app:title="activate" />
-        <EditTextPreference
-            app:dependency="sync"
-            app:key="time_interval_stretch"
-            app:title="time interval"
-            app:summary="(minute)" />
-    </PreferenceCategory>
-    <PreferenceCategory app:title="Water drinking">
-        <SwitchPreferenceCompat
-            app:key="sync2"
-            app:title="activate" />
-        <EditTextPreference
-            app:dependency="sync2"
-            app:key="time_interval_water"
-            app:title="time interval"
-            app:summary="(minute)" />
-    </PreferenceCategory>-->
-
     <PreferenceCategory app:title="Notifications">
 
         <SwitchPreferenceCompat
@@ -67,26 +17,54 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="Stretch">
+
+    <PreferenceCategory app:title="General">
 
         <SwitchPreferenceCompat
-            app:key="recommend_stretch"
-            app:title="Recommend Stretch" />
+            app:key="noBother"
+            android:disableDependentsState="true"
+            app:title="Don't bother" />
+
+        <ListPreference
+            app:dependency="noBother"
+            app:defaultValue="1"
+            app:entries="@array/sound_entries"
+            app:entryValues="@array/sound_values"
+            app:key="sound"
+            app:title="Sound setting" />
+
+        <CheckBoxPreference
+            app:key="smartwatch"
+            app:title="Smartwatch"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Stretch setting">
+
         <SwitchPreferenceCompat
-            app:key="activate_stretch"
+            app:key="sync"
             app:title="Activate Stretch Buzz" />
 
+        <EditTextPreference
+            app:dependency="sync"
+            app:key="time_interval_stretch"
+            app:title="time interval"
+            app:summary="(minute)" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="Water">
+    <PreferenceCategory app:title="Water drinking">
 
         <SwitchPreferenceCompat
-            app:key="activate_drinking"
+            app:key="sync2"
             app:title="Activate Drinking Buzz" />
 
+        <EditTextPreference
+            app:dependency="sync2"
+            app:key="time_interval_water"
+            app:title="time interval"
+            app:summary="(minute)" />
 
     </PreferenceCategory>
-
 
 </PreferenceScreen>

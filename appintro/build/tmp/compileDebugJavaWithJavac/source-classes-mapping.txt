@@ -1,0 +1,2 @@
+com/github/appintro/BuildConfig.java
+ com.github.appintro.BuildConfig

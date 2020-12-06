@@ -138,11 +138,14 @@ public class WelcomeFragment extends Fragment {
             return true;
         } else if (itemId == R.id.help) {
 //            Toast.makeText(getActivity(), "Go to help page", Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(requireActivity(), InferenceActivity.class));
+            //startActivity(new Intent(requireActivity(), InferenceActivity.class));
+            startActivity(new Intent(requireActivity(), MainActivity3.class));
+            requireActivity().finish();
             return true;
         } else if (itemId == R.id.debug_drinking) {
 //            Toast.makeText(getActivity(), "Go to help page", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(requireActivity(), DrinkingDataGettingActivity.class));
+
             return true;
         } else if (itemId == R.id.debug_movement) {
 //            Toast.makeText(getActivity(), "Go to help page", Toast.LENGTH_SHORT).show();

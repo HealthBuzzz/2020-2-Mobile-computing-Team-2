@@ -116,7 +116,7 @@
 
         </LinearLayout>
 
-        <com.github.mikephil.charting.charts.BarChart
+        <com.github.mikephil.charting.charts.LineChart
             android:id="@+id/chart"
             android:layout_width="400dp"
             android:layout_height="300dp"

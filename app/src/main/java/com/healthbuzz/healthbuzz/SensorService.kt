@@ -1,7 +1,10 @@
 package com.healthbuzz.healthbuzz
 
 import android.app.*
-import android.content.*
+import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
+import android.graphics.Color
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -10,8 +13,10 @@ import android.media.AudioManager
 import android.media.ToneGenerator
 import android.os.*
 import android.os.VibrationEffect.DEFAULT_AMPLITUDE
+import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.getSystemService
 import androidx.preference.PreferenceManager
@@ -24,7 +29,9 @@ import java.io.IOException
 import java.util.*
 
 
-class SensorService : Service(), SensorEventListener, RunningStateListener {
+class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListener,
+    RunningStateListener {
+    private var ttsInit: Boolean = false
     private val CHANNEL_ID = "HealthBuzzSensorService"
     private val CHANNEL_NAME = "HealthBuzz sensor service"
 
@@ -38,7 +45,7 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
 
     private lateinit var gyroscope: Sensor
     private lateinit var accelerometer: Sensor
-    private var sensorManager: SensorManager? = null
+    private lateinit var sensorManager: SensorManager
 
     private lateinit var runDetector: GpsRunDetector
 
@@ -48,7 +55,6 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
     private var stop_count = 0
     private var not_stop_count = 0
     private var lastTimeMoveSec = System.currentTimeMillis()
-    private var lastTimeWaterSec = System.currentTimeMillis()
 
     private var lastTimeWalkSec = System.currentTimeMillis()
     private var lastTimeRunSec = System.currentTimeMillis()
@@ -79,10 +85,15 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
 
     private lateinit var notiManager: NotificationManager
 
+    private lateinit var myTTS: TextToSpeech
+
     private var isNotifying = false
+
     private var refreshFlage = false
 
+
     companion object {
+
         // We need to make this false when user not allow vibrate initially
 
         var soundSetting = "Buzz"
@@ -92,9 +103,7 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
             soundSetting = setting
         }
 
-        // Notification ID cannot be 0.
         private const val ONGOING_NOTIFICATION_ID = 1
-        const val ACTION_WATER_DRINK = "com.healthbuzz.healthbuzz.WATER_DRINK"
     }
 
     /**
@@ -106,69 +115,20 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
         fun getService(): SensorService = this@SensorService
     }
 
-
-    private val receiver: BroadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent) {
-            val theAction = intent.action
-            if (theAction == ACTION_WATER_DRINK) {
-                if (!isNotifying) {
-                    val waterIntent =
-                        Intent(this@SensorService, WaterBroadcastReceiver::class.java).apply {
-                            action = "ACTION_DRINK"
-                            putExtra("water", true)
-                            putExtra("RealWater", true)
-                            //                                    putExtra(EXTRA_NOTIFICATION_ID, 0)
-                        }
-                    val noWaterIntent = Intent(
-                        this@SensorService, WaterBroadcastReceiver::class.java
-                    ).apply {
-                        action = "ACTION_DRINK"
-                        putExtra("water", true)
-                        putExtra("RealWater", false)
-                    }
-                    val snoozePendingIntent: PendingIntent =
-                        PendingIntent.getBroadcast(this@SensorService, 0, waterIntent, 0)
-                    val snoozePendingIntent2: PendingIntent =
-                        PendingIntent.getBroadcast(this@SensorService, 0, noWaterIntent, 0)
-                    val builder = NotificationCompat.Builder(this@SensorService, CHANNEL_ID)
-                        .setSmallIcon(R.drawable.drink_water)
-                        .setContentTitle("You drank water now!")
-                        .setContentText("Happy Drinking")
-                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                        .setContentIntent(snoozePendingIntent)
-                        .addAction(
-                            R.drawable.drink_water, "Yes, I drank now!",
-                            snoozePendingIntent
-                        ).addAction(
-                            R.drawable.icon, "No, I didn't",
-                            snoozePendingIntent2
-                        )
-                        .setAutoCancel(true)
-                    notiManager.notify(1, builder.build())
-                    isNotifying = true
-                }
-            }
-        }
-    }
-
-    override fun onCreate() {
-        super.onCreate()
-        val filter = IntentFilter()
-        filter.addAction(ACTION_WATER_DRINK)
-        registerReceiver(receiver, filter)
-    }
-
     override fun onBind(intent: Intent): IBinder {
         return binder
     }
 
     // https://stackoverflow.com/a/47533338/8614565
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        myTTS = TextToSpeech(this, this)
+
         notiManager = getSystemService()!!
         val pendingIntent: PendingIntent =
             Intent(this, MainActivity::class.java).let { notificationIntent ->
                 PendingIntent.getActivity(this, 0, notificationIntent, 0)
             }
+
 
         val channelId =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -184,7 +144,7 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
                 notiBuilder = Notification.Builder(this, channelId)
                     .setContentTitle(getText(R.string.ticker_text))
                     .setContentText(getText(R.string.ticker_text))
-                    .setSmallIcon(R.drawable.icon)
+                    .setSmallIcon(R.drawable.ic_launcher_foreground)
                     .setContentIntent(pendingIntent)
                     .setTicker(getText(R.string.ticker_text))
                 notiBuilder.build()
@@ -193,7 +153,12 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
                 notiBuilder.build()
             }
 
+        // Notification ID cannot be 0.
         startForeground(ONGOING_NOTIFICATION_ID, notification)
+//        thread = Thread {
+//            SensorThread.run(this)
+//        }
+//        thread?.start()
 
         RealtimeModel.stretching_count.observeForever {
             isNotifying = false
@@ -201,13 +166,14 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
         }
 
         sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
-        accelerometer = sensorManager!!.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
-        gyroscope = sensorManager!!.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
+        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+        gyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
 
         loadModel("rf.model")
+        Log.d(TAG, "Load model finished")
 
-        sensorManager!!.registerListener(this, accelerometer, samplingRate)
-        sensorManager!!.registerListener(this, gyroscope, samplingRate)
+        sensorManager.registerListener(this, accelerometer, samplingRate)
+        sensorManager.registerListener(this, gyroscope, samplingRate)
 
         runDetector = GpsRunDetector(this, this)
         runDetector.startDetection()
@@ -217,8 +183,23 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
 
     override fun onDestroy() {
         super.onDestroy()
-        sensorManager?.unregisterListener(this, accelerometer)
-        sensorManager?.unregisterListener(this, gyroscope)
+//        thread?.interrupt()
+        sensorManager.unregisterListener(this, accelerometer)
+        sensorManager.unregisterListener(this, gyroscope)
+
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun createNotificationChannel(channelId: String, channelName: String): String {
+        val chan = NotificationChannel(
+            channelId,
+            channelName, NotificationManager.IMPORTANCE_LOW
+        )
+        chan.lightColor = Color.BLUE
+        chan.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
+        val service = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        service.createNotificationChannel(chan)
+        return channelId
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
@@ -238,6 +219,7 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+//        TODO("Not yet implemented")
     }
 
     private fun handleInference(sample: Instance) {
@@ -247,13 +229,13 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
             //Daily Backend Refresh
             val hour = cal[Calendar.HOUR_OF_DAY]
             val min = cal[Calendar.MINUTE]
-            if (hour == 23 && min == 59 && refreshFlage == false) {
+            if (hour == 23 && min == 59 && refreshFlage == false){
                 refreshFlage = true
                 if (UserInfo.userName != null) {
                     LoginDataSource.getTodayRefresh()
                 }
             }
-            if (hour == 0 && min == 1) {
+            if (hour == 0 && min == 1){
                 refreshFlage = false
             }
             //
@@ -261,28 +243,96 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
             val features: Instances = processor.extractFeaturesAndAddLabels(inferenceSegment, -1)
             inferenceSegment.clear()
             val feature = features[0]
+
             try {
+
+                //int prediction = (int)classifier.classifyInstance(feature);
                 val prediction = assetClassifier.classifyInstance(feature).toInt()
+                //inferenceResultView.setText(labelList.get(prediction));
                 Log.d("stop_count", stop_count.toString())
+                Log.d("prediction", prediction.toString())
                 if (prediction == 0) {
                     stop_count += 1
                     not_stop_count = 0
                     val currentTimeSec = System.currentTimeMillis()
                     val timeDiffSec = (currentTimeSec - lastTimeMoveSec) / 1000
+
                     Log.d(TAG, "time_diff$timeDiffSec")
-                    val leftSeconds = getLeftSecondsStretch(timeDiffSec)
 
+                    //bad practice which always read the value
+                    val prefs: SharedPreferences =
+                        PreferenceManager.getDefaultSharedPreferences(this)
+                    var timeIntervalStretch: String =
+                        prefs.getString("time_interval_stretch", "20") ?: "20"
+                    if (timeIntervalStretch.isEmpty())
+                        timeIntervalStretch = "20"
+                    Log.d(TAG, "time_interval_stretch$timeIntervalStretch")
 
-                    RealtimeModel.stretching_time_left.postValue(leftSeconds)
-                    if (leftSeconds <= 0) {
+                    val leftSeconds = Integer.parseInt(timeIntervalStretch) * 60 - timeDiffSec
+
+//                    SingleObject.getInstance().stretching_time_left.value = left_minutes
+                    RealtimeModel.stretching_time_left.value = leftSeconds
+                    Log.d("SUG", timeIntervalStretch)  // Error
+                    Log.d("SUG2",timeDiffSec.toString())
+
+                    if (0 >= leftSeconds) {
                         if (!isNotifying) {
                             alarmToStretch()
+                            val prefs: SharedPreferences =
+                                PreferenceManager.getDefaultSharedPreferences(this)
+                            if (!prefs.getBoolean("n_bother", false)) {
+                                if (soundSetting.equals("Buzz")) {
+                                    val vibrator: Vibrator =
+                                        getSystemService(VIBRATOR_SERVICE) as Vibrator
+                                    // 0.5초간 진동
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                        vibrator.vibrate(
+                                            VibrationEffect.createOneShot(
+                                                200,
+                                                DEFAULT_AMPLITUDE
+                                            )
+                                        )
+                                    } else {
+                                        vibrator.vibrate(500)
+                                    }
+                                } else if (soundSetting.equals("Sound")) {
+                                    val toneGen1 = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
+                                    toneGen1.startTone(ToneGenerator.TONE_CDMA_ABBR_ALERT, 300)
+                                }
+                            }
+                            val stretchIntent =
+                                Intent(this, StretchBroadcastReceiver::class.java).apply {
+                                    action = "ACTION_STRETCH"
+                                    putExtra("stretched", true)
+//                                    putExtra(EXTRA_NOTIFICATION_ID, 0)
+                                }
+                            val snoozePendingIntent: PendingIntent =
+                                PendingIntent.getBroadcast(this, 0, stretchIntent, 0)
+                            val builder = NotificationCompat.Builder(this, CHANNEL_ID)
+                                .setSmallIcon(R.drawable.stretching)
+                                .setContentTitle("You need to stretch now!")
+                                .setContentText("Happy stretching")
+                                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                                .setContentIntent(snoozePendingIntent)
+                                .addAction(
+                                    R.drawable.stretching, "I stretched!",
+                                    snoozePendingIntent
+                                ).setAutoCancel(true)
+//                            notiBuilder.setContentText("You need to move $time_diff")
+                            notiManager.notify(1, builder.build())
+                            if (ttsInit) {
+
+                            }
+                            isNotifying = true
                         }
+                        // https://developer.android.com/training/notify-user/build-notification
                         Log.d(TAG, "You need to move $timeDiffSec")
+                        // inferenceResultView.setText("you need to move")
                     } else {
                         isNotifying = false
                         Log.d(TAG, "val:${labelList[prediction]}")
                         showDebugToNoti(prediction)
+//                        inferenceResultView.setText(labelList[prediction])
                     }
                 } else { // moving!
                     not_stop_count += 1
@@ -292,61 +342,42 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
                     }
                     showDebugToNoti(prediction)
                     Log.d(TAG, "val:${labelList[prediction]}")
+//                    inferenceResultView.setText(labelList[prediction])
                 }
             } catch (e: Exception) {
                 Log.d(TAG, e.toString(), e)
                 Toast.makeText(applicationContext, "Inference failed!", Toast.LENGTH_SHORT).show()
             }
-
-            val currentTimeSec = System.currentTimeMillis()
-            val timeDiffSec = (currentTimeSec - lastTimeMoveSec) / 1000
-            Log.d(TAG, "time_diff$timeDiffSec")
-            val leftSeconds = getLeftSecondsWater(timeDiffSec)
-            RealtimeModel.water_time_left.postValue(leftSeconds)
-            if (leftSeconds <= 0) {
-                if (!isNotifying) {
-                    alarmToWater()
-                }
-            } else {
-                isNotifying = false
-            }
         }
     }
 
-    private fun getLeftSecondsStretch(timeDiffSec: Long): Long {
-        //bad practice which always read the value
-        val prefs: SharedPreferences =
-            PreferenceManager.getDefaultSharedPreferences(this)
-        var timeIntervalStretch: String =
-            prefs.getString("time_interval_stretch", "20") ?: "20"
-        if (timeIntervalStretch.isEmpty())
-            timeIntervalStretch = "20"
-
-        return Integer.parseInt(timeIntervalStretch) * 60 - timeDiffSec
-    }
-
-    private fun getLeftSecondsWater(timeDiffSec: Long): Long {
-        //bad practice which always read the value
-        val prefs: SharedPreferences =
-            PreferenceManager.getDefaultSharedPreferences(this)
-        var timeIntervalWater: String =
-            prefs.getString("time_interval_water", "20") ?: "20"
-        if (timeIntervalWater.isEmpty())
-            timeIntervalWater = "20"
-
-        return Integer.parseInt(timeIntervalWater) * 60 - timeDiffSec
-    }
-
     private fun showDebugToNoti(prediction: Int) {
-//        notiManager.cancel(ONGOING_NOTIFICATION_ID)
         notiBuilder.setContentText("Current status: ${labelList[prediction]}, gps: $currentRunState")
-        notiManager.notify(ONGOING_NOTIFICATION_ID, notiBuilder.build())
+        notiManager.notify(1, notiBuilder.build())
     }
 
     private fun alarmToStretch() {
         val prefs: SharedPreferences =
             PreferenceManager.getDefaultSharedPreferences(this)
-        buzzBasedOnSettings(prefs)
+        if (!prefs.getBoolean("n_bother", false)) {
+            if (soundSetting == "Buzz") {
+                val vibrator: Vibrator =
+                    getSystemService(VIBRATOR_SERVICE) as Vibrator
+                if (Build.VERSION.SDK_INT >= 26) {
+                    vibrator.vibrate(
+                        VibrationEffect.createOneShot(
+                            200,
+                            DEFAULT_AMPLITUDE
+                        )
+                    ) // 0.5초간 진동
+                } else {
+                    vibrator.vibrate(200);
+                }
+            } else if (soundSetting == "Sound") {
+                val toneGen1 = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
+                toneGen1.startTone(ToneGenerator.TONE_CDMA_ABBR_ALERT, 300)
+            }
+        }
         val stretchIntent =
             Intent(this, StretchBroadcastReceiver::class.java).apply {
                 action = "ACTION_STRETCH"
@@ -379,68 +410,10 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
             .setAutoCancel(true)
         //                            notiBuilder.setContentText("You need to move $time_diff")
         notiManager.notify(1, builder.build())
-        isNotifying = true
-    }
+        if (ttsInit) {
 
-    private fun alarmToWater() {
-        val prefs: SharedPreferences =
-            PreferenceManager.getDefaultSharedPreferences(this)
-        buzzBasedOnSettings(prefs)
-        val waterIntent =
-            Intent(this, WaterBroadcastReceiver::class.java).apply {
-                action = "ACTION_WATER"
-                putExtra("water", true)
-                //                                    putExtra(EXTRA_NOTIFICATION_ID, 0)
-            }
-        val noWaterIntent = Intent(
-            this, WaterBroadcastReceiver::class.java
-        ).apply {
-            action = "ACTION_WATER"
-            putExtra("water", false)
         }
-        val snoozePendingIntent: PendingIntent =
-            PendingIntent.getBroadcast(this, 0, waterIntent, 0)
-        val snoozePendingIntent2: PendingIntent =
-            PendingIntent.getBroadcast(this, 0, noWaterIntent, 0)
-        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setSmallIcon(R.drawable.drink_water)
-            .setContentTitle("You need to drink water now!")
-            .setContentText("Happy drinking")
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .setContentIntent(snoozePendingIntent)
-            .addAction(
-                R.drawable.drink_water, "I will drink now!",
-                snoozePendingIntent
-            ).addAction(
-                R.drawable.icon, "later",
-                snoozePendingIntent2
-            )
-            .setAutoCancel(true)
-        //                            notiBuilder.setContentText("You need to move $time_diff")
-        notiManager.notify(1, builder.build())
         isNotifying = true
-    }
-
-    private fun buzzBasedOnSettings(prefs: SharedPreferences) {
-        if (!prefs.getBoolean("n_bother", false)) {
-            if (soundSetting == "Buzz") {
-                val vibrator: Vibrator =
-                    getSystemService(VIBRATOR_SERVICE) as Vibrator
-                if (Build.VERSION.SDK_INT >= 26) {
-                    vibrator.vibrate(
-                        VibrationEffect.createOneShot(
-                            500,
-                            DEFAULT_AMPLITUDE
-                        )
-                    ) // 0.5초간 진동
-                } else {
-                    vibrator.vibrate(500);
-                }
-            } else if (soundSetting == "Sound") {
-                val toneGen1 = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
-                toneGen1.startTone(ToneGenerator.TONE_CDMA_ABBR_ALERT, 300)
-            }
-        }
     }
 
     private fun loadModel(model_name: String) {
@@ -454,7 +427,10 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
             Log.e(TAG, "Failed to load ", e)
         }
         Toast.makeText(this, "Model loaded", Toast.LENGTH_SHORT).show()
-        Log.d(TAG, "Load model finished")
+    }
+
+    override fun onInit(status: Int) {
+        ttsInit = true
     }
 
     override fun onStartWalking() {
@@ -500,7 +476,7 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
             RealtimeModel.stretching_count.postValue(
                 (RealtimeModel.stretching_count.value?.toLong() ?: 0) + 1
             ) // add 1
-            if (UserInfo.userName != null) {
+            if (UserInfo.userName != null){
                 LoginDataSource.postTodayStretching()
             }
         }
@@ -549,12 +525,12 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
                     R.drawable.stretching, "I stretched!",
                     snoozePendingIntent
                 ).setAutoCancel(true)
+//                            notiBuilder.setContentText("You need to move $time_diff")
             notiManager.notify(1, builder.build())
             isNotifying = true
         }
 
     }
-
     fun resetStretchTime() {
         lastTimeMoveSec = System.currentTimeMillis()
     }

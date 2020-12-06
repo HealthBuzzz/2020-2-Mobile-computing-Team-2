@@ -72,7 +72,7 @@ dependencies {
 
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
-
+    implementation 'com.github.AppIntro:AppIntro:6.0.0'
 }
 configurations {
     all {
