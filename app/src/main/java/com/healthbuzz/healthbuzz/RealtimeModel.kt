@@ -31,8 +31,6 @@ object RealtimeModel {
         it.value = null
     }
 
-    val waterDummy = MutableLiveData<String>().also {
-        it.value = ""
-    }
+    val waterDummy = MutableLiveData<String?>()
 }
 
