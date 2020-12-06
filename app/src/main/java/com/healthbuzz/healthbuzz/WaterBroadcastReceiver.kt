@@ -19,9 +19,8 @@ class WaterBroadcastReceiver : BroadcastReceiver() {
             if (willDrinkNow) {
                 val drankNow = intent.getBooleanExtra("RealWater", false)
                 if (drankNow) {
-                    RealtimeModel.water_count.postValue(
-                        (RealtimeModel.water_count.value?.toLong() ?: 0) + 200
-                    ) // add 1
+                    val theIntent = Intent(context, WaterAmountInputActivity::class.java)
+                    context.startActivity(theIntent)
                     if (!UserInfo.userName.value.equals("")) {
                         LoginDataSource.postTodayWater()
                     }
