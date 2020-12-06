@@ -100,6 +100,7 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
         private const val ONGOING_NOTIFICATION_ID = 1
         private const val STRETCHING_NOTIFICATION_ID = 2
         private const val WATER_NOTIFICATION_ID = 3
+        private const val WATER_ASK_NOTIFICATION_ID = 4
 
     }
 
@@ -157,7 +158,7 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
                     snoozePendingIntent2
                 )
                 .setAutoCancel(true)
-            notiManager.notify(ONGOING_NOTIFICATION_ID, builder.build())
+            notiManager.notify(WATER_ASK_NOTIFICATION_ID, builder.build())
             isNotifying = true
         }
     }
@@ -373,7 +374,7 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
             )
             .setAutoCancel(true)
         //                            notiBuilder.setContentText("You need to move $time_diff")
-        notiManager.notify(ONGOING_NOTIFICATION_ID, builder.build())
+        notiManager.notify(WATER_NOTIFICATION_ID, builder.build())
         isNotifying = true
     }
 
@@ -501,9 +502,7 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
             RealtimeModel.stretching_count.postValue(
                 (RealtimeModel.stretching_count.value?.toLong() ?: 0) + 1
             ) // add 1
-            if (UserInfo.userName != null) {
-                LoginDataSource.postTodayStretching()
-            }
+            LoginDataSource.postTodayStretching()
         }
     }
 
