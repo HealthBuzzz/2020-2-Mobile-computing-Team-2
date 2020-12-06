@@ -1,16 +1,10 @@
 package com.healthbuzz.healthbuzz.data;
 
 import android.os.Bundle;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
-import android.service.autofill.TextValueSanitizer;
-import android.view.View;
-import android.widget.TextView;
 
 import com.healthbuzz.healthbuzz.R;
 import com.healthbuzz.healthbuzz.RealtimeModel;
@@ -33,13 +27,13 @@ public class CommunityActivity extends AppCompatActivity {
 
             String textStretching = "";
             String textStretching2 = "";
-            if(community == null)
+            if (community == null)
                 return;
             if (community.getStretching() != null) {
                 int i = 1;
                 for (UserCount nameWithCount : community.getStretching()) {
                     textStretching += String.format("%d. %-10s\n", i, nameWithCount.getUsername());
-                    textStretching2 += ""+nameWithCount.getCount()+"\n";
+                    textStretching2 += "" + nameWithCount.getCount() + "\n";
                     i++;
                 }
                 stretch.setText(textStretching);
@@ -51,7 +45,7 @@ public class CommunityActivity extends AppCompatActivity {
                 int i = 1;
                 for (UserCount nameWithCount : community.getWater()) {
                     textWater += String.format("%d. %-10s\n", i, nameWithCount.getUsername());
-                    textWater2 += ""+nameWithCount.getCount()+"\n";
+                    textWater2 += "" + nameWithCount.getCount() + "\n";
                     i++;
                 }
                 water.setText(textWater);
@@ -61,7 +55,7 @@ public class CommunityActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
         LoginDataSource.getCommunity();
     }

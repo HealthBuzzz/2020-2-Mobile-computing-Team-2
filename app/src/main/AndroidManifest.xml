@@ -59,7 +59,11 @@
         <service
             android:name=".SensorService"
             android:enabled="true"
-            android:exported="false" />
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.healthbuzz.healthbuzz.drink_water"/>
+            </intent-filter>
+        </service>
 
         <activity
             android:name=".WelcomeActivity"

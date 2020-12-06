@@ -3,7 +3,7 @@ package com.healthbuzz.healthbuzz.data.model;
 public class TodayWater {
     private int hour, minute, amount;
 
-    public TodayWater(int hour, int minute, int amount){
+    public TodayWater(int hour, int minute, int amount) {
         this.hour = hour;
         this.minute = minute;
         this.amount = amount;

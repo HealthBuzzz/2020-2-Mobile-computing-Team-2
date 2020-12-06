@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.github.appintro.AppIntro
-import com.github.appintro.AppIntro2
 import com.github.appintro.AppIntroFragment
 import com.github.appintro.model.SliderPage
 
@@ -44,6 +43,11 @@ class MainActivity3 : AppIntro() {
 
     override fun onDonePressed(currentFragment: Fragment?) {
         super.onDonePressed(currentFragment)
+        startActivity(Intent(this@MainActivity3, MainActivity::class.java))
+        finish()
+    }
+
+    override fun onBackPressed() {
         startActivity(Intent(this@MainActivity3, MainActivity::class.java))
         finish()
     }

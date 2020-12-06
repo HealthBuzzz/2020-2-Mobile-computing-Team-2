@@ -1,5 +1,6 @@
 package com.healthbuzz.healthbuzz
 
+
 import android.content.*
 import android.os.Build
 import android.os.Bundle
@@ -19,15 +20,11 @@ import androidx.preference.PreferenceManager
 import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar
 import com.healthbuzz.healthbuzz.RealtimeModel.ranking_stretch
 import com.healthbuzz.healthbuzz.RealtimeModel.ranking_water
-
-
 import com.healthbuzz.healthbuzz.UserInfo.userName
 import com.healthbuzz.healthbuzz.data.CommunityActivity
 import com.healthbuzz.healthbuzz.data.LoginDataSource
-import com.healthbuzz.healthbuzz.data.model.LoggedInUser
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 import kotlinx.android.synthetic.main.fragment_dashboard.view.*
-import org.apache.commons.lang3.math.NumberUtils.toInt
 
 
 /**
@@ -70,7 +67,8 @@ class DashboardFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val rootView = inflater.inflate(R.layout.fragment_dashboard, container, false)
-        val stretchingDrawable = ResourcesCompat.getDrawable(resources, R.drawable.stretchicon, null)
+        val stretchingDrawable =
+            ResourcesCompat.getDrawable(resources, R.drawable.stretchicon, null)
         val waterDrawable = ResourcesCompat.getDrawable(resources, R.drawable.drinkicon, null)
         val rankingDrawable = ResourcesCompat.getDrawable(resources, R.drawable.users, null)
 
@@ -248,7 +246,7 @@ class DashboardFragment : Fragment() {
 
             cardview_layout_stretching.findViewById<SwitchCompat>(R.id.swCardEnable)
                 .apply {
-                    isChecked = prefs.getBoolean("sync", true)
+                    isChecked = prefs.getBoolean("sync", false)
                 }
                 .setOnCheckedChangeListener { buttonView, checked ->
                     disableEnableControls(checked, cardview_layout_stretching as ViewGroup)
@@ -261,7 +259,7 @@ class DashboardFragment : Fragment() {
 
             cardview_layout_water.findViewById<SwitchCompat>(R.id.swCardEnable)
                 .apply {
-                    isChecked = prefs.getBoolean("sync2", true)
+                    isChecked = prefs.getBoolean("sync2", false)
                 }
                 .setOnCheckedChangeListener { buttonView, checked ->
                     disableEnableControls(checked, cardview_layout_water as ViewGroup)
@@ -301,22 +299,23 @@ class DashboardFragment : Fragment() {
 
         return stretchIntervalSec
     }
+
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         ranking_stretch.observe(viewLifecycleOwner, { aLong: Long? ->
             val rankingView = requireView().findViewById<TextView>(R.id.ranking)
-            if(aLong == null || aLong.toInt() == (-1)){
+            if (aLong == null || aLong.toInt() == (-1)) {
                 rankingView.setText("Login First!")
-            }else {
+            } else {
                 rankingView.setText("TOP $aLong% Stretcher")
             }
         })
         ranking_water.observe(viewLifecycleOwner, { aLong: Long? ->
             val rankingView = requireView().findViewById<TextView>(R.id.ranking2)
-            if(aLong == null || aLong.toInt() == (-1)){
+            if (aLong == null || aLong.toInt() == (-1)) {
                 rankingView.setText("")
-            }else {
+            } else {
                 rankingView.setText("TOP $aLong% WaterDrinker")
             }
         })
@@ -329,13 +328,13 @@ class DashboardFragment : Fragment() {
 
         cardview_layout_water.findViewById<SwitchCompat>(R.id.swCardEnable)
             .apply {
-                isChecked = prefs.getBoolean("sync2", true)
+                isChecked = prefs.getBoolean("sync2", false)
             }
         cardview_layout_stretching.findViewById<SwitchCompat>(R.id.swCardEnable)
             .apply {
-                isChecked = prefs.getBoolean("sync", true)
+                isChecked = prefs.getBoolean("sync", false)
             }
-        if(!userName.getValue().equals("")) {
+        if (!userName.getValue().equals("")) {
             LoginDataSource.getTodayData()
         }
     }

@@ -20,7 +20,7 @@ class StretchBroadcastReceiver : BroadcastReceiver() {
                 RealtimeModel.stretching_count.postValue(
                     (RealtimeModel.stretching_count.value?.toLong() ?: 0) + 1
                 ) // add 1
-                if(!userName.getValue().equals("")) {
+                if (!userName.getValue().equals("")) {
                     LoginDataSource.postTodayStretching()
                 }
             }

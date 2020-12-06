@@ -136,7 +136,8 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 LoginDataSource.signup(emailEditText.getText().toString(),
                         passwordEditText.getText().toString());
-        }});
+            }
+        });
     }
 
     private void updateUiWithUser(LoggedInUserView model) {
