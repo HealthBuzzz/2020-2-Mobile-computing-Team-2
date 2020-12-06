@@ -48,7 +48,7 @@
     <string name="running">running</string>
 
     <string name="dashboard_community_title">Compare with Your Community!</string>
-    <string name="title_activity_community">CommunityActivity</string>
+    <string name="title_activity_community">Today Ranking</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
