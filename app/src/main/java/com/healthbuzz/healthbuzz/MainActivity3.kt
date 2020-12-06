@@ -27,7 +27,7 @@ class MainActivity3 : AppIntro() {
                 SliderPage(
                     "Page two",
                     "You can enable Stretch and Water drinking functionalities by flipping the switch. \n" +
-                            "Make sure you have a paired watch that has our app installed. Otherwise, we won’t be able to detect your hand motions. Click on any of these dashboards to see the detail view!\n",
+                            "Make sure you have a paired watch that has our app installed. Otherwise, you can add manually by the + button! Click on any of these dashboards to see the detail view!\n",
                     imageDrawable = R.drawable.helppage4,
                     backgroundDrawable = R.drawable.back_slide2
                 )
