@@ -43,6 +43,10 @@
             android:name=".StretchBroadcastReceiver"
             android:enabled="true"
             android:exported="true" />
+        <receiver
+            android:name=".WaterBroadcastReceiver"
+            android:enabled="true"
+            android:exported="true" />
 
         <activity android:name=".InferenceActivity" />
 
@@ -58,9 +62,9 @@
         <service
             android:name=".SensorService"
             android:enabled="true"
-            android:exported="false" >
+            android:exported="false">
             <intent-filter>
-                <action android:name="com.healthbuzz.healthbuzz.drink_water"/>
+                <action android:name="com.healthbuzz.healthbuzz.drink_water" />
             </intent-filter>
         </service>
 
@@ -77,8 +81,9 @@
             android:name=".MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".SettingsActivity"
-            android:theme="@style/PreferenceScreen"/>
+        <activity
+            android:name=".SettingsActivity"
+            android:theme="@style/PreferenceScreen" />
         <activity android:name=".StretchingDetailActivity" />
         <activity android:name=".WaterDetailActivity" />
         <activity android:name=".DataGettingActivity" />
