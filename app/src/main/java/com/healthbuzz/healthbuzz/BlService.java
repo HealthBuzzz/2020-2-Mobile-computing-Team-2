@@ -1,3 +1,6 @@
+
+
+//############################################################
 package com.healthbuzz.healthbuzz;
 
 
@@ -91,11 +94,13 @@ public class BlService extends WearableListenerService {
             //...retrieve the message//
             final String message = new String(messageEvent.getData());
 
-            if(message.equals("_watchready")){
-                Intent messageIntent = new Intent();
+            if(message.equals("_WR")){
+                /*Intent messageIntent = new Intent();
                 messageIntent.setAction(Intent.ACTION_SEND);
                 messageIntent.putExtra("message", message);
-                LocalBroadcastManager.getInstance(this).sendBroadcast(messageIntent);
+                LocalBroadcastManager.getInstance(this).sendBroadcast(messageIntent);*/
+                SharedPreferences sharedPrefs =  PreferenceManager.getDefaultSharedPreferences(this);
+                sharedPrefs.edit().putBoolean("watchDetected" , true).apply();
                 return;
             }
 
