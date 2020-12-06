@@ -71,7 +71,7 @@ public class SettingsActivity extends AppCompatActivity {
 
             bindSummaryValue(findPreference("time_interval_water"));
             bindSummaryValue(findPreference("time_interval_stretch"));
-            bindSummaryValue(findPreference("sound"));
+            //bindSummaryValue(findPreference("sound"));
             findPreference("sync2").setOnPreferenceChangeListener(listener);
         }
     }
