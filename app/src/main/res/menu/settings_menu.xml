@@ -36,6 +36,7 @@
                 android:id="@+id/debug_movement"
                 android:title="@string/debug_movement"
                 app:showAsAction="never" />
+
         </menu>
     </item>
 
