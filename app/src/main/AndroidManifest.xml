@@ -68,6 +68,7 @@
             </intent-filter>
         </service>
 
+        <activity android:name=".WaterAmountInputActivity"/>
         <activity
             android:name=".WelcomeActivity"
             android:theme="@style/Welcome_page">
