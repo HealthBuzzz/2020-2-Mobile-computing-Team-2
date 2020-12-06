@@ -149,7 +149,7 @@ public class WeatherFragment extends Fragment {
                 current_weather_icon = current_weather_obj.get("icon").getAsString();
                 Log.d("curr_weather_icon", current_weather_icon);
                 Log.d("curr_weather", current_weather);
-                current_temp = "" + (response.body().getAsJsonObject("main").get("temp").getAsFloat() - 273f);
+                current_temp = "" + String.format("%.1f", (response.body().getAsJsonObject("main").get("temp").getAsFloat() - 273f)) + "°C";
                 updateViews();
             }
 
@@ -220,8 +220,8 @@ public class WeatherFragment extends Fragment {
             public void onLocationChanged(@NonNull Location location) {
                 latitude = String.valueOf(location.getLatitude());
                 longitude = String.valueOf(location.getLongitude());
-                Log.d("latitude",latitude);
-                Log.d("latitude",longitude);
+                //Log.d("latitude",latitude);
+                //Log.d("latitude",longitude);
             }
         };
 
