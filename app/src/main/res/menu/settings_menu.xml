@@ -1,31 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item
-        android:id="@+id/settings"
-        android:title="@string/menu_item1"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/debug"
-        android:title="@string/menu_item2"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/debug_drinking"
-        android:title="@string/debug_drinking"
-        app:showAsAction="never" />
 
-    <item
-        android:id="@+id/debug_movement"
-        android:title="@string/debug_movement"
-        app:showAsAction="never" />
+
     <item
         android:id="@+id/help"
         android:title="@string/menu_item3"
         app:showAsAction="never" />
+
     <item
         android:id="@+id/login"
         android:title="login"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/settings"
+        android:title="@string/menu_item1"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/devloper"
+        android:title="Developer options"
+        app:showAsAction="never">
+        <menu>
+            <item
+                android:id="@+id/debug"
+                android:title="@string/menu_item2"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/debug_drinking"
+                android:title="@string/debug_drinking"
+                app:showAsAction="never" />
+
+            <item
+                android:id="@+id/debug_movement"
+                android:title="@string/debug_movement"
+                app:showAsAction="never" />
+
+        </menu>
+    </item>
 
 </menu>

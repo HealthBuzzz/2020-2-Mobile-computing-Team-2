@@ -125,6 +125,11 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
     }
 
     private fun onWaterDetect() {
+        val prefs: SharedPreferences =
+            PreferenceManager.getDefaultSharedPreferences(this)
+        val shouldWater = prefs.getBoolean("sync2", false)
+        if (!shouldWater)
+            return
         if (!isNotifying) {
             val waterIntent =
                 Intent(this@SensorService, WaterBroadcastReceiver::class.java).apply {
@@ -265,6 +270,11 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
     }
 
     private fun handleInference(sample: Instance) {
+        val prefs: SharedPreferences =
+            PreferenceManager.getDefaultSharedPreferences(this)
+        val enableStretch = prefs.getBoolean("sync", false)
+        val enableWater = prefs.getBoolean("sync2", false)
+
         inferenceSegment.add(sample)
         if (inferenceSegment.size >= windowSize) {
             val cal: Calendar = Calendar.getInstance()
@@ -298,17 +308,18 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
 
                     Log.d(TAG, "time_diff$timeDiffSec")
                     val leftSeconds = getLeftSecondsStretch(timeDiffSec)
-                    RealtimeModel.stretching_time_left.postValue(leftSeconds)
-
-                    if (leftSeconds <= 0) {
-                        if (!isNotifying) {
-                            alarmToStretch()
+                    if (enableStretch) {
+                        RealtimeModel.stretching_time_left.postValue(leftSeconds)
+                        if (leftSeconds <= 0) {
+                            if (!isNotifying) {
+                                alarmToStretch()
+                            }
+                            Log.d(TAG, "You need to move $timeDiffSec")
+                        } else {
+                            isNotifying = false
+                            Log.d(TAG, "val:${labelList[prediction]}")
+//                            showDebugToNoti(prediction)
                         }
-                        Log.d(TAG, "You need to move $timeDiffSec")
-                    } else {
-                        isNotifying = false
-                        Log.d(TAG, "val:${labelList[prediction]}")
-                        showDebugToNoti(prediction)
                     }
                 } else { // moving!
                     not_stop_count += 1
@@ -316,24 +327,26 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
                         stop_count = 0
                         lastTimeMoveSec = System.currentTimeMillis()
                     }
-                    showDebugToNoti(prediction)
+//                     showDebugToNoti(prediction)
                     Log.d(TAG, "val:${labelList[prediction]}")
                 }
             } catch (e: Exception) {
                 Log.d(TAG, e.toString(), e)
                 Toast.makeText(applicationContext, "Inference failed!", Toast.LENGTH_SHORT).show()
             }
-            val currentTimeSec = System.currentTimeMillis()
-            val timeDiffSec = (currentTimeSec - lastTimeMoveSec) / 1000
-            Log.d(TAG, "time_diff$timeDiffSec")
-            val leftSeconds = getLeftSecondsWater(timeDiffSec)
-            RealtimeModel.water_time_left.postValue(leftSeconds)
-            if (leftSeconds <= 0) {
-                if (!isNotifying) {
-                    alarmToWater()
+            if (enableWater) {
+                val currentTimeSec = System.currentTimeMillis()
+                val timeDiffSec = (currentTimeSec - lastTimeMoveSec) / 1000
+                Log.d(TAG, "time_diff$timeDiffSec")
+                val leftSeconds = getLeftSecondsWater(timeDiffSec)
+                RealtimeModel.water_time_left.postValue(leftSeconds)
+                if (leftSeconds <= 0) {
+                    if (!isNotifying) {
+                        alarmToWater()
+                    }
+                } else {
+                    isNotifying = false
                 }
-            } else {
-                isNotifying = false
             }
         }
     }
@@ -561,24 +574,30 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
     }
 
     private fun buzzBasedOnSettings(prefs: SharedPreferences) {
-        if (!prefs.getBoolean("n_bother", false)) {
-            if (soundSetting == "Buzz") {
-                val vibrator: Vibrator =
-                    getSystemService(VIBRATOR_SERVICE) as Vibrator
-                if (Build.VERSION.SDK_INT >= 26) {
-                    vibrator.vibrate(
-                        VibrationEffect.createOneShot(
-                            500,
-                            DEFAULT_AMPLITUDE
-                        )
-                    ) // 0.5초간 진동
-                } else {
-                    vibrator.vibrate(500);
-                }
-            } else if (soundSetting == "Sound") {
-                val toneGen1 = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
-                toneGen1.startTone(ToneGenerator.TONE_CDMA_ABBR_ALERT, 300)
+        val shouldBuzz = prefs.getBoolean("notif_buzz", false)
+        val shouldSound = prefs.getBoolean("notif_sound", false)
+        val shouldPopup = prefs.getBoolean("notif_popup", false)
+
+        if (shouldBuzz) {
+            val vibrator: Vibrator =
+                getSystemService(VIBRATOR_SERVICE) as Vibrator
+            if (Build.VERSION.SDK_INT >= 26) {
+                vibrator.vibrate(
+                    VibrationEffect.createOneShot(
+                        500,
+                        DEFAULT_AMPLITUDE
+                    )
+                ) // 0.5초간 진동
+            } else {
+                vibrator.vibrate(500);
             }
         }
+        if (shouldSound) {
+            val toneGen1 = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
+            toneGen1.startTone(ToneGenerator.TONE_CDMA_ABBR_ALERT, 300)
+        }
+
+        // TODO: show popup head up bomb but it wont work without more noti channel
+
     }
 }

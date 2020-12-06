@@ -26,6 +26,7 @@ class WaterBroadcastReceiver : BroadcastReceiver() {
                 notiManager?.cancel(SensorService.WATER_ASK_NOTIFICATION_ID)
                 if (drankNow) {
                     val theIntent = Intent(context, WaterAmountInputActivity::class.java)
+                    theIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     context.startActivity(theIntent)
                     if (!UserInfo.userName.value.equals("")) {
                         LoginDataSource.postTodayWater()

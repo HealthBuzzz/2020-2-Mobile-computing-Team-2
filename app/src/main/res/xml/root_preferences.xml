@@ -17,55 +17,44 @@
 
     </PreferenceCategory>
 
-    <!--
-     <PreferenceCategory app:title="General">
+    <PreferenceCategory app:title="Stretch setting">
 
-         <SwitchPreferenceCompat
-             app:key="noBother"
-             android:disableDependentsState="true"
-             app:title="Don't bother" />
+        <SwitchPreferenceCompat
+            app:key="sync"
+            app:title="Activate Stretch Buzz" />
 
-         <ListPreference
-             app:dependency="noBother"
-             app:defaultValue="1"
-             app:entries="@array/sound_entries"
-             app:entryValues="@array/sound_values"
-             app:key="sound"
-             app:title="Sound setting" />
+        <EditTextPreference
+            app:dependency="sync"
+            app:key="time_interval_stretch"
+            app:summary="(minute)"
+            app:title="time interval" />
 
-         <CheckBoxPreference
-             app:key="smartwatch"
-             app:title="Smartwatch"
-             app:useSimpleSummaryProvider="true" />
-     </PreferenceCategory>
-     -->
+    </PreferenceCategory>
 
-     <PreferenceCategory app:title="Stretch setting">
+    <PreferenceCategory app:title="Water drinking">
 
-         <SwitchPreferenceCompat
-             app:key="sync"
-             app:title="Activate Stretch Buzz" />
+        <SwitchPreferenceCompat
+            app:key="sync2"
+            app:title="Activate Drinking Buzz" />
 
-         <EditTextPreference
-             app:dependency="sync"
-             app:key="time_interval_stretch"
-             app:title="time interval"
-             app:summary="(minute)" />
+        <EditTextPreference
+            app:dependency="sync2"
+            app:key="time_interval_water"
+            app:summary="(minute)"
+            app:title="time interval" />
 
-     </PreferenceCategory>
+    </PreferenceCategory>
 
-     <PreferenceCategory app:title="Water drinking">
+    <PreferenceCategory app:title="Open source licence">
+        <Preference
+            android:key="key_location"
+            android:summary="Open source License"
+            android:title="Open sources libraries">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://www.notion.so/Healthbuzz-open-source-38547dceb5604aa6825cf4812b4def3e" />
+        </Preference>
 
-         <SwitchPreferenceCompat
-             app:key="sync2"
-             app:title="Activate Drinking Buzz" />
+    </PreferenceCategory>
 
-         <EditTextPreference
-             app:dependency="sync2"
-             app:key="time_interval_water"
-             app:title="time interval"
-             app:summary="(minute)" />
-
-     </PreferenceCategory>
-
- </PreferenceScreen>
+</PreferenceScreen>
