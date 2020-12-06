@@ -31,6 +31,7 @@
             android:layout_width="137dp"
             android:layout_height="68dp"
             android:text="Login First"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:textColor="@color/colorAccent" />
     </LinearLayout>
