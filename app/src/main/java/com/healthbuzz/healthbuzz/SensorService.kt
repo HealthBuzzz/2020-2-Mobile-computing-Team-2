@@ -98,9 +98,9 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
         }
 
         private const val ONGOING_NOTIFICATION_ID = 1
-        private const val STRETCHING_NOTIFICATION_ID = 2
-        private const val WATER_NOTIFICATION_ID = 3
-        private const val WATER_ASK_NOTIFICATION_ID = 4
+        const val STRETCHING_NOTIFICATION_ID = 2
+        const val WATER_NOTIFICATION_ID = 3
+        const val WATER_ASK_NOTIFICATION_ID = 4
 
     }
 
