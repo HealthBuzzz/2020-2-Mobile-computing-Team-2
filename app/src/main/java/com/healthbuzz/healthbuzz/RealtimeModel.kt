@@ -3,7 +3,6 @@ package com.healthbuzz.healthbuzz
 import androidx.lifecycle.MutableLiveData
 import com.healthbuzz.healthbuzz.data.model.Community
 import com.healthbuzz.healthbuzz.data.model.YearData
-import java.time.Year
 
 // unit: seconds
 object RealtimeModel {
@@ -30,6 +29,10 @@ object RealtimeModel {
     }
     val community = MutableLiveData<Community?>().also {
         it.value = null
+    }
+
+    val waterDummy = MutableLiveData<String>().also {
+        it.value = ""
     }
 }
 

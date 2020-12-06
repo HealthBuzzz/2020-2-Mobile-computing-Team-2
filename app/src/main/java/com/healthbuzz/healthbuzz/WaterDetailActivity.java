@@ -23,10 +23,8 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.healthbuzz.healthbuzz.data.LoginDataSource;
-import com.healthbuzz.healthbuzz.data.model.TodayData;
 import com.healthbuzz.healthbuzz.data.model.YearData;
 
-import java.time.Year;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedList;
@@ -198,7 +196,7 @@ public class WaterDetailActivity extends AppCompatActivity {
 
     private void lineChartDataUpdateForYear() {
         List<YearData> year_data = total_data;
-        if(total_data == null)
+        if (total_data == null)
             return;
         List<Entry> entries = new ArrayList<>();
 
@@ -208,8 +206,8 @@ public class WaterDetailActivity extends AppCompatActivity {
                 target = drinkMonth;
             }
         }
-        for (YearData data : year_data ) {
-            if(data.getYear() == showYear && data.getMonth() == showMonth) {
+        for (YearData data : year_data) {
+            if (data.getYear() == showYear && data.getMonth() == showMonth) {
                 entries.add(new Entry(data.getDay(), data.getAmount()));
             }
         }
@@ -279,7 +277,7 @@ public class WaterDetailActivity extends AppCompatActivity {
             showMonth -= 1;
         }
         lineChartDataUpdate();
-        if (UserInfo.INSTANCE.getUserName().getValue() != "" && total_data!= null)
+        if (UserInfo.INSTANCE.getUserName().getValue() != "" && total_data != null)
             lineChartDataUpdateForYear();
         historyTextUpdate();
         lineChart.invalidate();
@@ -293,14 +291,14 @@ public class WaterDetailActivity extends AppCompatActivity {
             showMonth += 1;
         }
         lineChartDataUpdate();
-        if (UserInfo.INSTANCE.getUserName().getValue() != "" && total_data!= null)
+        if (UserInfo.INSTANCE.getUserName().getValue() != "" && total_data != null)
             lineChartDataUpdateForYear();
         historyTextUpdate();
         lineChart.invalidate();
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
         if (UserInfo.INSTANCE.getUserName().getValue() != "")
             LoginDataSource.getYearWater();

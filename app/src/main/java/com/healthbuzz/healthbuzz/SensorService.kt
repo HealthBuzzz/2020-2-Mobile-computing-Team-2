@@ -98,6 +98,9 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
 
         var soundSetting = "Buzz"
 
+        const val ACTION_WATER_DRINK = "com.healthbuzz.healthbuzz.drink_water"
+
+
         @JvmStatic
         fun setSound(setting: String) {
             soundSetting = setting
@@ -115,13 +118,74 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
         fun getService(): SensorService = this@SensorService
     }
 
+
+
+    private val receiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent) {
+            Log.d(TAG, "OnReceive water drink")
+            val theAction = intent.action
+            if (theAction == ACTION_WATER_DRINK) {
+                onWaterDetect()
+            }
+        }
+    }
+
+    private fun onWaterDetect() {
+        if (!isNotifying) {
+            val waterIntent =
+                Intent(this@SensorService, WaterBroadcastReceiver::class.java).apply {
+                    action = "ACTION_DRINK"
+                    putExtra("water", true)
+                    putExtra("RealWater", true)
+                    //                                    putExtra(EXTRA_NOTIFICATION_ID, 0)
+                }
+            val noWaterIntent = Intent(
+                this@SensorService, WaterBroadcastReceiver::class.java
+            ).apply {
+                action = "ACTION_DRINK"
+                putExtra("water", true)
+                putExtra("RealWater", false)
+            }
+            val snoozePendingIntent: PendingIntent =
+                PendingIntent.getBroadcast(this@SensorService, 0, waterIntent, 0)
+            val snoozePendingIntent2: PendingIntent =
+                PendingIntent.getBroadcast(this@SensorService, 0, noWaterIntent, 0)
+            val builder = NotificationCompat.Builder(this@SensorService, CHANNEL_ID)
+                .setSmallIcon(R.drawable.drink_water)
+                .setContentTitle("You drank water now!")
+                .setContentText("Happy Drinking")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setContentIntent(snoozePendingIntent)
+                .addAction(
+                    R.drawable.drink_water, "Yes, I drank now!",
+                    snoozePendingIntent
+                ).addAction(
+                    R.drawable.icon, "No, I didn't",
+                    snoozePendingIntent2
+                )
+                .setAutoCancel(true)
+            notiManager.notify(ONGOING_NOTIFICATION_ID, builder.build())
+            isNotifying = true
+        }
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+    }
+
+
+
     override fun onBind(intent: Intent): IBinder {
         return binder
     }
 
     // https://stackoverflow.com/a/47533338/8614565
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        myTTS = TextToSpeech(this, this)
+
+
+        val filter = IntentFilter()
+        filter.addAction(ACTION_WATER_DRINK)
+        registerReceiver(receiver, filter)
 
         notiManager = getSystemService()!!
         val pendingIntent: PendingIntent =
@@ -163,6 +227,12 @@ class SensorService : Service(), SensorEventListener, TextToSpeech.OnInitListene
         RealtimeModel.stretching_count.observeForever {
             isNotifying = false
             lastTimeMoveSec = System.currentTimeMillis()
+        }
+
+
+        RealtimeModel.waterDummy.observeForever {
+            isNotifying = false
+            onWaterDetect()
         }
 
         sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager

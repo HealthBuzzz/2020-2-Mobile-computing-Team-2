@@ -267,7 +267,7 @@ public class StretchingDetailActivity extends AppCompatActivity {
 
     private void lineChartDataUpdateForYearData() {
         List<Entry> entries = new ArrayList<>();
-        if(year_data_total == null){
+        if (year_data_total == null) {
             return;
         }
         for (YearData year_data : year_data_total) {
@@ -326,8 +326,9 @@ public class StretchingDetailActivity extends AppCompatActivity {
         historyTextUpdate();
         lineChart.invalidate();
     }
+
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
         if (UserInfo.INSTANCE.getUserName().getValue() != "")
             LoginDataSource.getYearStretching();

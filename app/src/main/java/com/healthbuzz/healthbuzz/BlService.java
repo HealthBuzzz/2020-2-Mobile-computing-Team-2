@@ -1,53 +1,47 @@
-
-
 //############################################################
 package com.healthbuzz.healthbuzz;
 
 
-        import android.content.DialogInterface;
-        import android.content.Intent;
-        import android.content.SharedPreferences;
-        import android.content.res.AssetManager;
-        import android.os.Environment;
-        import android.util.Log;
-        import android.widget.Toast;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.AssetManager;
+import android.os.Environment;
+import android.util.Log;
+import android.widget.Toast;
+
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.preference.PreferenceManager;
+
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
+import com.google.android.gms.wearable.MessageEvent;
+import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.Wearable;
+import com.google.android.gms.wearable.WearableListenerService;
+import com.opencsv.CSVWriter;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+
+import weka.classifiers.Classifier;
+import weka.core.Attribute;
+import weka.core.DenseInstance;
+import weka.core.Instance;
+import weka.core.Instances;
+
 //
-
-        import androidx.appcompat.app.AlertDialog;
-        import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-        import androidx.preference.PreferenceManager;
-
-        import com.google.android.gms.tasks.Task;
-        import com.google.android.gms.tasks.Tasks;
-        import com.google.android.gms.wearable.MessageEvent;
-        import com.google.android.gms.wearable.Node;
-        import com.google.android.gms.wearable.Wearable;
-        import com.google.android.gms.wearable.WearableListenerService;
-        import com.opencsv.CSVWriter;
-
-        import java.io.File;
-        import java.io.FileWriter;
-        import java.io.IOException;
-        import java.text.SimpleDateFormat;
-        import java.util.ArrayList;
-        import java.util.Arrays;
-        import java.util.Date;
-        import java.util.LinkedList;
-        import java.util.List;
-        import java.util.Locale;
-        import java.util.concurrent.ExecutionException;
-
-        import weka.classifiers.Classifier;
-        import weka.core.Attribute;
-        import weka.core.DenseInstance;
-        import weka.core.Instance;
-        import weka.core.Instances;
 
 //Extend WearableListenerService//
 
 public class BlService extends WearableListenerService {
 
-    public static LinkedList<String[]> output=new LinkedList<>();
+    public static LinkedList<String[]> output = new LinkedList<>();
     public static List<String[]> output2;
     private final Attribute Attr0 = new Attribute("0");
     private final Attribute Attr1 = new Attribute("1");
@@ -68,21 +62,27 @@ public class BlService extends WearableListenerService {
 
     @Override
     public void onDestroy() {
-        Log.e("CYT_LOG" , "destroyed...");
+        Log.e("CYT_LOG", "destroyed...");
+
 
         SharedPreferences sharedPrefs =  PreferenceManager.getDefaultSharedPreferences(this);
+        //boolean continueService = sharedPrefs.getBoolean("activate_drinking", false);
         boolean continueService = sharedPrefs.getBoolean("sync2", false);
+        Log.e("Continue", String.valueOf(continueService));
         if(continueService) {
+            Log.e("Continue", "Continue service");
             String datapath = "/my_path";
             new SendMessage(datapath, "_startrealtime").start();
+            Log.e("Continue", "Continue service");
         }
         super.onDestroy();
+        Log.e("destory", "destoryed?");
     }
 
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
 
-        if(asset_classifier == null){
+        if (asset_classifier == null) {
             loadModel("drink_newrf.model");
             Log.d("drink_rf", "Load model finished");
         }
@@ -94,13 +94,13 @@ public class BlService extends WearableListenerService {
             //...retrieve the message//
             final String message = new String(messageEvent.getData());
 
-            if(message.equals("_WR")){
+            if (message.equals("_WR")) {
                 /*Intent messageIntent = new Intent();
                 messageIntent.setAction(Intent.ACTION_SEND);
                 messageIntent.putExtra("message", message);
                 LocalBroadcastManager.getInstance(this).sendBroadcast(messageIntent);*/
-                SharedPreferences sharedPrefs =  PreferenceManager.getDefaultSharedPreferences(this);
-                sharedPrefs.edit().putBoolean("watchDetected" , true).apply();
+                SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+                sharedPrefs.edit().putBoolean("watchDetected", true).apply();
                 return;
             }
 
@@ -111,12 +111,10 @@ public class BlService extends WearableListenerService {
             //Log.e("CYT_LOG" , message);
             Log.d("print_message", message.split(",")[3]);
             String[] split_message = message.split(",");
-            for(int i=0; i<50; i++)
-            {
+            for (int i = 0; i < 50; i++) {
                 Instance sample = new DenseInstance(3);
-                for(int j=0; j<3; j++)
-                {
-                    sample.setValue(j, Double.parseDouble(split_message[6*i+j]));
+                for (int j = 0; j < 3; j++) {
+                    sample.setValue(j, Double.parseDouble(split_message[6 * i + j]));
                 }
                 output_segment.add(sample);
                 //output.add(Arrays.copyOfRange(split_message, 6*i, 6*i + 6));
@@ -131,76 +129,65 @@ public class BlService extends WearableListenerService {
             //Log.d("feature", features.toSummaryString());
             Instance feature = features.get(0);
 
-            try{
+            try {
                 double pred = asset_classifier.classifyInstance(feature);
-                String pred_result = features.classAttribute().value((int)pred);
+                String pred_result = features.classAttribute().value((int) pred);
                 //Log.d("prediction", String.valueOf(pred));
                 Log.d("prediction", pred_result);
 
-                if(drink_state == 1)
-                {
+                if (drink_state == 1) {
                     drink_time = drink_time + 1;
                 }
-                if(drink_time > 10)
-                {
+                if (drink_time > 10) {
                     drink_state = 0;
                     drink_time = 0;
                 }
 
                 //state update
-                if(state == 0 & pred == 1)
-                {
+                if (state == 0 & pred == 1) {
                     state = 1;
                     state_count = 0;
                     not_state_count = 0;
-                    Log.d("prediction_state","up");
-                }
-                else if(state == 1 & pred == 2)
-                {
+                    Log.d("prediction_state", "up");
+                } else if (state == 1 & pred == 2) {
                     state = 2;
                     state_count = 0;
                     not_state_count = 0;
-                    Log.d("prediction_state","drink");
-                }
-                else if(state == 2 & pred == 3)
-                {
+                    Log.d("prediction_state", "drink");
+                } else if (state == 2 & pred == 3) {
                     state = 3;
                     state_count = 0;
                     not_state_count = 0;
-                    Log.d("prediction_state","down");
-                }
-                else if(state == 3 & pred == 0)
-                {
+                    Log.d("prediction_state", "down");
+                } else if (state == 3 & pred == 0) {
                     drink_state = 1;
                     drink_time = 0;
                     state = 0;
                     state_count = 0;
                     not_state_count = 0;
                     Log.d("drink_detect", "drink_detect");
+                    // Broadcast
+                    Intent drinkIntent = new Intent(SensorService.ACTION_WATER_DRINK);
+                    sendBroadcast(drinkIntent);
+                    RealtimeModel.INSTANCE.getWaterDummy().postValue("yeah");
                 }
 
                 //state count update
-                if(state != 0)
-                {
-                    if(state == pred)
-                    {
+                if (state != 0) {
+                    if (state == pred) {
                         state_count = state_count + 1;
-                    }
-                    else
-                    {
+                    } else {
                         not_state_count = not_state_count + 1;
                     }
                 }
 
 
-                if(state_count < not_state_count & not_state_count > 0)
-                {
-                    Log.d("prediction_state","state revert");
+                if (state_count < not_state_count & not_state_count > 0) {
+                    Log.d("prediction_state", "state revert");
                     state = 0;
                 }
 
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 Log.d("inference_error", e.toString());
             }
 
@@ -215,22 +202,19 @@ public class BlService extends WearableListenerService {
             //Broadcast the received Data Layer messages locally//
             //output.add(message.split(","));
             LocalBroadcastManager.getInstance(this).sendBroadcast(messageIntent);
-        }
-        else {
+        } else {
             super.onMessageReceived(messageEvent);
         }
     }
 
-    private void loadModel(String model_name){
+    private void loadModel(String model_name) {
         Log.d("load_asset_model", "loading the model from asset folder");
         AssetManager assetManager = getAssets();
-        try{
+        try {
             asset_classifier = (Classifier) weka.core.SerializationHelper.read(assetManager.open(model_name));
-        }
-        catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         Toast.makeText(this, "Model loaded", Toast.LENGTH_SHORT).show();
@@ -262,26 +246,23 @@ public class BlService extends WearableListenerService {
         return var;
     }
 
-    private Instance diffsum(Instances window){
+    private Instance diffsum(Instances window) {
         int numAxis = window.numAttributes();
         Instance diffsum = new DenseInstance(3);
-        double diffsum_x=0;
-        double diffsum_y=0;
-        double diffsum_z=0;
-        for(int j=0; j < window.numInstances()-1; j++)
-        {
-            double diff_sign = (window.get(j+1).value(0) - window.get(j).value(0)) > 0 ? 1 : -1;
-            diffsum_x+=diff_sign;
+        double diffsum_x = 0;
+        double diffsum_y = 0;
+        double diffsum_z = 0;
+        for (int j = 0; j < window.numInstances() - 1; j++) {
+            double diff_sign = (window.get(j + 1).value(0) - window.get(j).value(0)) > 0 ? 1 : -1;
+            diffsum_x += diff_sign;
         }
-        for(int j=0; j < window.numInstances()-1; j++)
-        {
-            double diff_sign = (window.get(j+1).value(1) - window.get(j).value(1)) > 0 ? 1 : -1;
-            diffsum_y+=diff_sign;
+        for (int j = 0; j < window.numInstances() - 1; j++) {
+            double diff_sign = (window.get(j + 1).value(1) - window.get(j).value(1)) > 0 ? 1 : -1;
+            diffsum_y += diff_sign;
         }
-        for(int j=0; j < window.numInstances()-1; j++)
-        {
-            double diff_sign = (window.get(j+1).value(2) - window.get(j).value(2)) > 0 ? 1 : -1;
-            diffsum_z+=diff_sign;
+        for (int j = 0; j < window.numInstances() - 1; j++) {
+            double diff_sign = (window.get(j + 1).value(2) - window.get(j).value(2)) > 0 ? 1 : -1;
+            diffsum_z += diff_sign;
         }
         diffsum.setValue(0, diffsum_x);
         diffsum.setValue(1, diffsum_y);
@@ -325,12 +306,12 @@ public class BlService extends WearableListenerService {
         return featureData;
     }
 
-    public void saveToFile(LinkedList<String[]> output , String filename){
+    public void saveToFile(LinkedList<String[]> output, String filename) {
 
         File root = new File(Environment.getExternalStorageDirectory(), filename);
         CSVWriter writer = null;
         try {
-            writer = new CSVWriter(new FileWriter(root , true));
+            writer = new CSVWriter(new FileWriter(root, true));
         } catch (Exception e) {
             Log.e("CYT_LOG", "ERROR in making CSVWriter", e);
             Toast.makeText(this, "Failed to save file", Toast.LENGTH_SHORT).show();
