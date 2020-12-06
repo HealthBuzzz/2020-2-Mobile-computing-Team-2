@@ -1,6 +1,7 @@
 package com.healthbuzz.healthbuzz;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
 
 import com.healthbuzz.healthbuzz.data.LoginDataSource;
 import com.healthbuzz.healthbuzz.ui.login.LoginActivity;
@@ -56,19 +58,42 @@ public class WelcomeFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        SharedPreferences sharedPrefs =  PreferenceManager.getDefaultSharedPreferences(getContext());
+        boolean show=sharedPrefs.getBoolean("sync2" , false);
+        if(show){
+            watchview.setVisibility(View.VISIBLE);
+        }else{
+            watchview.setVisibility(View.INVISIBLE);
+        }
+
+
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
         return inflater.inflate(R.layout.fragment_welcome, container, false);
     }
-
+    ImageView watchview;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         ImageView manView = getView().findViewById(R.id.man);
         ImageView treeView = getView().findViewById(R.id.tree);
+
+        watchview = getView().findViewById(R.id.watch);
+        SharedPreferences sharedPrefs =  PreferenceManager.getDefaultSharedPreferences(getContext());
+        boolean show=sharedPrefs.getBoolean("sync2" , false);
+        if(show){
+            watchview.setVisibility(View.VISIBLE);
+        }else{
+            watchview.setVisibility(View.INVISIBLE);
+        }
         RealtimeModel.INSTANCE.getStretching_count().observe(getViewLifecycleOwner(), stretching_count -> {
             int int_count = stretching_count.intValue();
             if (int_count >= 6) {

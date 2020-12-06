@@ -18,7 +18,7 @@
     </PreferenceCategory>
 
 
-    <PreferenceCategory app:title="General">
+   <!-- <PreferenceCategory app:title="General">
 
         <SwitchPreferenceCompat
             app:key="noBother"
@@ -37,13 +37,14 @@
             app:key="smartwatch"
             app:title="Smartwatch"
             app:useSimpleSummaryProvider="true" />
-    </PreferenceCategory>
+    </PreferenceCategory>-->
 
     <PreferenceCategory app:title="Stretch setting">
 
         <SwitchPreferenceCompat
             app:key="sync"
-            app:title="Activate Stretch Buzz" />
+            app:title="Activate Stretch Buzz"
+            app:defaultValue="true"/>
 
         <EditTextPreference
             app:dependency="sync"

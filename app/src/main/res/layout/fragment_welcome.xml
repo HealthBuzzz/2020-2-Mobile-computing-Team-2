@@ -59,4 +59,14 @@
         app:layout_constraintStart_toEndOf="@+id/linearlayout"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.040" />
+
+    <ImageView
+        android:id="@+id/watch"
+        android:layout_width="41dp"
+        android:layout_height="0dp"
+        android:layout_marginRight="5dp"
+        android:src="@drawable/whatchicon"
+        app:layout_constraintBottom_toBottomOf="@+id/man"
+        app:layout_constraintEnd_toStartOf="@+id/man"
+        app:layout_constraintTop_toTopOf="@+id/man" />
 </androidx.constraintlayout.widget.ConstraintLayout>
