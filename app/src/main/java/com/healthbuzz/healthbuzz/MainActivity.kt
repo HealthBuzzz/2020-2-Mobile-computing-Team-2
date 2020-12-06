@@ -13,6 +13,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.healthbuzz.healthbuzz.Retrofit.RetrofitAPI
+import com.healthbuzz.healthbuzz.data.LoginDataSource
+import com.healthbuzz.healthbuzz.ui.login.LoginActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -47,6 +50,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.detail_toolbar))
 
+        /*
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(baseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+           */
         if (savedInstanceState == null) {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.

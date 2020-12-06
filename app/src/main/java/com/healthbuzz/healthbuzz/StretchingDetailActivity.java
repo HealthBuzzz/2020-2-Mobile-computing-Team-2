@@ -12,12 +12,16 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.mikephil.charting.animation.Easing;
+import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -60,9 +64,14 @@ class YAxisValueFormatterForStretch extends ValueFormatter {
 
 public class StretchingDetailActivity extends AppCompatActivity {
 
-    private LineChart lineChart;
+    private BarChart barChart;
     private ProgressBar progressBar;
     private int showYear, showMonth;
+
+    YAxis yLAxis;
+    LimitLine lim;
+    Description description;
+    YAxis yRAxis;
 
     private Object SingleObject;
     // This is from file or backend
@@ -147,79 +156,63 @@ public class StretchingDetailActivity extends AppCompatActivity {
         textBuzz.setTypeface(null, Typeface.BOLD);
 
         ////// LINE CHART BELOW
-        lineChart = (LineChart) findViewById(R.id.chart);
-        XAxis xAxis = lineChart.getXAxis();
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setTextColor(Color.BLACK);
-        xAxis.enableGridDashedLine(8, 24, 0);
-        xAxis.setTextSize(12f);
-        xAxis.setAxisMinimum(0);
-        xAxis.setAxisMaximum(30);
+        barChart = (BarChart) findViewById(R.id.chart);
 
-
-        YAxis yLAxis = lineChart.getAxisLeft();
+        yLAxis = barChart.getAxisLeft();
         yLAxis.setTextColor(Color.BLACK);
         yLAxis.setAxisMinimum(0);
         yLAxis.setAxisMaximum(8);
-        LimitLine lim = new LimitLine(5, "Day objective"); // Create a limit line. This line also has some related methods for drawing properties. Just look at it yourself, not much.
+        lim = new LimitLine(5, "Day objective"); // Create a limit line. This line also has some related methods for drawing properties. Just look at it yourself, not much.
         yLAxis.addLimitLine(lim);
-        YAxis yRAxis = lineChart.getAxisRight();
+        yRAxis = barChart.getAxisRight();
         yRAxis.setDrawLabels(false);
         yRAxis.setDrawAxisLine(false);
         yRAxis.setDrawGridLines(false);
-        lineChart.getLegend().setEnabled(false);
-        lineChart.setDoubleTapToZoomEnabled(false);
-        lineChart.setDrawGridBackground(false);
-        lineChart.animateY(2000, Easing.EaseInCubic);
+        barChart.getXAxis().setAxisMinimum(0);
+        barChart.getXAxis().setAxisMaximum(31);
+        barChart.getLegend().setEnabled(false);
+        barChart.setDoubleTapToZoomEnabled(false);
+        barChart.setDrawGridBackground(false);
+        barChart.animateY(200, Easing.Linear);
 
-        lineChart.getDescription().setEnabled(true);
+        barChart.getDescription().setEnabled(true);
         Description description = new Description();
         description.setText("Day");
         description.setTextSize(30f);
-        lineChart.setDescription(description);
+        description.setTextColor(Color.GRAY);
+        barChart.setDescription(description);
         yLAxis.setValueFormatter(new YAxisValueFormatterForStretch());
 
-        lineChartDataUpdate();
-        lineChart.invalidate();
+        barChartDataUpdate();
+        barChart.invalidate();
         historyTextUpdate();
 
         RealtimeModel.INSTANCE.getYear_data().observe(this, year_data -> {
-            lineChart = (LineChart) findViewById(R.id.chart);
-            //XAxis xAxis = lineChart.getXAxis();
-            xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-            xAxis.setTextColor(Color.BLACK);
-            xAxis.enableGridDashedLine(8, 24, 0);
-            xAxis.setTextSize(12f);
-            xAxis.setAxisMinimum(0);
-            xAxis.setAxisMaximum(30);
 
+            year_data_total = year_data;
+            barChart = (BarChart) findViewById(R.id.chart);
 
-            //YAxis yLAxis = lineChart.getAxisLeft();
+            YAxis yLAxis = barChart.getAxisLeft();
             yLAxis.setTextColor(Color.BLACK);
             yLAxis.setAxisMinimum(0);
             yLAxis.setAxisMaximum(8);
-            //LimitLine lim = new LimitLine(5, "Day objective"); // Create a limit line. This line also has some related methods for drawing properties. Just look at it yourself, not much.
+            LimitLine lim = new LimitLine(5, "Day objective"); // Create a limit line. This line also has some related methods for drawing properties. Just look at it yourself, not much.
             yLAxis.addLimitLine(lim);
-            //YAxis yRAxis = lineChart.getAxisRight();
+            YAxis yRAxis = barChart.getAxisRight();
             yRAxis.setDrawLabels(false);
             yRAxis.setDrawAxisLine(false);
             yRAxis.setDrawGridLines(false);
-            lineChart.getLegend().setEnabled(false);
-            lineChart.setDoubleTapToZoomEnabled(false);
-            lineChart.setDrawGridBackground(false);
-            lineChart.animateY(2000, Easing.EaseInCubic);
+            barChart.getLegend().setEnabled(false);
+            barChart.setDoubleTapToZoomEnabled(false);
+            barChart.setDrawGridBackground(false);
+            barChart.animateY(200, Easing.Linear);
 
-            lineChart.getDescription().setEnabled(true);
-            //Description description = new Description();
-            description.setText("Day");
-            description.setTextSize(30f);
-            lineChart.setDescription(description);
+            barChart.getDescription().setEnabled(true);
+            barChart.setDescription(description);
             yLAxis.setValueFormatter(new YAxisValueFormatterForStretch());
 
-            year_data_total = year_data;
-
-            lineChartDataUpdateForYearData();
-            lineChart.invalidate();
+            barChartDataUpdateForYearData();
+            barChart.invalidate();
             historyTextUpdate();
         });
     }
@@ -230,8 +223,8 @@ public class StretchingDetailActivity extends AppCompatActivity {
         textBuzz.setText("BUZZ " + UtilKt.formatTime(this, RealtimeModel.INSTANCE.getStretching_time_left().getValue().intValue()));
     }
 
-    private void lineChartDataUpdate() {
-        List<Entry> entries = new ArrayList<>();
+    private void barChartDataUpdate() {
+        List<BarEntry> entries = new ArrayList<>();
 
         StretchingMonth target = null;
         for (StretchingMonth stretchingMonth : stretchingMonths) {
@@ -241,57 +234,36 @@ public class StretchingDetailActivity extends AppCompatActivity {
         }
         if (target != null) {
             for (int i = 0; i < target.dayQuantityPairs.size(); i++) {
-                entries.add(new Entry(target.dayQuantityPairs.get(i).x,
+                entries.add(new BarEntry(target.dayQuantityPairs.get(i).x,
                         target.dayQuantityPairs.get(i).y));
             }
         }
-
-        LineDataSet lineDataSet = new LineDataSet(entries, "");
-        lineDataSet.setLineWidth(2);
-        lineDataSet.setCircleRadius(6);
-        lineDataSet.setCircleColor(Color.parseColor("#FFA1B4DC"));
-        lineDataSet.setCircleHoleColor(Color.WHITE);
-        lineDataSet.setColor(Color.parseColor("#FFA1B4DC"));
-        lineDataSet.setDrawCircleHole(true);
-        lineDataSet.setDrawCircles(true);
-        lineDataSet.setDrawHorizontalHighlightIndicator(false);
-        lineDataSet.setDrawHighlightIndicators(false);
-        lineDataSet.setDrawValues(false);
-        lineDataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
-        lineDataSet.setDrawFilled(true);
-
-        LineData lineData = new LineData(lineDataSet);
-        lineChart.setData(lineData);
+        BarDataSet barDataSet = new BarDataSet(entries, "");
+        barDataSet.setColor(Color.BLACK);
+        BarData barData = new BarData(barDataSet);
+        barChart.setData(barData);
     }
 
 
-    private void lineChartDataUpdateForYearData() {
-        List<Entry> entries = new ArrayList<>();
-        if (year_data_total == null) {
+    private void barChartDataUpdateForYearData() {
+
+        List<BarEntry> entries = new ArrayList<>();
+
+        StretchingMonth target = null;
+        if(year_data_total == null || UserInfo.INSTANCE.getUserName() == null){
             return;
         }
         for (YearData year_data : year_data_total) {
-            if (year_data.getYear() == showYear && year_data.getMonth() == showMonth)
-                entries.add(new Entry(year_data.getDay(),
+            if (year_data.getYear() == showYear && year_data.getMonth() == showMonth) {
+                entries.add(new BarEntry(year_data.getDay(),
                         year_data.getAmount()));
+                Log.d("SUG",""+year_data.getAmount());
+            }
         }
-
-        LineDataSet lineDataSet = new LineDataSet(entries, "");
-        lineDataSet.setLineWidth(2);
-        lineDataSet.setCircleRadius(6);
-        lineDataSet.setCircleColor(Color.parseColor("#FFA1B4DC"));
-        lineDataSet.setCircleHoleColor(Color.WHITE);
-        lineDataSet.setColor(Color.parseColor("#FFA1B4DC"));
-        lineDataSet.setDrawCircleHole(true);
-        lineDataSet.setDrawCircles(true);
-        lineDataSet.setDrawHorizontalHighlightIndicator(false);
-        lineDataSet.setDrawHighlightIndicators(false);
-        lineDataSet.setDrawValues(false);
-        lineDataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
-        lineDataSet.setDrawFilled(true);
-
-        LineData lineData = new LineData(lineDataSet);
-        lineChart.setData(lineData);
+        BarDataSet barDataSet = new BarDataSet(entries, "");
+        barDataSet.setColor(Color.BLACK);
+        BarData barData = new BarData(barDataSet);
+        barChart.setData(barData);
     }
 
     private void historyTextUpdate() {
@@ -306,11 +278,12 @@ public class StretchingDetailActivity extends AppCompatActivity {
         } else {
             showMonth -= 1;
         }
-        lineChartDataUpdate();
         if (UserInfo.INSTANCE.getUserName().getValue() != "" && year_data_total != null)
-            lineChartDataUpdateForYearData();
+            barChartDataUpdateForYearData();
+        else
+            barChartDataUpdate();
         historyTextUpdate();
-        lineChart.invalidate();
+        barChart.invalidate();
     }
 
     public void onAfterClicked(View v) {
@@ -320,15 +293,15 @@ public class StretchingDetailActivity extends AppCompatActivity {
         } else {
             showMonth += 1;
         }
-        lineChartDataUpdate();
         if (UserInfo.INSTANCE.getUserName().getValue() != "" && year_data_total != null)
-            lineChartDataUpdateForYearData();
+            barChartDataUpdateForYearData();
+        else
+            barChartDataUpdate();
         historyTextUpdate();
-        lineChart.invalidate();
+        barChart.invalidate();
     }
-
     @Override
-    public void onResume() {
+    public void onResume(){
         super.onResume();
         if (UserInfo.INSTANCE.getUserName().getValue() != "")
             LoginDataSource.getYearStretching();
