@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
@@ -268,6 +269,22 @@ class DashboardFragment : Fragment() {
                     editor.apply()
                     resetWaterTime(prefs)
                 }
+
+            cardview_layout_stretching.findViewById<Button>(R.id.plusbutton).setOnClickListener {
+                val stretchedIntent = Intent(context, StretchBroadcastReceiver::class.java).apply {
+                    action = "ACTION_STRETCH"
+                    putExtra("stretched", true)
+                }
+                context.sendBroadcast(stretchedIntent)
+            }
+            cardview_layout_water.findViewById<Button>(R.id.plusbutton).setOnClickListener {
+                val waterIntent = Intent(context, WaterBroadcastReceiver::class.java).apply {
+                    action = "ACTION_DRINK"
+                    putExtra("water", true)
+                    putExtra("RealWater", true)
+                }
+                context.sendBroadcast(waterIntent)
+            }
         }
 
         return rootView
