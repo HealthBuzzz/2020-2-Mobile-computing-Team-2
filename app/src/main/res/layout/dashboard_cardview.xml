@@ -5,10 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
+    android:background="#C3C3C3"
+    android:padding="10dp"
     app:cardCornerRadius="10dp"
     app:cardElevation="3dp"
-    android:padding="10dp"
-    android:background="#C3C3C3"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
@@ -81,6 +81,15 @@
             android:theme="@style/BuzzSwitch"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
+
+        <Button
+            android:id="@+id/plusbutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/pbCardProgress"
+            app:layout_constraintStart_toEndOf="@id/ivCardImage" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

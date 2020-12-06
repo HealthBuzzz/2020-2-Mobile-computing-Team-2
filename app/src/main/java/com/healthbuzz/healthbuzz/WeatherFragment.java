@@ -4,10 +4,10 @@ import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.location.Geocoder;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,7 +23,6 @@ import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.healthbuzz.healthbuzz.Retrofit.RetrofitAPI;
 import com.healthbuzz.healthbuzz.data.LoginDataSource;
@@ -137,7 +136,12 @@ public class WeatherFragment extends Fragment {
                     // In this sample, we get just a single address.
                     addresses = geocoder.getFromLocation(Double.parseDouble(latitude), Double.parseDouble(longitude), 1);
                 } catch (IOException ioException) {
-                } catch (IllegalArgumentException illegalArgumentException) { }
+                    Log.e(TAG, "Failed to ", ioException);
+                    return;
+                } catch (IllegalArgumentException illegalArgumentException) {
+                    Log.e(TAG, "Fialed to ", illegalArgumentException);
+                    return;
+                }
 
                 Address address = addresses.get(0);
                 current_city = address.getSubLocality();
@@ -210,8 +214,8 @@ public class WeatherFragment extends Fragment {
     }
 
     private void getLocation() {
-        Log.d("getlocation","getlocation");
-        Log.d("permission",String.valueOf(ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED));
+        Log.d("getlocation", "getlocation");
+        Log.d("permission", String.valueOf(ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED));
         LocationManager locationManager;
         LocationListener locationListener;
 
@@ -228,7 +232,7 @@ public class WeatherFragment extends Fragment {
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            Log.d("locationlisten","locationlisten");
+            Log.d("locationlisten", "locationlisten");
             locationManager.requestLocationUpdates(locationManager.GPS_PROVIDER, 0, 0, locationListener);
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
