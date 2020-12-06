@@ -1,17 +1,23 @@
 package com.healthbuzz.healthbuzz;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.wearable.activity.WearableActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.PreferenceManager;
 
@@ -20,6 +26,8 @@ import com.google.android.gms.tasks.Tasks;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.Wearable;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -36,6 +44,9 @@ public class BlActivity extends WearableActivity {
         setContentView(R.layout.activity_bl);
         textView =  findViewById(R.id.text);
         talkButton =  findViewById(R.id.talkClick);
+
+
+
 
         //Create an OnClickListener//
 
@@ -62,6 +73,59 @@ public class BlActivity extends WearableActivity {
 
     }
 
+    private final static int REQUEST_CODE_ASK_PERMISSIONS = 1;
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[],
+                                           @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE_ASK_PERMISSIONS:
+                for (int index = permissions.length - 1; index >= 0; --index) {
+                    if (grantResults[index] != PackageManager.PERMISSION_GRANTED) {
+                        // exit the app if one permission is not granted
+                        Toast.makeText(this, "Required permission '" + permissions[index]
+                                + "' not granted, exiting", Toast.LENGTH_LONG).show();
+                        finish();
+                        return;
+                    }
+                }
+                // all permissions were granted
+                //initialize();
+                break;
+        }
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //checkPermissions();
+        checkPermission("android.permission.WRITE_EXTERNAL_STORAGE" , 103);
+        checkPermission("android.permission.BODY_SENSORS" , 104);
+
+    }
+    public void checkPermission(String permission, int requestCode)
+    {
+
+        // Checking if permission is not granted
+        if (ContextCompat.checkSelfPermission(
+                BlActivity.this,
+                permission)
+                == PackageManager.PERMISSION_DENIED) {
+            ActivityCompat
+                    .requestPermissions(
+                            BlActivity.this,
+                            new String[] { permission },
+                            requestCode);
+        }
+        else {
+            Toast
+                    .makeText(BlActivity.this,
+                            "Permission already granted " +requestCode,
+                            Toast.LENGTH_SHORT)
+                    .show();
+        }
+    }
 
     public static boolean realTimeFlag=false;
     public void enableCheckBox_onClick(View v){
