@@ -93,3 +93,16 @@ fun hasPermissions(context: Context, vararg permissions: String): Boolean = perm
     ActivityCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
 }
 
+fun startBlService(context: Context) {
+    if (!isServiceRunning(context, "com.healthbuzz.healthbuzz.BlService"))
+        startBlServiceSub(context)
+}
+
+fun startBlServiceSub(context: Context) {
+    val intent = Intent(context, BlService::class.java)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        context.startForegroundService(intent)
+    } else {
+        context.startService(intent)
+    }
+}
