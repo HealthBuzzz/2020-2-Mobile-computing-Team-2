@@ -3,7 +3,6 @@ package com.healthbuzz.healthbuzz
 import androidx.lifecycle.MutableLiveData
 import com.healthbuzz.healthbuzz.data.model.Community
 import com.healthbuzz.healthbuzz.data.model.YearData
-import java.time.Year
 
 // unit: seconds
 object RealtimeModel {

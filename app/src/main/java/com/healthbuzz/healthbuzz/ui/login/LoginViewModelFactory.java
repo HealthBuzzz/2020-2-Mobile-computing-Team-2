@@ -16,9 +16,11 @@ import com.healthbuzz.healthbuzz.data.LoginRepository;
 public class LoginViewModelFactory implements ViewModelProvider.Factory {
 
     private Context context;
-    public LoginViewModelFactory(Context context){
+
+    public LoginViewModelFactory(Context context) {
         this.context = context;
     }
+
     @NonNull
     @Override
     @SuppressWarnings("unchecked")
