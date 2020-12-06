@@ -25,8 +25,8 @@ import java.util.*
 
 
 class SensorService : Service(), SensorEventListener, RunningStateListener {
-    private val CHANNEL_ID = "HealthBuzzSensorService"
-    private val CHANNEL_NAME = "HealthBuzz sensor service"
+    private val CHANNEL_ID = "HealthBuzzSensorService1"
+    private val CHANNEL_NAME = "HealthBuzz sensor service1"
 
     private val binder = SensorBinder()
 
@@ -109,6 +109,7 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
 
     private val receiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent) {
+            Log.d(TAG,"OnReceive water drink")
             val theAction = intent.action
             if (theAction == ACTION_WATER_DRINK) {
                 if (!isNotifying) {
@@ -144,7 +145,7 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
                             snoozePendingIntent2
                         )
                         .setAutoCancel(true)
-                    notiManager.notify(1, builder.build())
+                    notiManager.notify(ONGOING_NOTIFICATION_ID, builder.build())
                     isNotifying = true
                 }
             }
@@ -157,6 +158,7 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
         filter.addAction(ACTION_WATER_DRINK)
         registerReceiver(receiver, filter)
     }
+
 
     override fun onBind(intent: Intent): IBinder {
         return binder
@@ -219,6 +221,7 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
         super.onDestroy()
         sensorManager?.unregisterListener(this, accelerometer)
         sensorManager?.unregisterListener(this, gyroscope)
+        unregisterReceiver(receiver)
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
@@ -378,14 +381,14 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
             )
             .setAutoCancel(true)
         //                            notiBuilder.setContentText("You need to move $time_diff")
-        notiManager.notify(1, builder.build())
+        notiManager.notify(ONGOING_NOTIFICATION_ID, builder.build())
         isNotifying = true
     }
 
     private fun alarmToWater() {
         val prefs: SharedPreferences =
             PreferenceManager.getDefaultSharedPreferences(this)
-        buzzBasedOnSettings(prefs)
+//        buzzBasedOnSettings(prefs)
         val waterIntent =
             Intent(this, WaterBroadcastReceiver::class.java).apply {
                 action = "ACTION_WATER"
@@ -417,7 +420,7 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
             )
             .setAutoCancel(true)
         //                            notiBuilder.setContentText("You need to move $time_diff")
-        notiManager.notify(1, builder.build())
+        notiManager.notify(ONGOING_NOTIFICATION_ID, builder.build())
         isNotifying = true
     }
 
@@ -549,7 +552,7 @@ class SensorService : Service(), SensorEventListener, RunningStateListener {
                     R.drawable.stretching, "I stretched!",
                     snoozePendingIntent
                 ).setAutoCancel(true)
-            notiManager.notify(1, builder.build())
+            notiManager.notify(ONGOING_NOTIFICATION_ID, builder.build())
             isNotifying = true
         }
 

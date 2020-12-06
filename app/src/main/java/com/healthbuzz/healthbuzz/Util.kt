@@ -94,7 +94,7 @@ fun showYoutubeSearch(context: Context, query: String) {
 fun Context.createNotificationChannel(channelId: String, channelName: String): String {
     val chan = NotificationChannel(
         channelId,
-        channelName, NotificationManager.IMPORTANCE_HIGH
+        channelName, NotificationManager.IMPORTANCE_LOW
     )
     chan.lightColor = Color.BLUE
     chan.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
