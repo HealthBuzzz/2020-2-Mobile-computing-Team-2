@@ -12,6 +12,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.healthbuzz.healthbuzz.Retrofit.RetrofitAPI
+import com.healthbuzz.healthbuzz.data.LoginDataSource
+import com.healthbuzz.healthbuzz.ui.login.LoginActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -51,6 +54,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.detail_toolbar))
 
+
 //        findViewById<FloatingActionButton>(R.id.fab) is not needed thanks to kotlin synthetic android extension
 
         // Show the Up button in the action bar.
@@ -65,6 +69,14 @@ class MainActivity : AppCompatActivity() {
         //
         // http://developer.android.com/guide/components/fragments.html
         //
+
+        /*
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(baseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+           */
+
         if (savedInstanceState == null) {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
