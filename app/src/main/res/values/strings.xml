@@ -16,10 +16,10 @@
     <string name="walking">walking</string>
     <string name="reset">reset</string>
     <string name="stop_collecting">stop collecting</string>
-    <string name="save">save</string>
+    <string name="save" translatable="false">save</string>
 
-    <string name="processing">Processing</string>
-    <string name="not_inferencing">Not inferencing</string>
+    <string name="processing" translatable="false">Processing</string>
+    <string name="not_inferencing" translatable="false">Not inferencing</string>
     <string name="inference_failed">Inference failed</string>
     <string name="dashboard_seconds_left">%d seconds left</string>
     <string name="you_need_stretch">You need to stretch now</string>
@@ -37,24 +37,24 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
 
-    <string name="normal">Normal</string>
-    <string name="up">Up</string>
-    <string name="drinking">Drinking</string>
-    <string name="down">Down</string>
+    <string name="normal" translatable="false">Normal</string>
+    <string name="up" translatable="false">Up</string>
+    <string name="drinking" translatable="false">Drinking</string>
+    <string name="down" translatable="false">Down</string>
 
-    <string name="debug_drinking">debug_drinking</string>
-    <string name="debug_movement">debug_movement</string>
+    <string name="debug_drinking" translatable="false">debug_drinking</string>
+    <string name="debug_movement" translatable="false">debug_movement</string>
 
-    <string name="running">running</string>
+    <string name="running" translatable="false">running</string>
 
     <string name="dashboard_community_title">Compare with Your Community!</string>
     <string name="title_activity_community">Today Ranking</string>
     <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
+    <string name="first_fragment_label" translatable="false">First Fragment</string>
+    <string name="second_fragment_label" translatable="false">Second Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
 
-    <string name="hello_first_fragment">Hello first fragment</string>
-    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="hello_first_fragment" translatable="false">Hello first fragment</string>
+    <string name="hello_second_fragment" translatable="false">Hello second fragment. Arg: %1$s</string>
 </resources>

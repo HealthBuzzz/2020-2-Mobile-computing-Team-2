@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">HealthBuzz</string>
+    <string name="title_item_detail">아이템 디테일</string>
+    <string name="dashboard_stretching_title_default">스트레칭하세요</string>
+    <string name="dashboard_water_title_default">물을 마시세요</string>
+    <string name="dashboard_minutes_left">%d 분 남음</string>
+    <string name="menu_item1">설정</string>
+    <string name="menu_item2">디버그</string>
+    <string name="menu_item3">도움말</string>
+    <string name="ticker_text">HealthBuzz가 당신을 지켜주고 있습니다</string>
+    <string name="title_activity_water_detail">물 마시기 상세</string>
+    <string name="title_activity_stretching_detail">스트레칭 하기 상세</string>
+    <string name="ondesk">ondesk</string>
+    <string name="walking">walking</string>
+    <string name="standing">standing</string>
+    <string name="reset">reset</string>
+    <string name="stop_collecting">stop collectiong</string>
+    <string name="inference_failed">추론 실패</string>
+    <string name="dashboard_seconds_left">%d 초 남음</string>
+    <string name="you_need_drink">물 마시세요.</string>
+    <string name="you_need_stretch">스트레칭 하세요.</string>
+    <string name="require_storage_permission">권한이 필요합니다.</string>
+    <string name="title_activity_login">로그인 페이지</string>
+    <string name="prompt_email">이메일</string>
+    <string name="prompt_password">비밀번호</string>
+    <string name="action_sign_in">로그인</string>
+    <string name="action_register">회원가입</string>
+    <string name="action_sign_in_short">로그인</string>
+    <string name="welcome">환영합니다</string>
+    <string name="invalid_username">이상한 유저 이름</string>
+    <string name="invalid_password">비밀번호 5자 이상</string>
+    <string name="login_failed">로그인 실패</string>
+    <string name="dashboard_community_title">다른 사람들과 비교하세요</string>
+    <string name="title_activity_community">오늘의 랭킹</string>
+    <string name="next">다음</string>
+    <string name="previous">이전</string>
+</resources>
