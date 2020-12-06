@@ -1,12 +1,19 @@
 package com.healthbuzz.healthbuzz
 
 import android.app.ActivityManager
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Build
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
 
 
 // Generates log TAG constant automatically
@@ -68,3 +75,21 @@ fun showYoutubeSearch(context: Context, query: String) {
     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
     context.startActivity(intent)
 }
+
+@RequiresApi(Build.VERSION_CODES.O)
+fun Context.createNotificationChannel(channelId: String, channelName: String): String {
+    val chan = NotificationChannel(
+        channelId,
+        channelName, NotificationManager.IMPORTANCE_DEFAULT
+    )
+    chan.lightColor = Color.BLUE
+    chan.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
+    val service = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    service.createNotificationChannel(chan)
+    return channelId
+}
+
+fun hasPermissions(context: Context, vararg permissions: String): Boolean = permissions.all {
+    ActivityCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
+}
+
